@@ -1,0 +1,526 @@
+/* Previous CSS styles remain the same, adding modal styles */
+
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f8fafc;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+h1, h2, h3 {
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+p {
+    margin-bottom: 20px;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+/* Header Styles */
+header {
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    display: flex;
+    align-items: center;
+}
+
+.book-icon {
+    margin-right: 5px;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+}
+
+nav ul li {
+    margin: 0 15px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+nav ul li a:hover {
+    color: #2563eb;
+}
+
+.sign-in-btn {
+    background-color: #2563eb;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 5px;
+}
+
+.sign-in-btn:hover {
+    background-color: #1d4ed8;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+    color: white;
+    padding: 80px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.highlight {
+    color: #fcd34d;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.get-started-btn {
+    background-color: #4f46e5;
+    color: white;
+    padding: 12px 25px;
+    font-size: 1rem;
+    border-radius: 5px;
+}
+
+.get-started-btn:hover {
+    background-color: #4338ca;
+}
+
+.arrow {
+    margin-left: 5px;
+}
+
+/* Main Content Section */
+.main-content {
+    padding: 60px 0;
+    text-align: center;
+}
+
+.main-content h2 {
+    font-size: 2rem;
+    color: #333;
+}
+
+.main-content h3 {
+    font-size: 1.5rem;
+    color: #4b5563;
+    margin-bottom: 20px;
+}
+
+.description {
+    max-width: 800px;
+    margin: 0 auto 40px;
+    text-align: center;
+    color: #4b5563;
+}
+
+.cards {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+    text-align: left;
+}
+
+.card-icon {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.card h3 {
+    text-align: left;
+    font-size: 1.3rem;
+}
+
+.card p {
+    color: #4b5563;
+    margin-bottom: 25px;
+}
+
+.assist-btn, .assistance-btn {
+    background-color: #0ea5e9;
+    color: white;
+    width: 100%;
+    padding: 12px;
+    text-align: center;
+}
+
+.assist-btn:hover, .assistance-btn:hover {
+    background-color: #0284c7;
+}
+
+/* Why Choose Section */
+.why-choose {
+    background-color: #f0f9ff;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.why-choose h2 {
+    font-size: 2rem;
+}
+
+.subtitle {
+    max-width: 700px;
+    margin: 0 auto 40px;
+    color: #4b5563;
+}
+
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.feature {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    padding: 30px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 1.5rem;
+}
+
+.blue {
+    background-color: #dbeafe;
+}
+
+.green {
+    background-color: #d1fae5;
+}
+
+.purple {
+    background-color: #ede9fe;
+}
+
+.feature h3 {
+    font-size: 1.2rem;
+}
+
+.feature p {
+    color: #4b5563;
+}
+
+/* Footer */
+footer {
+    background-color: #f0f9ff;
+    padding: 20px 0;
+    text-align: center;
+    border-top: 1px solid #e5e7eb;
+}
+
+footer p {
+    color: #6b7280;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    cursor: pointer;
+}
+
+.close:hover {
+    opacity: 0.7;
+}
+
+.modal-header {
+    text-align: center;
+    padding: 30px 30px 0;
+    color: white;
+}
+
+.modal-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.modal-subtitle {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.modal-body {
+    background: white;
+    margin: 20px;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+}
+
+.modal-body h2 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 1.8rem;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #4b5563;
+    font-weight: 500;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    z-index: 1;
+    font-size: 1rem;
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #f9fafb;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    background-color: white;
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #4b5563;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.forgot-password {
+    color: #3b82f6;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+.modal-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.login-btn {
+    background-color: #0ea5e9;
+}
+
+.login-btn:hover {
+    background-color: #0284c7;
+}
+
+.signup-btn {
+    background-color: #0ea5e9;
+}
+
+.signup-btn:hover {
+    background-color: #0284c7;
+}
+
+.switch-form {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+.switch-form a {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.switch-form a:hover {
+    text-decoration: underline;
+}
+
+.error-message {
+    background-color: #fee2e2;
+    color: #dc2626;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.success-message {
+    background-color: #d1fae5;
+    color: #059669;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .cards, .features {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .card, .feature {
+        max-width: 100%;
+    }
+    
+    nav {
+        display: none;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .modal-content {
+        margin: 10% auto;
+        width: 95%;
+    }
+    
+    .modal-body {
+        margin: 15px;
+        padding: 20px;
+    }
+}
