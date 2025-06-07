@@ -1,3 +1,68 @@
+<?php
+session_start();
+include 'functions.php';
+
+// Handle login form submission
+if(isset($_POST['login_submit'])) {
+    $email = $_POST['login_email'];
+    $password = $_POST['login_password'];
+    $assistIntent = $_POST['assist_intent'] ?? '';
+    
+    $loginResult = processLogin($email, $password, $assistIntent);
+    if($loginResult !== true) {
+        $login_error = $loginResult;
+        $show_login_modal = true;
+    }
+}
+
+// Handle signup form submission
+if(isset($_POST['signup_submit'])) {
+    $username = $_POST['signup_username'];
+    $email = $_POST['signup_email'];
+    $year = $_POST['signup_year'];
+    $password = $_POST['signup_password'];
+    $confirm_password = $_POST['confirm_password'];
+    $assistIntent = $_POST['assist_intent'] ?? '';
+    
+    if($password === $confirm_password) {
+        if(registerUser($username, $email, $password, $year)) {
+            $signup_success = true;
+            $show_login_modal = true;
+        } else {
+            $signup_error = "Registration failed. Email may already exist.";
+            $show_signup_modal = true;
+        }
+    } else {
+        $signup_error = "Passwords do not match";
+        $show_signup_modal = true;
+    }
+}
+
+// Handle modal display requests
+if(isset($_GET['action'])) {
+    if($_GET['action'] === 'login') {
+        $show_login_modal = true;
+        $assist_intent = $_GET['intent'] ?? '';
+    } elseif($_GET['action'] === 'signup') {
+        $show_signup_modal = true;
+        $assist_intent = $_GET['intent'] ?? '';
+    }
+}
+
+// Handle logout
+if(isset($_GET['logout'])) {
+    session_destroy();
+    header("Location: index.php");
+    exit();
+}
+
+// Check for success messages
+if(isset($_SESSION['success_message'])) {
+    $success_message = $_SESSION['success_message'];
+    unset($_SESSION['success_message']);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,41 +70,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Crew - Your Campus Connection</title>
     <link rel="stylesheet" href="style.css">
-    <?php 
-    session_start();
-    include 'functions.php'; 
-    
-    // Handle login form submission
-    if(isset($_POST['login_submit'])) {
-        $email = $_POST['login_email'];
-        $password = $_POST['login_password'];
-        
-        if(loginUser($email, $password)) {
-            $login_success = true;
-        } else {
-            $login_error = "Invalid email or password";
-        }
-    }
-    
-    // Handle signup form submission
-    if(isset($_POST['signup_submit'])) {
-        $username = $_POST['signup_username'];
-        $email = $_POST['signup_email'];
-        $year = $_POST['signup_year'];
-        $password = $_POST['signup_password'];
-        $confirm_password = $_POST['confirm_password'];
-        
-        if($password === $confirm_password) {
-            if(registerUser($username, $email, $password, $year)) {
-                $signup_success = true;
-            } else {
-                $signup_error = "Registration failed. Email may already exist.";
-            }
-        } else {
-            $signup_error = "Passwords do not match";
-        }
-    }
-    ?>
 </head>
 <body>
     <!-- Header Section -->
@@ -50,19 +80,28 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Courses</a></li>
+                    <li><a href="index.php">Home</a></li>
+                    <li><a href="courses.php">Courses</a></li>
                     <li><a href="#">About</a></li>
                     <li><a href="#">Contact Us</a></li>
                 </ul>
             </nav>
             <?php if(isLoggedIn()): ?>
-                <button class="sign-in-btn" onclick="logout()">LOGOUT</button>
+                <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
             <?php else: ?>
-                <button class="sign-in-btn" onclick="openLoginModal()">SIGN IN</button>
+                <a href="?action=login" class="sign-in-btn">SIGN IN</a>
             <?php endif; ?>
         </div>
     </header>
+
+    <!-- Success Message -->
+    <?php if(isset($success_message)): ?>
+        <div class="success-banner">
+            <div class="container">
+                <p><?php echo htmlspecialchars($success_message); ?></p>
+            </div>
+        </div>
+    <?php endif; ?>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -71,9 +110,9 @@
                 <h1>Welcome to <span class="highlight">Study Crew</span>!</h1>
                 <p>Your campus connection for academic support.</p>
                 <?php if(isLoggedIn()): ?>
-                    <button class="get-started-btn">Continue Learning <span class="arrow">→</span></button>
+                    <a href="courses.php" class="get-started-btn">Continue Learning <span class="arrow">→</span></a>
                 <?php else: ?>
-                    <button class="get-started-btn" onclick="openSignupModal()">Get Started <span class="arrow">→</span></button>
+                    <a href="?action=signup&intent=get" class="get-started-btn">Get Started <span class="arrow">→</span></a>
                 <?php endif; ?>
             </div>
         </div>
@@ -96,9 +135,9 @@
                     <h3>Assist Others</h3>
                     <p>Share your knowledge, reinforce your understanding, and help fellow students succeed. Become a tutor and make a positive impact.</p>
                     <?php if(isLoggedIn()): ?>
-                        <button class="assist-btn">I'm here to assist others</button>
+                        <a href="assistant-form.php" class="assist-btn">I'm here to assist others</a>
                     <?php else: ?>
-                        <button class="assist-btn" onclick="openLoginModal()">I'm here to assist others</button>
+                        <a href="?action=login&intent=assist" class="assist-btn">I'm here to assist others</a>
                     <?php endif; ?>
                 </div>
 
@@ -107,9 +146,9 @@
                     <h3>Get Assistance</h3>
                     <p>Find knowledgeable peers to help you understand challenging concepts, prepare for exams, and improve your grades.</p>
                     <?php if(isLoggedIn()): ?>
-                        <button class="assistance-btn">I'm looking for assistance</button>
+                        <a href="courses.php" class="assistance-btn">I'm looking for assistance</a>
                     <?php else: ?>
-                        <button class="assistance-btn" onclick="openLoginModal()">I'm looking for assistance</button>
+                        <a href="?action=login&intent=get" class="assistance-btn">I'm looking for assistance</a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -152,9 +191,10 @@
     </footer>
 
     <!-- Login Modal -->
-    <div id="loginModal" class="modal">
+    <?php if(isset($show_login_modal) && $show_login_modal): ?>
+    <div class="modal" style="display: block;">
         <div class="modal-content">
-            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <a href="index.php" class="close">&times;</a>
             <div class="modal-header">
                 <div class="modal-logo">
                     <span class="book-icon">📚</span>STUDY CREW
@@ -165,19 +205,16 @@
                 <p class="modal-subtitle">Sign in to continue your learning journey.</p>
                 
                 <?php if(isset($login_error)): ?>
-                    <div class="error-message"><?php echo $login_error; ?></div>
+                    <div class="error-message"><?php echo htmlspecialchars($login_error); ?></div>
                 <?php endif; ?>
                 
-                <?php if(isset($login_success)): ?>
-                    <div class="success-message">Login successful! Redirecting...</div>
-                    <script>
-                        setTimeout(function() {
-                            location.reload();
-                        }, 1500);
-                    </script>
+                <?php if(isset($signup_success)): ?>
+                    <div class="success-message">Account created successfully! You can now log in.</div>
                 <?php endif; ?>
 
                 <form method="POST" action="">
+                    <input type="hidden" name="assist_intent" value="<?php echo htmlspecialchars($assist_intent ?? ''); ?>">
+                    
                     <div class="form-group">
                         <label>Username or Email</label>
                         <div class="input-group">
@@ -209,16 +246,18 @@
                 </form>
 
                 <p class="switch-form">
-                    Don't have an account? <a href="#" onclick="switchToSignup()">Create Account</a>
+                    Don't have an account? <a href="?action=signup&intent=<?php echo htmlspecialchars($assist_intent ?? ''); ?>">Create Account</a>
                 </p>
             </div>
         </div>
     </div>
+    <?php endif; ?>
 
     <!-- Signup Modal -->
-    <div id="signupModal" class="modal">
+    <?php if(isset($show_signup_modal) && $show_signup_modal): ?>
+    <div class="modal" style="display: block;">
         <div class="modal-content">
-            <span class="close" onclick="closeSignupModal()">&times;</span>
+            <a href="index.php" class="close">&times;</a>
             <div class="modal-header">
                 <div class="modal-logo">
                     <span class="book-icon">📚</span>STUDY CREW
@@ -229,20 +268,12 @@
                 <h2>Create Your Account</h2>
                 
                 <?php if(isset($signup_error)): ?>
-                    <div class="error-message"><?php echo $signup_error; ?></div>
-                <?php endif; ?>
-                
-                <?php if(isset($signup_success)): ?>
-                    <div class="success-message">Account created successfully! You can now log in.</div>
-                    <script>
-                        setTimeout(function() {
-                            closeSignupModal();
-                            openLoginModal();
-                        }, 2000);
-                    </script>
+                    <div class="error-message"><?php echo htmlspecialchars($signup_error); ?></div>
                 <?php endif; ?>
 
                 <form method="POST" action="">
+                    <input type="hidden" name="assist_intent" value="<?php echo htmlspecialchars($assist_intent ?? ''); ?>">
+                    
                     <div class="form-group">
                         <label>Username</label>
                         <div class="input-group">
@@ -296,12 +327,11 @@
                 </form>
 
                 <p class="switch-form">
-                    Already have an account? <a href="#" onclick="switchToLogin()">Back to login</a>
+                    Already have an account? <a href="?action=login&intent=<?php echo htmlspecialchars($assist_intent ?? ''); ?>">Back to login</a>
                 </p>
             </div>
         </div>
     </div>
-
-    <script src="script.js"></script>
+    <?php endif; ?>
 </body>
 </html>
