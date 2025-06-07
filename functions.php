@@ -1,5 +1,183 @@
 <?php
-// Add these functions to your existing functions.php file
+// File paths for data storage
+define('USERS_FILE', __DIR__ . '/data/users.json');
+define('COURSES_FILE', __DIR__ . '/data/courses.json');
+define('ASSISTANTS_FILE', __DIR__ . '/data/assistants.json');
+define('CONNECTIONS_FILE', __DIR__ . '/data/connections.json');
+
+// Ensure data directory exists
+function ensureDataDirectory() {
+    $dataDir = __DIR__ . '/data';
+    if (!file_exists($dataDir)) {
+        mkdir($dataDir, 0755, true);
+    }
+
+    // Create empty files if they don't exist
+    $files = [USERS_FILE, COURSES_FILE, ASSISTANTS_FILE, CONNECTIONS_FILE];
+    foreach ($files as $file) {
+        if (!file_exists($file)) {
+            file_put_contents($file, json_encode([]));
+        }
+    }
+}
+
+// Initialize data directory
+ensureDataDirectory();
+
+// Helper function to read JSON file
+function readJsonFile($filePath) {
+    if (!file_exists($filePath)) {
+        return [];
+    }
+    $content = file_get_contents($filePath);
+    return json_decode($content, true) ?: [];
+}
+
+// Helper function to write JSON file
+function writeJsonFile($filePath, $data) {
+    return file_put_contents($filePath, json_encode($data, JSON_PRETTY_PRINT));
+}
+
+// User authentication functions
+function loginUser($email, $password) {
+    $users = readJsonFile(USERS_FILE);
+
+    foreach ($users as $user) {
+        if (($user['email'] === $email || $user['username'] === $email) && 
+            password_verify($password, $user['password'])) {
+            // Start session and set user data
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['email'] = $user['email'];
+            
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// Process login with intent handling
+function processLogin($email, $password, $assistIntent = '') {
+    if(loginUser($email, $password)) {
+        if($assistIntent === 'assist') {
+            header("Location: assistant-dashboard.php");
+            exit();
+        } else if($assistIntent === 'get') {
+            header("Location: courses.php");
+            exit();
+        } else {
+            header("Location: index.php");
+            exit();
+        }
+    } else {
+        return "Invalid email or password";
+    }
+}
+
+// Helper function to check if user is logged in
+function isLoggedIn() {
+    return isset($_SESSION['user_id']);
+}
+
+// Function to register new users
+function registerUser($username, $email, $password, $year) {
+    $users = readJsonFile(USERS_FILE);
+
+    // Check if email or username already exists
+    foreach ($users as $user) {
+        if ($user['email'] === $email || $user['username'] === $username) {
+            return false;
+        }
+    }
+
+    // Generate new user ID
+    $newId = 1;
+    if (!empty($users)) {
+        $ids = array_column($users, 'id');
+        $newId = max($ids) + 1;
+    }
+
+    // Hash password
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+    // Create new user
+    $newUser = [
+        'id' => $newId,
+        'username' => $username,
+        'email' => $email,
+        'password' => $hashedPassword,
+        'academic_year' => $year,
+        'created_at' => date('Y-m-d H:i:s')
+    ];
+
+    $users[] = $newUser;
+
+    return writeJsonFile(USERS_FILE, $users) !== false;
+}
+
+// Function to get user data
+function getUserData($userId) {
+    $users = readJsonFile(USERS_FILE);
+
+    foreach ($users as $user) {
+        if ($user['id'] == $userId) {
+            return $user;
+        }
+    }
+
+    return null;
+}
+
+// Function to get courses by year and semester
+function getCoursesByYearAndSemester($year, $semester) {
+    $courses = readJsonFile(COURSES_FILE);
+    $result = [];
+
+    foreach ($courses as $course) {
+        if ($course['year'] == $year && $course['semester'] == $semester) {
+            $result[] = $course;
+        }
+    }
+
+    // Sort by name
+    usort($result, function($a, $b) {
+        return strcmp($a['name'], $b['name']);
+    });
+
+    return $result;
+}
+
+// Function to get all courses
+function getAllCourses() {
+    $courses = readJsonFile(COURSES_FILE);
+
+    // Sort by year, semester, name
+    usort($courses, function($a, $b) {
+        if ($a['year'] != $b['year']) {
+            return $a['year'] - $b['year'];
+        }
+        if ($a['semester'] != $b['semester']) {
+            return $a['semester'] - $b['semester'];
+        }
+        return strcmp($a['name'], $b['name']);
+    });
+
+    return $courses;
+}
+
+// Function to get course by ID
+function getCourseById($courseId) {
+    $courses = readJsonFile(COURSES_FILE);
+
+    foreach ($courses as $course) {
+        if ($course['id'] == $courseId) {
+            return $course;
+        }
+    }
+
+    return null;
+}
 
 // Function to get courses for assistant based on their academic year
 function getCoursesForAssistant($userYearValue) {
@@ -91,41 +269,13 @@ function saveAssistantProfile($userId, $selectedCourses, $telegram, $phone, $bio
     return writeJsonFile(ASSISTANTS_FILE, $assistants);
 }
 
-// Function to get assistant details for display to students
-function getAssistantDetails($assistantId) {
-    $assistants = readJsonFile(ASSISTANTS_FILE);
-    $users = readJsonFile(USERS_FILE);
-    
-    foreach ($assistants as $assistant) {
-        if ($assistant['id'] == $assistantId) {
-            // Find user data
-            foreach ($users as $user) {
-                if ($user['id'] == $assistant['user_id']) {
-                    return [
-                        'id' => $assistant['id'],
-                        'name' => $user['username'],
-                        'year' => $user['academic_year'],
-                        'telegram' => $assistant['telegram'] ?? $user['telegram'] ?? '',
-                        'phone' => $assistant['phone'] ?? $user['phone'] ?? '',
-                        'bio' => $assistant['bio'] ?? $user['bio'] ?? '',
-                        'availability' => $assistant['availability'] ?? $user['availability'] ?? '',
-                        'visits' => $assistant['visits'] ?? 0
-                    ];
-                }
-            }
-        }
-    }
-    
-    return null;
-}
-
-// Update the getTutorsByCourse function to include more details
+// Function to get tutors by course with search
 function getTutorsByCourse($courseId, $searchQuery = '') {
     $assistants = readJsonFile(ASSISTANTS_FILE);
     $users = readJsonFile(USERS_FILE);
     $connections = readJsonFile(CONNECTIONS_FILE);
     $result = [];
-    
+
     foreach ($assistants as $assistant) {
         if ($assistant['course_id'] == $courseId) {
             // Find user data
@@ -161,7 +311,229 @@ function getTutorsByCourse($courseId, $searchQuery = '') {
             }
         }
     }
-    
+
     return $result;
 }
+
+// Function to get tutor by ID
+function getTutorById($tutorId) {
+    $assistants = readJsonFile(ASSISTANTS_FILE);
+    $users = readJsonFile(USERS_FILE);
+
+    foreach ($assistants as $assistant) {
+        if ($assistant['id'] == $tutorId) {
+            // Find user data
+            foreach ($users as $user) {
+                if ($user['id'] == $assistant['user_id']) {
+                    $assistant['name'] = $user['username'];
+                    return $assistant;
+                }
+            }
+        }
+    }
+
+    return null;
+}
+
+// Function to save connection request
+function saveConnectionRequest($userId, $tutorId, $courseId, $problemDescription, $telegram = '') {
+    $connections = readJsonFile(CONNECTIONS_FILE);
+
+    // Generate new connection ID
+    $newId = 1;
+    if (!empty($connections)) {
+        $ids = array_column($connections, 'id');
+        $newId = max($ids) + 1;
+    }
+
+    // Create new connection
+    $newConnection = [
+        'id' => $newId,
+        'user_id' => $userId,
+        'assistant_id' => $tutorId,
+        'course_id' => $courseId,
+        'problem_description' => $problemDescription,
+        'telegram' => $telegram,
+        'created_at' => date('Y-m-d H:i:s')
+    ];
+
+    $connections[] = $newConnection;
+
+    return writeJsonFile(CONNECTIONS_FILE, $connections) !== false;
+}
+
+// Function to increment tutor visits
+function incrementTutorVisits($tutorId) {
+    $assistants = readJsonFile(ASSISTANTS_FILE);
+
+    foreach ($assistants as &$assistant) {
+        if ($assistant['id'] == $tutorId) {
+            $assistant['visits'] = ($assistant['visits'] ?? 0) + 1;
+            break;
+        }
+    }
+
+    return writeJsonFile(ASSISTANTS_FILE, $assistants) !== false;
+}
+
+// Function to save assistant application
+function saveAssistantApplication($userId, $courseId, $telegram = '', $phone = '', $otherInfo = '') {
+    $assistants = readJsonFile(ASSISTANTS_FILE);
+    $existingIndex = -1;
+
+    // Check if user already applied for this course
+    foreach ($assistants as $index => $assistant) {
+        if ($assistant['user_id'] == $userId && $assistant['course_id'] == $courseId) {
+            $existingIndex = $index;
+            break;
+        }
+    }
+
+    if ($existingIndex >= 0) {
+        // Update existing application
+        $assistants[$existingIndex]['telegram'] = $telegram;
+        $assistants[$existingIndex]['phone'] = $phone;
+        $assistants[$existingIndex]['other_info'] = $otherInfo;
+        $assistants[$existingIndex]['updated_at'] = date('Y-m-d H:i:s');
+    } else {
+        // Generate new assistant ID
+        $newId = 1;
+        if (!empty($assistants)) {
+            $ids = array_column($assistants, 'id');
+            $newId = max($ids) + 1;
+        }
+        
+        // Create new assistant
+        $newAssistant = [
+            'id' => $newId,
+            'user_id' => $userId,
+            'course_id' => $courseId,
+            'telegram' => $telegram,
+            'phone' => $phone,
+            'other_info' => $otherInfo,
+            'visits' => 0,
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+        
+        $assistants[] = $newAssistant;
+    }
+
+    return writeJsonFile(ASSISTANTS_FILE, $assistants) !== false;
+}
+
+// Function to get year name
+function getYearName($year) {
+    $yearNames = [
+        1 => 'First Year',
+        2 => 'Second Year',
+        3 => 'Third Year',
+        4 => 'Fourth Year',
+        5 => 'Fifth Year'
+    ];
+
+    return $yearNames[$year] ?? 'Unknown Year';
+}
+
+// Function to get course icon
+function getCourseIcon($category) {
+    $icons = [
+        'math' => '📊',
+        'programming' => '💻',
+        'language' => '📝',
+        'science' => '🔬',
+        'humanities' => '📚',
+        'business' => '💼',
+        'engineering' => '⚙️',
+        'arts' => '🎨',
+        'geography' => '🌍',
+        'logic' => '🧠',
+        'computer' => '🖥️'
+    ];
+
+    return $icons[$category] ?? '📚';
+}
+
+// Initialize with sample data if files are empty
+function initializeSampleData() {
+    // Sample users
+    if (empty(readJsonFile(USERS_FILE))) {
+        $users = [
+            [
+                'id' => 1,
+                'username' => 'admin',
+                'email' => 'admin@example.com',
+                'password' => password_hash('admin123', PASSWORD_DEFAULT),
+                'academic_year' => 'Senior',
+                'created_at' => date('Y-m-d H:i:s')
+            ]
+        ];
+        writeJsonFile(USERS_FILE, $users);
+    }
+
+    // Sample courses
+    if (empty(readJsonFile(COURSES_FILE))) {
+        $courses = [
+            [
+                'id' => 1,
+                'name' => 'Discrete Mathematics',
+                'year' => 1,
+                'semester' => 1,
+                'category' => 'math'
+            ],
+            [
+                'id' => 2,
+                'name' => 'Introduction to Programming',
+                'year' => 1,
+                'semester' => 1,
+                'category' => 'programming'
+            ],
+            [
+                'id' => 3,
+                'name' => 'College English I',
+                'year' => 1,
+                'semester' => 1,
+                'category' => 'language'
+            ],
+            [
+                'id' => 4,
+                'name' => 'Calculus I',
+                'year' => 1,
+                'semester' => 2,
+                'category' => 'math'
+            ],
+            [
+                'id' => 5,
+                'name' => 'Data Structures',
+                'year' => 2,
+                'semester' => 1,
+                'category' => 'programming'
+            ],
+            [
+                'id' => 6,
+                'name' => 'Physics I',
+                'year' => 1,
+                'semester' => 2,
+                'category' => 'science'
+            ],
+            [
+                'id' => 7,
+                'name' => 'Database Systems',
+                'year' => 2,
+                'semester' => 2,
+                'category' => 'programming'
+            ],
+            [
+                'id' => 8,
+                'name' => 'Linear Algebra',
+                'year' => 2,
+                'semester' => 1,
+                'category' => 'math'
+            ]
+        ];
+        writeJsonFile(COURSES_FILE, $courses);
+    }
+}
+
+// Initialize sample data
+initializeSampleData();
 ?>

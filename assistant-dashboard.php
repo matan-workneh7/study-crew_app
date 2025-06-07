@@ -87,6 +87,155 @@ if(isset($_SESSION['success_message'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assistant Dashboard - Study Crew</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Assistant Dashboard Styles */
+        .assistant-dashboard {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .dashboard-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .assistant-form {
+            padding: 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 3rem;
+            background: #f9fafb;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-section h2 {
+            color: #1f2937;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            text-align: left;
+        }
+
+        .section-description {
+            color: #6b7280;
+            margin-bottom: 2rem;
+        }
+
+        .course-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .year-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .year-group h3 {
+            color: #1f2937;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+            text-align: left;
+        }
+
+        .semester-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .semester-group h4 {
+            color: #4b5563;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .course-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .course-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .course-checkbox:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .course-checkbox input[type="checkbox"] {
+            margin-right: 1rem;
+            width: 20px;
+            height: 20px;
+            accent-color: #667eea;
+        }
+
+        .course-checkbox .course-name {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .course-checkbox .course-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            color: white;
+        }
+
+        .no-courses-message {
+            background: #f3f4f6;
+            border: 2px dashed #d1d5db;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .field-hint {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
     <!-- Header Section -->
