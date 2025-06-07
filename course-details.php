@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once 'session.php';
 include 'functions.php';
 
 // Redirect to login if not logged in

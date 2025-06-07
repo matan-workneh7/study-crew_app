@@ -1,4 +1,5 @@
 <?php
+require_once 'session.php';
 include 'functions.php';
 
 // Handle login form submission
@@ -7,10 +8,15 @@ if(isset($_POST['login_submit'])) {
     $password = $_POST['login_password'];
     $assistIntent = $_POST['assist_intent'] ?? '';
     
-    $loginResult = processLogin($email, $password, $assistIntent);
-    if($loginResult !== true) {
-        $login_error = $loginResult;
+    if(empty($email) || empty($password)) {
+        $login_error = "Please enter both email and password";
         $show_login_modal = true;
+    } else {
+        $loginResult = processLogin($email, $password, $assistIntent);
+        if($loginResult !== true) {
+            $login_error = $loginResult;
+            $show_login_modal = true;
+        }
     }
 }
 
@@ -21,12 +27,16 @@ if(isset($_POST['signup_submit'])) {
     $year = $_POST['signup_year'];
     $password = $_POST['signup_password'];
     $confirm_password = $_POST['confirm_password'];
-    $assistIntent = $_POST['assist_intent'] ?? '';
+    $user_role = $_POST['user_role'] ?? '';
     
     if($password === $confirm_password) {
         if(registerUser($username, $email, $password, $year)) {
-            $signup_success = true;
-            $show_login_modal = true;
+            // Set success message in session
+            $_SESSION['success_message'] = "Registration successful! Please log in to continue.";
+            
+            // Redirect to login with the selected role
+            header("Location: index.php?action=login&intent=" . $user_role);
+            exit();
         } else {
             $signup_error = "Registration failed. Email may already exist.";
             $show_signup_modal = true;
@@ -273,7 +283,7 @@ if(isset($_SESSION['success_message'])) {
                     <div class="error-message"><?php echo htmlspecialchars($signup_error); ?></div>
                 <?php endif; ?>
 
-                <form method="POST" action="">
+                <form method="POST" action="index.php">
                     <input type="hidden" name="assist_intent" value="<?php echo htmlspecialchars($assist_intent ?? ''); ?>">
                     
                     <div class="form-group">
@@ -304,6 +314,22 @@ if(isset($_SESSION['success_message'])) {
                                 <option value="Senior">Senior</option>
                                 <option value="Graduate">Graduate</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>I want to:</label>
+                        <div class="role-selection">
+                            <label class="role-option">
+                                <input type="radio" name="user_role" value="assist" required>
+                                <span class="role-icon">👨‍🏫</span>
+                                <span class="role-text">Assist Others</span>
+                            </label>
+                            <label class="role-option">
+                                <input type="radio" name="user_role" value="get" required>
+                                <span class="role-icon">👨‍🎓</span>
+                                <span class="role-text">Get Assistance</span>
+                            </label>
                         </div>
                     </div>
 

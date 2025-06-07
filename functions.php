@@ -57,9 +57,23 @@ function loginUser($email, $password) {
     return false;
 }
 
+// Function to check if user is an assistant
+function isUserAssistant($userId) {
+    $assistants = readJsonFile(ASSISTANTS_FILE);
+    foreach ($assistants as $assistant) {
+        if ($assistant['user_id'] == $userId) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // Process login with intent handling
 function processLogin($email, $password, $assistIntent = '') {
     if(loginUser($email, $password)) {
+        $userId = $_SESSION['user_id'];
+        
+        // If specific intent is provided, follow it
         if($assistIntent === 'assist') {
             header("Location: assistant-dashboard.php");
             exit();
@@ -67,7 +81,12 @@ function processLogin($email, $password, $assistIntent = '') {
             header("Location: courses.php");
             exit();
         } else {
-            header("Location: index.php");
+            // No specific intent, check user's role
+            if(isUserAssistant($userId)) {
+                header("Location: assistant-dashboard.php");
+            } else {
+                header("Location: courses.php");
+            }
             exit();
         }
     } else {
