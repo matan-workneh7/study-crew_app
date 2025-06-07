@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'functions.php';
 
 // Redirect to login if not logged in
@@ -57,7 +58,6 @@ if(isset($_GET['logout'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($course['name']); ?> - Study Crew</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="courses.css">
 </head>
 <body>
     <!-- Header Section -->
@@ -70,6 +70,7 @@ if(isset($_GET['logout'])) {
                 <ul>
                     <li><a href="index.php">Home</a></li>
                     <li><a href="courses.php" class="active">Courses</a></li>
+                    <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
                     <li><a href="#">About</a></li>
                     <li><a href="#">Contact Us</a></li>
                 </ul>
@@ -101,10 +102,11 @@ if(isset($_GET['logout'])) {
         <div class="tutors-list">
             <div class="tutors-header">
                 <div class="tutor-name">
-                    Student Name
+                    Assistant Name
                     <a href="?id=<?php echo $courseId; ?>&sort=name&order=asc&search=<?php echo urlencode($searchQuery); ?>" class="sort-arrow">↑</a>
                     <a href="?id=<?php echo $courseId; ?>&sort=name&order=desc&search=<?php echo urlencode($searchQuery); ?>" class="sort-arrow">↓</a>
                 </div>
+                <div class="tutor-year">Academic Year</div>
                 <div class="tutor-visits">
                     Visit Count
                     <a href="?id=<?php echo $courseId; ?>&sort=visits&order=asc&search=<?php echo urlencode($searchQuery); ?>" class="sort-arrow">↑</a>
@@ -113,19 +115,29 @@ if(isset($_GET['logout'])) {
             </div>
 
             <?php foreach ($tutors as $tutor): ?>
-                <a href="connect.php?course=<?php echo $courseId; ?>&tutor=<?php echo $tutor['id']; ?>" class="tutor-item">
-                    <div class="tutor-name"><?php echo htmlspecialchars($tutor['name']); ?></div>
-                    <div class="tutor-visits"><?php echo $tutor['visits']; ?> Visits</div>
-                </a>
+                <div class="tutor-item-container">
+                    <a href="connect.php?course=<?php echo $courseId; ?>&tutor=<?php echo $tutor['id']; ?>" class="tutor-item">
+                        <div class="tutor-name"><?php echo htmlspecialchars($tutor['name']); ?></div>
+                        <div class="tutor-year"><?php echo htmlspecialchars($tutor['year']); ?></div>
+                        <div class="tutor-visits"><?php echo $tutor['visits']; ?> Visits</div>
+                    </a>
+                    <?php if (!empty($tutor['bio'])): ?>
+                        <div class="tutor-bio">
+                            <p><?php echo htmlspecialchars($tutor['bio']); ?></p>
+                        </div>
+                    <?php endif; ?>
+                </div>
             <?php endforeach; ?>
 
             <?php if (empty($tutors)): ?>
                 <div class="no-tutors">
                     <?php if($searchQuery): ?>
-                        No tutors found matching "<?php echo htmlspecialchars($searchQuery); ?>".
-                        <br><a href="?id=<?php echo $courseId; ?>">Show all tutors</a>
+                        No assistants found matching "<?php echo htmlspecialchars($searchQuery); ?>".
+                        <br><a href="?id=<?php echo $courseId; ?>">Show all assistants</a>
                     <?php else: ?>
-                        No tutors available for this course yet.
+                        No assistants available for this course yet.
+                        <br><br>
+                        <a href="assistant-dashboard.php" class="become-assistant-btn">Become an Assistant</a>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>

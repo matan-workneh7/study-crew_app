@@ -1,50 +1,26 @@
 <?php
+session_start();
 include 'functions.php';
 
 // Handle login form submission
-if(isset($_POST['login_submit'])) {
-    $email = $_POST['login_email'];
-    $password = $_POST['login_password'];
-    $assistIntent = $_POST['assist_intent'] ?? '';
-    
-    $loginResult = processLogin($email, $password, $assistIntent);
-    if($loginResult !== true) {
-        $login_error = $loginResult;
-        $show_login_modal = true;
-    }
-}
-
-// Handle signup form submission
-if(isset($_POST['signup_submit'])) {
-    $username = $_POST['signup_username'];
-    $email = $_POST['signup_email'];
-    $year = $_POST['signup_year'];
-    $password = $_POST['signup_password'];
-    $confirm_password = $_POST['confirm_password'];
-    $assistIntent = $_POST['assist_intent'] ?? '';
-    
-    if($password === $confirm_password) {
-        if(registerUser($username, $email, $password, $year)) {
-            $signup_success = true;
-            $show_login_modal = true;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    if ($_POST['action'] === 'login') {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $assistIntent = $_POST['assist_intent'] ?? '';
+        
+        $error = processLogin($email, $password, $assistIntent);
+    } elseif ($_POST['action'] === 'signup') {
+        $username = $_POST['username'];
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $year = $_POST['year'];
+        
+        if (registerUser($username, $email, $password, $year)) {
+            $success = "Account created successfully! Please log in.";
         } else {
-            $signup_error = "Registration failed. Email may already exist.";
-            $show_signup_modal = true;
+            $error = "Username or email already exists.";
         }
-    } else {
-        $signup_error = "Passwords do not match";
-        $show_signup_modal = true;
-    }
-}
-
-// Handle modal display requests
-if(isset($_GET['action'])) {
-    if($_GET['action'] === 'login') {
-        $show_login_modal = true;
-        $assist_intent = $_GET['intent'] ?? '';
-    } elseif($_GET['action'] === 'signup') {
-        $show_signup_modal = true;
-        $assist_intent = $_GET['intent'] ?? '';
     }
 }
 
@@ -67,7 +43,7 @@ if(isset($_SESSION['success_message'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Crew - Your Campus Connection</title>
+    <title>Study Crew - Connect, Learn, Succeed</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -79,16 +55,22 @@ if(isset($_SESSION['success_message'])) {
             </div>
             <nav>
                 <ul>
-                    <li><a href="index.php">Home</a></li>
+                    <li><a href="index.php" class="active">Home</a></li>
                     <li><a href="courses.php">Courses</a></li>
+                    <?php if(isLoggedIn()): ?>
+                    <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
+                    <?php endif; ?>
                     <li><a href="#">About</a></li>
                     <li><a href="#">Contact Us</a></li>
                 </ul>
             </nav>
             <?php if(isLoggedIn()): ?>
-                <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
+                <div class="user-menu">
+                    <span>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</span>
+                    <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
+                </div>
             <?php else: ?>
-                <a href="?action=login" class="sign-in-btn">SIGN IN</a>
+                <a href="#" class="sign-in-btn" onclick="openModal('loginModal')">SIGN IN</a>
             <?php endif; ?>
         </div>
     </header>
@@ -106,12 +88,16 @@ if(isset($_SESSION['success_message'])) {
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1>Welcome to <span class="highlight">Study Crew</span>!</h1>
-                <p>Your campus connection for academic support.</p>
+                <h1>Connect, Learn, <span class="highlight">Succeed</span></h1>
+                <p>Join Study Crew and connect with peer tutors who can help you excel in your courses. Get personalized assistance or share your knowledge with others.</p>
                 <?php if(isLoggedIn()): ?>
-                    <a href="courses.php" class="get-started-btn">Continue Learning <span class="arrow">→</span></a>
+                    <a href="courses.php" class="get-started-btn">
+                        <span>🚀</span> Browse Courses
+                    </a>
                 <?php else: ?>
-                    <a href="?action=signup&intent=get" class="get-started-btn">Get Started <span class="arrow">→</span></a>
+                    <a href="#" class="get-started-btn" onclick="openModal('signupModal')">
+                        <span>🚀</span> Get Started
+                    </a>
                 <?php endif; ?>
             </div>
         </div>
@@ -120,34 +106,33 @@ if(isset($_SESSION['success_message'])) {
     <!-- Main Content Section -->
     <section class="main-content">
         <div class="container">
-            <h2>Need help with a tough subject?</h2>
-            <h3>Want to offer help and make a difference?</h3>
+            <h2>How Study Crew Works</h2>
+            <h3>Choose your path to academic success</h3>
             <p class="description">
-                Study Crew connects students who are looking for academic assistance with peers who are 
-                ready to help. Whether you're stuck in calculus or fluent in Java, this is your space to learn and 
-                support each other.
+                Whether you need help with challenging courses or want to share your expertise, 
+                Study Crew connects you with the right people at the right time.
             </p>
 
             <div class="cards">
                 <div class="card">
-                    <div class="card-icon">🔗</div>
-                    <h3>Assist Others</h3>
-                    <p>Share your knowledge, reinforce your understanding, and help fellow students succeed. Become a tutor and make a positive impact.</p>
+                    <div class="card-icon">🎯</div>
+                    <h3>Get Assistance</h3>
+                    <p>Connect with experienced peer tutors who have mastered the courses you're struggling with. Get personalized help and guidance.</p>
                     <?php if(isLoggedIn()): ?>
-                        <a href="assistant-form.php" class="assist-btn">I'm here to assist others</a>
+                        <a href="courses.php" class="assistance-btn">I need assistance</a>
                     <?php else: ?>
-                        <a href="?action=login&intent=assist" class="assist-btn">I'm here to assist others</a>
+                        <a href="#" class="assistance-btn" onclick="openModal('loginModal', 'get')">I need assistance</a>
                     <?php endif; ?>
                 </div>
 
                 <div class="card">
-                    <div class="card-icon">💡</div>
-                    <h3>Get Assistance</h3>
-                    <p>Find knowledgeable peers to help you understand challenging concepts, prepare for exams, and improve your grades.</p>
+                    <div class="card-icon">🔗</div>
+                    <h3>Assist Others</h3>
+                    <p>Share your knowledge, reinforce your understanding, and help fellow students succeed. Become a tutor and make a positive impact on your academic community.</p>
                     <?php if(isLoggedIn()): ?>
-                        <a href="courses.php" class="assistance-btn">I'm looking for assistance</a>
+                        <a href="assistant-dashboard.php" class="assist-btn">I'm here to assist others</a>
                     <?php else: ?>
-                        <a href="?action=login&intent=get" class="assistance-btn">I'm looking for assistance</a>
+                        <a href="#" class="assist-btn" onclick="openModal('loginModal', 'assist')">I'm here to assist others</a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -158,25 +143,25 @@ if(isset($_SESSION['success_message'])) {
     <section class="why-choose">
         <div class="container">
             <h2>Why Choose Study Crew?</h2>
-            <p class="subtitle">We provide a collaborative and supportive environment for students to thrive academically.</p>
+            <p class="subtitle">We make peer-to-peer learning simple, effective, and accessible for everyone</p>
 
             <div class="features">
                 <div class="feature">
                     <div class="feature-icon blue">👥</div>
                     <h3>Peer-to-Peer Learning</h3>
-                    <p>Connect with students who understand your coursework and challenges.</p>
+                    <p>Learn from students who have recently mastered the same material you're studying. Get insights and tips that textbooks can't provide.</p>
                 </div>
 
                 <div class="feature">
-                    <div class="feature-icon green">⏰</div>
-                    <h3>Flexible Scheduling</h3>
-                    <p>Find help or offer assistance at times that work for you.</p>
+                    <div class="feature-icon green">⚡</div>
+                    <h3>Quick Connections</h3>
+                    <p>Find the right tutor for your needs in minutes. Our platform makes it easy to connect with available peer tutors instantly.</p>
                 </div>
 
                 <div class="feature">
-                    <div class="feature-icon purple">🛡️</div>
-                    <h3>Safe & Trusted</h3>
-                    <p>A secure platform connecting students from your own campus community.</p>
+                    <div class="feature-icon purple">🎓</div>
+                    <h3>Academic Excellence</h3>
+                    <p>Improve your grades and understanding while building lasting study relationships. Success is better when shared.</p>
                 </div>
             </div>
         </div>
@@ -190,111 +175,111 @@ if(isset($_SESSION['success_message'])) {
     </footer>
 
     <!-- Login Modal -->
-    <?php if(isset($show_login_modal) && $show_login_modal): ?>
-    <div class="modal" style="display: block;">
+    <div id="loginModal" class="modal">
         <div class="modal-content">
-            <a href="index.php" class="close">&times;</a>
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
             <div class="modal-header">
-                <div class="modal-logo">
-                    <span class="book-icon">📚</span>STUDY CREW
-                </div>
+                <div class="modal-logo">📚 STUDY CREW</div>
+                <p class="modal-subtitle">Connect, Learn, Succeed</p>
             </div>
             <div class="modal-body">
                 <h2>Welcome Back!</h2>
-                <p class="modal-subtitle">Sign in to continue your learning journey.</p>
                 
-                <?php if(isset($login_error)): ?>
-                    <div class="error-message"><?php echo htmlspecialchars($login_error); ?></div>
+                <?php if(isset($error) && $_POST['action'] === 'login'): ?>
+                    <div class="error-message"><?php echo htmlspecialchars($error); ?></div>
                 <?php endif; ?>
                 
-                <?php if(isset($signup_success)): ?>
-                    <div class="success-message">Account created successfully! You can now log in.</div>
-                <?php endif; ?>
-
                 <form method="POST" action="">
-                    <input type="hidden" name="assist_intent" value="<?php echo htmlspecialchars($assist_intent ?? ''); ?>">
+                    <input type="hidden" name="action" value="login">
+                    <input type="hidden" name="assist_intent" id="assistIntent" value="">
                     
                     <div class="form-group">
-                        <label>Username or Email</label>
+                        <label for="loginEmail">Email or Username</label>
                         <div class="input-group">
                             <span class="input-icon">👤</span>
-                            <input type="text" name="login_email" placeholder="Enter your username or email" required>
+                            <input type="text" id="loginEmail" name="email" required>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Password</label>
+                        <label for="loginPassword">Password</label>
                         <div class="input-group">
                             <span class="input-icon">🔒</span>
-                            <input type="password" name="login_password" placeholder="Enter your password" required>
+                            <input type="password" id="loginPassword" name="password" required>
                         </div>
                     </div>
 
                     <div class="form-options">
                         <label class="checkbox-label">
-                            <input type="checkbox" name="remember_me">
-                            <span class="checkmark"></span>
-                            Remember Me
+                            <input type="checkbox"> Remember me
                         </label>
                         <a href="#" class="forgot-password">Forgot Password?</a>
                     </div>
 
-                    <button type="submit" name="login_submit" class="modal-btn login-btn">
-                        <span class="btn-icon">→</span> LOG IN
+                    <button type="submit" class="modal-btn login-btn">
+                        <span>🚀</span> Sign In
                     </button>
                 </form>
 
                 <p class="switch-form">
-                    Don't have an account? <a href="?action=signup&intent=<?php echo htmlspecialchars($assist_intent ?? ''); ?>">Create Account</a>
+                    Don't have an account? <a href="#" onclick="switchModal('loginModal', 'signupModal')">Sign up here</a>
                 </p>
             </div>
         </div>
     </div>
-    <?php endif; ?>
 
     <!-- Signup Modal -->
-    <?php if(isset($show_signup_modal) && $show_signup_modal): ?>
-    <div class="modal" style="display: block;">
+    <div id="signupModal" class="modal">
         <div class="modal-content">
-            <a href="index.php" class="close">&times;</a>
+            <span class="close" onclick="closeModal('signupModal')">&times;</span>
             <div class="modal-header">
-                <div class="modal-logo">
-                    <span class="book-icon">📚</span>STUDY CREW
-                </div>
-                <p class="modal-subtitle">Join our academic support community!</p>
+                <div class="modal-logo">📚 STUDY CREW</div>
+                <p class="modal-subtitle">Connect, Learn, Succeed</p>
             </div>
             <div class="modal-body">
-                <h2>Create Your Account</h2>
+                <h2>Join Study Crew</h2>
                 
-                <?php if(isset($signup_error)): ?>
-                    <div class="error-message"><?php echo htmlspecialchars($signup_error); ?></div>
+                <?php if(isset($error) && $_POST['action'] === 'signup'): ?>
+                    <div class="error-message"><?php echo htmlspecialchars($error); ?></div>
                 <?php endif; ?>
-
+                
+                <?php if(isset($success)): ?>
+                    <div class="success-message"><?php echo htmlspecialchars($success); ?></div>
+                <?php endif; ?>
+                
                 <form method="POST" action="">
-                    <input type="hidden" name="assist_intent" value="<?php echo htmlspecialchars($assist_intent ?? ''); ?>">
+                    <input type="hidden" name="action" value="signup">
                     
                     <div class="form-group">
-                        <label>Username</label>
+                        <label for="signupUsername">Username</label>
                         <div class="input-group">
                             <span class="input-icon">👤</span>
-                            <input type="text" name="signup_username" placeholder="Enter your username" required>
+                            <input type="text" id="signupUsername" name="username" required>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Email</label>
+                        <label for="signupEmail">Email</label>
                         <div class="input-group">
                             <span class="input-icon">📧</span>
-                            <input type="email" name="signup_email" placeholder="test@example.com" required>
+                            <input type="email" id="signupEmail" name="email" required>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Year</label>
+                        <label for="signupPassword">Password</label>
                         <div class="input-group">
-                            <span class="input-icon">📅</span>
-                            <select name="signup_year" required>
-                                <option value="">Select your academic year</option>
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="signupPassword" name="password" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="academicYear">Academic Year</label>
+                        <div class="input-group">
+                            <span class="input-icon">🎓</span>
+                            <select id="academicYear" name="year" required>
+                                <option value="">Select your year</option>
                                 <option value="Freshman">Freshman</option>
                                 <option value="Sophomore">Sophomore</option>
                                 <option value="Junior">Junior</option>
@@ -304,33 +289,59 @@ if(isset($_SESSION['success_message'])) {
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>Password</label>
-                        <div class="input-group">
-                            <span class="input-icon">🔒</span>
-                            <input type="password" name="signup_password" placeholder="Enter your password" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Confirm Password</label>
-                        <div class="input-group">
-                            <span class="input-icon">🔒</span>
-                            <input type="password" name="confirm_password" placeholder="Enter your password again" required>
-                        </div>
-                    </div>
-
-                    <button type="submit" name="signup_submit" class="modal-btn signup-btn">
-                        <span class="btn-icon">⭐</span> Sign Up
+                    <button type="submit" class="modal-btn signup-btn">
+                        <span>✨</span> Create Account
                     </button>
                 </form>
 
                 <p class="switch-form">
-                    Already have an account? <a href="?action=login&intent=<?php echo htmlspecialchars($assist_intent ?? ''); ?>">Back to login</a>
+                    Already have an account? <a href="#" onclick="switchModal('signupModal', 'loginModal')">Sign in here</a>
                 </p>
             </div>
         </div>
     </div>
-    <?php endif; ?>
+
+    <script>
+        function openModal(modalId, intent = '') {
+            document.getElementById(modalId).style.display = 'block';
+            if (intent && modalId === 'loginModal') {
+                document.getElementById('assistIntent').value = intent;
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function switchModal(currentModal, targetModal) {
+            closeModal(currentModal);
+            openModal(targetModal);
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Auto-open modals based on URL parameters
+        <?php if(isset($_GET['action']) && $_GET['action'] === 'login'): ?>
+            openModal('loginModal', '<?php echo isset($_GET['intent']) ? $_GET['intent'] : ''; ?>');
+        <?php elseif(isset($_GET['action']) && $_GET['action'] === 'signup'): ?>
+            openModal('signupModal');
+        <?php endif; ?>
+
+        // Show signup modal after successful account creation
+        <?php if(isset($success)): ?>
+            setTimeout(() => {
+                closeModal('signupModal');
+                openModal('loginModal');
+            }, 2000);
+        <?php endif; ?>
+    </script>
 </body>
 </html>
