@@ -1,5 +1,5 @@
 <?php
-session_start();
+include 'functions.php';
 
 // Destroy all session data
 session_destroy();
