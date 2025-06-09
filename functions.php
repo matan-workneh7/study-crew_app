@@ -77,16 +77,9 @@ function processLogin($email, $password, $assistIntent = '') {
         if($assistIntent === 'assist') {
             header("Location: assistant-dashboard.php");
             exit();
-        } else if($assistIntent === 'get') {
-            header("Location: courses.php");
-            exit();
         } else {
-            // No specific intent, check user's role
-            if(isUserAssistant($userId)) {
-                header("Location: assistant-dashboard.php");
-            } else {
-                header("Location: courses.php");
-            }
+            // Default to courses page for 'get' intent or no specific intent
+            header("Location: courses.php");
             exit();
         }
     } else {

@@ -7,15 +7,14 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
+    $intent = $_GET['intent'] ?? '';
     
     if (empty($username) || empty($password)) {
         $error = 'Please enter both username and password';
     } else {
-        if (loginUser($username, $password)) {
-            header('Location: index.php');
-            exit;
-        } else {
-            $error = 'Invalid username or password';
+        $result = processLogin($username, $password, $intent);
+        if ($result !== true) {
+            $error = $result;
         }
     }
 }

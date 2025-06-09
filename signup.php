@@ -19,7 +19,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Password must be at least 6 characters long';
     } else {
         if (registerUser($username, $email, $password, $academic_year)) {
-            $success = 'Registration successful! You can now login.';
+            // Redirect to login with the correct intent
+            header("Location: login.php?intent=get");
+            exit();
         } else {
             $error = 'Username or email already exists';
         }
