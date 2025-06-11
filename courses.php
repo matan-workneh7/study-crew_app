@@ -1,9 +1,16 @@
 <?php
+require_once 'session.php';
 include 'functions.php';
 
 // Redirect to login if not logged in
 if (!isLoggedIn()) {
     header("Location: index.php?action=login&intent=get");
+    exit();
+}
+
+// Redirect assistants to their dashboard
+if (isUserAssistant($_SESSION['user_id'])) {
+    header("Location: assistant-dashboard.php");
     exit();
 }
 

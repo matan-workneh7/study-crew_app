@@ -1,4 +1,5 @@
 <?php
+require_once 'session.php';
 include 'functions.php';
 
 // Redirect to login if not logged in
@@ -27,10 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Save assistant application
     if (saveAssistantApplication($userId, $selectedCourse, $telegram, $phone, $otherInfo)) {
         // Set success message
-        $_SESSION['success_message'] = "Your application has been submitted successfully. We'll review it and get back to you soon.";
+        $_SESSION['success_message'] = "Your application has been submitted successfully. You can now access both student and assistant features.";
         
-        // Redirect to courses page
-        header("Location: courses.php");
+        // Redirect to assistant dashboard
+        header("Location: assistant-dashboard.php");
         exit();
     } else {
         $error = "Failed to submit your application. Please try again.";
@@ -50,7 +51,7 @@ if(isset($_GET['logout'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Assistant Form - Study Crew</title>
+    <title>Become an Assistant - Study Crew</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="courses.css">
 </head>
@@ -64,7 +65,8 @@ if(isset($_GET['logout'])) {
             <nav>
                 <ul>
                     <li><a href="index.php">Home</a></li>
-                    <li><a href="courses.php" class="active">Courses</a></li>
+                    <li><a href="courses.php">Courses</a></li>
+                    <li><a href="assistant-form.php" class="active">Become an Assistant</a></li>
                     <li><a href="#">About</a></li>
                     <li><a href="#">Contact Us</a></li>
                 </ul>
@@ -79,8 +81,8 @@ if(isset($_GET['logout'])) {
     <!-- Main Content -->
     <div class="container assistant-form-container">
         <div class="assistant-card">
-            <h1>Student Assistant Form</h1>
-            <p class="form-subtitle">Please complete your profile to join the team.</p>
+            <h1>Become a Student Assistant</h1>
+            <p class="form-subtitle">Complete this form to start helping other students while maintaining your student status.</p>
 
             <?php if (isset($error)): ?>
                 <div class="error-message"><?php echo htmlspecialchars($error); ?></div>
@@ -93,7 +95,7 @@ if(isset($_GET['logout'])) {
                 </div>
 
                 <div class="form-group">
-                    <label for="year">Year</label>
+                    <label for="year">Academic Year</label>
                     <input type="text" id="year" name="year" value="<?php echo htmlspecialchars($userData['academic_year']); ?>" required>
                 </div>
 
@@ -103,7 +105,7 @@ if(isset($_GET['logout'])) {
                 </div>
 
                 <div class="form-group">
-                    <label for="selected_course">Selected Course</label>
+                    <label for="selected_course">Course to Assist</label>
                     <select id="selected_course" name="selected_course" required>
                         <option value="">Select a course</option>
                         <?php foreach ($courses as $course): ?>
@@ -129,8 +131,8 @@ if(isset($_GET['logout'])) {
                 </div>
 
                 <div class="form-group">
-                    <label for="other_info">Other Contact Information (Optional)</label>
-                    <textarea id="other_info" name="other_info" rows="4"></textarea>
+                    <label for="other_info">Additional Information (Optional)</label>
+                    <textarea id="other_info" name="other_info" rows="4" placeholder="Tell us about your experience and why you want to become an assistant..."></textarea>
                 </div>
 
                 <button type="submit" class="submit-btn">

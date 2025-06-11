@@ -8,6 +8,12 @@ if (!isLoggedIn()) {
     exit();
 }
 
+// Redirect non-assistants to courses page
+if (!isUserAssistant($_SESSION['user_id'])) {
+    header("Location: courses.php");
+    exit();
+}
+
 // Get user data
 $userId = $_SESSION['user_id'];
 $userData = getUserData($userId);
@@ -247,7 +253,6 @@ if(isset($_SESSION['success_message'])) {
             <nav>
                 <ul>
                     <li><a href="index.php">Home</a></li>
-                    <li><a href="courses.php">Courses</a></li>
                     <li><a href="assistant-dashboard.php" class="active">Assistant Dashboard</a></li>
                     <li><a href="#">About</a></li>
                     <li><a href="#">Contact Us</a></li>
