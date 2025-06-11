@@ -30,7 +30,7 @@ if(isset($_POST['signup_submit'])) {
     $user_role = $_POST['user_role'] ?? '';
     
     if($password === $confirm_password) {
-        if(registerUser($username, $email, $password, $year)) {
+        if(registerUser($username, $email, $password, $year, $user_role)) {
             // Set success message in session
             $_SESSION['success_message'] = "Registration successful! Please log in to continue.";
             
@@ -90,9 +90,12 @@ if(isset($_SESSION['success_message'])) {
             <nav>
                 <ul>
                     <li><a href="index.php" class="active">Home</a></li>
-                    <li><a href="courses.php">Courses</a></li>
                     <?php if(isLoggedIn()): ?>
-                    <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
+                        <?php if(isUserAssistant($_SESSION['user_id'])): ?>
+                            <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
+                        <?php else: ?>
+                            <li><a href="courses.php">Courses</a></li>
+                        <?php endif; ?>
                     <?php endif; ?>
                     <li><a href="#">About</a></li>
                     <li><a href="#">Contact Us</a></li>
@@ -147,7 +150,11 @@ if(isset($_SESSION['success_message'])) {
                     <h3>Assist Others</h3>
                     <p>Share your knowledge, reinforce your understanding, and help fellow students succeed. Become a tutor and make a positive impact.</p>
                     <?php if(isLoggedIn()): ?>
-                        <a href="assistant-dashboard.php" class="assist-btn">I'm here to assist others</a>
+                        <?php if(isUserAssistant($_SESSION['user_id'])): ?>
+                            <a href="assistant-dashboard.php" class="assist-btn">Go to Assistant Dashboard</a>
+                        <?php else: ?>
+                            <a href="assistant-form.php" class="assist-btn">Become an Assistant</a>
+                        <?php endif; ?>
                     <?php else: ?>
                         <a href="?action=login&intent=assist" class="assist-btn">I'm here to assist others</a>
                     <?php endif; ?>
@@ -158,7 +165,7 @@ if(isset($_SESSION['success_message'])) {
                     <h3>Get Assistance</h3>
                     <p>Find knowledgeable peers to help you understand challenging concepts, prepare for exams, and improve your grades.</p>
                     <?php if(isLoggedIn()): ?>
-                        <a href="courses.php" class="assistance-btn">I'm looking for assistance</a>
+                        <a href="courses.php" class="assistance-btn">Browse Courses</a>
                     <?php else: ?>
                         <a href="?action=login&intent=get" class="assistance-btn">I'm looking for assistance</a>
                     <?php endif; ?>
@@ -213,15 +220,11 @@ if(isset($_SESSION['success_message'])) {
                 </div>
             </div>
             <div class="modal-body">
-                <h2>Welcome Back!</h2>
-                <p class="modal-subtitle">Sign in to continue your learning journey.</p>
+                <h2><?php echo $assist_intent === 'assist' ? 'Assistant Login' : 'Student Login'; ?></h2>
+                <p class="modal-subtitle">Sign in to <?php echo $assist_intent === 'assist' ? 'start helping others' : 'get the help you need'; ?>.</p>
                 
                 <?php if(isset($login_error)): ?>
                     <div class="error-message"><?php echo htmlspecialchars($login_error); ?></div>
-                <?php endif; ?>
-                
-                <?php if(isset($signup_success)): ?>
-                    <div class="success-message">Account created successfully! You can now log in.</div>
                 <?php endif; ?>
 
                 <form method="POST" action="">
@@ -243,23 +246,14 @@ if(isset($_SESSION['success_message'])) {
                         </div>
                     </div>
 
-                    <div class="form-options">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="remember_me">
-                            <span class="checkmark"></span>
-                            Remember Me
-                        </label>
-                        <a href="#" class="forgot-password">Forgot Password?</a>
-                    </div>
-
-                    <button type="submit" name="login_submit" class="modal-btn login-btn">
-                        <span class="btn-icon">→</span> LOG IN
+                    <button type="submit" name="login_submit" class="submit-btn">
+                        <span class="btn-icon">🔑</span> Sign In
                     </button>
-                </form>
 
-                <p class="switch-form">
-                    Don't have an account? <a href="?action=signup&intent=<?php echo htmlspecialchars($assist_intent ?? ''); ?>">Create Account</a>
-                </p>
+                    <p class="signup-link">
+                        Don't have an account? <a href="?action=signup&intent=<?php echo htmlspecialchars($assist_intent ?? 'get'); ?>">Sign up</a>
+                    </p>
+                </form>
             </div>
         </div>
     </div>
@@ -274,23 +268,23 @@ if(isset($_SESSION['success_message'])) {
                 <div class="modal-logo">
                     <span class="book-icon">📚</span>STUDY CREW
                 </div>
-                <p class="modal-subtitle">Join our academic support community!</p>
             </div>
             <div class="modal-body">
-                <h2>Create Your Account</h2>
+                <h2>Join Study Crew</h2>
+                <p class="modal-subtitle">Create your account to <?php echo $assist_intent === 'assist' ? 'start helping others' : 'get the help you need'; ?>.</p>
                 
                 <?php if(isset($signup_error)): ?>
                     <div class="error-message"><?php echo htmlspecialchars($signup_error); ?></div>
                 <?php endif; ?>
 
-                <form method="POST" action="index.php">
-                    <input type="hidden" name="assist_intent" value="<?php echo htmlspecialchars($assist_intent ?? ''); ?>">
+                <form method="POST" action="">
+                    <input type="hidden" name="user_role" value="<?php echo htmlspecialchars($assist_intent ?? 'get'); ?>">
                     
                     <div class="form-group">
                         <label>Username</label>
                         <div class="input-group">
                             <span class="input-icon">👤</span>
-                            <input type="text" name="signup_username" placeholder="Enter your username" required>
+                            <input type="text" name="signup_username" placeholder="Choose a username" required>
                         </div>
                     </div>
 
@@ -298,38 +292,15 @@ if(isset($_SESSION['success_message'])) {
                         <label>Email</label>
                         <div class="input-group">
                             <span class="input-icon">📧</span>
-                            <input type="email" name="signup_email" placeholder="test@example.com" required>
+                            <input type="email" name="signup_email" placeholder="Enter your email" required>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Year</label>
+                        <label>Academic Year</label>
                         <div class="input-group">
-                            <span class="input-icon">📅</span>
-                            <select name="signup_year" required>
-                                <option value="">Select your academic year</option>
-                                <option value="Freshman">Freshman</option>
-                                <option value="Sophomore">Sophomore</option>
-                                <option value="Junior">Junior</option>
-                                <option value="Senior">Senior</option>
-                                <option value="Graduate">Graduate</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>I want to:</label>
-                        <div class="role-selection">
-                            <label class="role-option">
-                                <input type="radio" name="user_role" value="assist" required>
-                                <span class="role-icon">👨‍🏫</span>
-                                <span class="role-text">Assist Others</span>
-                            </label>
-                            <label class="role-option">
-                                <input type="radio" name="user_role" value="get" required>
-                                <span class="role-icon">👨‍🎓</span>
-                                <span class="role-text">Get Assistance</span>
-                            </label>
+                            <span class="input-icon">🎓</span>
+                            <input type="text" name="signup_year" placeholder="e.g., 3rd Year" required>
                         </div>
                     </div>
 
@@ -337,7 +308,7 @@ if(isset($_SESSION['success_message'])) {
                         <label>Password</label>
                         <div class="input-group">
                             <span class="input-icon">🔒</span>
-                            <input type="password" name="signup_password" placeholder="Enter your password" required>
+                            <input type="password" name="signup_password" placeholder="Create a password" required>
                         </div>
                     </div>
 
@@ -345,18 +316,18 @@ if(isset($_SESSION['success_message'])) {
                         <label>Confirm Password</label>
                         <div class="input-group">
                             <span class="input-icon">🔒</span>
-                            <input type="password" name="confirm_password" placeholder="Enter your password again" required>
+                            <input type="password" name="confirm_password" placeholder="Confirm your password" required>
                         </div>
                     </div>
 
-                    <button type="submit" name="signup_submit" class="modal-btn signup-btn">
-                        <span class="btn-icon">⭐</span> Sign Up
+                    <button type="submit" name="signup_submit" class="submit-btn">
+                        <span class="btn-icon">📝</span> Create Account
                     </button>
-                </form>
 
-                <p class="switch-form">
-                    Already have an account? <a href="?action=login&intent=<?php echo htmlspecialchars($assist_intent ?? ''); ?>">Back to login</a>
-                </p>
+                    <p class="login-link">
+                        Already have an account? <a href="?action=login&intent=<?php echo htmlspecialchars($assist_intent ?? 'get'); ?>">Sign in</a>
+                    </p>
+                </form>
             </div>
         </div>
     </div>

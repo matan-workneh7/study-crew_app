@@ -70,7 +70,6 @@ if(isset($_GET['logout'])) {
                 <ul>
                     <li><a href="index.php">Home</a></li>
                     <li><a href="courses.php" class="active">Courses</a></li>
-                    <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
                     <li><a href="#">About</a></li>
                     <li><a href="#">Contact Us</a></li>
                 </ul>

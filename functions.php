@@ -72,6 +72,17 @@ function isUserAssistant($userId) {
 function processLogin($email, $password, $assistIntent = '') {
     if(loginUser($email, $password)) {
         $userId = $_SESSION['user_id'];
+        $isAssistant = isUserAssistant($userId);
+        
+        // If user is trying to login as assistant but isn't one
+        if($assistIntent === 'assist' && !$isAssistant) {
+            return "This account is not registered as an assistant. Please sign up as an assistant or login as a student.";
+        }
+        
+        // If user is trying to login as student but is an assistant
+        if($assistIntent === 'get' && $isAssistant) {
+            return "This account is registered as an assistant. Please use the assistant login.";
+        }
         
         // If specific intent is provided, follow it
         if($assistIntent === 'assist') {
@@ -93,7 +104,7 @@ function isLoggedIn() {
 }
 
 // Function to register new users
-function registerUser($username, $email, $password, $year) {
+function registerUser($username, $email, $password, $year, $user_role = 'get') {
     $users = readJsonFile(USERS_FILE);
 
     // Check if email or username already exists
@@ -120,12 +131,22 @@ function registerUser($username, $email, $password, $year) {
         'email' => $email,
         'password' => $hashedPassword,
         'academic_year' => $year,
+        'user_role' => $user_role,
         'created_at' => date('Y-m-d H:i:s')
     ];
 
     $users[] = $newUser;
 
-    return writeJsonFile(USERS_FILE, $users) !== false;
+    if (writeJsonFile(USERS_FILE, $users) !== false) {
+        // If user wants to be an assistant, redirect to assistant form
+        if ($user_role === 'assist') {
+            header("Location: assistant-form.php");
+            exit();
+        }
+        return true;
+    }
+
+    return false;
 }
 
 // Function to get user data
