@@ -1,6 +1,12 @@
 <?php
 require_once 'session.php';
 include 'functions.php';
+// Initialize variables
+$error = '';
+$success = '';
+$show_login_modal = false;
+$show_signup_modal = false;
+$assist_intent = $_GET['intent'] ?? 'get';
 
 // Handle login form submission
 if(isset($_POST['login_submit'])) {
@@ -22,28 +28,32 @@ if(isset($_POST['login_submit'])) {
 
 // Handle signup form submission
 if(isset($_POST['signup_submit'])) {
-    $username = $_POST['signup_username'];
-    $email = $_POST['signup_email'];
-    $year = $_POST['signup_year'];
-    $password = $_POST['signup_password'];
-    $confirm_password = $_POST['confirm_password'];
-    $user_role = $_POST['user_role'] ?? '';
+    $username = $_POST['signup_username'] ?? $_POST['username'] ?? '';
+    $email = $_POST['signup_email'] ?? $_POST['email'] ?? '';
+    $year = $_POST['signup_year'] ?? $_POST['academic_year'] ?? '';
+    $password = $_POST['signup_password'] ?? $_POST['password'] ?? '';
+    $confirm_password = $_POST['confirm_password'] ?? '';
+    $user_role = $_POST['user_role'] ?? $assist_intent;
     
-    if($password === $confirm_password) {
+    // Validation
+    if(empty($username) || empty($email) || empty($year) || empty($password) || empty($confirm_password)) {
+        $error = "Please fill all fields";
+        $show_signup_modal = true;
+    } elseif($password !== $confirm_password) {
+        $error = "Passwords don't match";
+        $show_signup_modal = true;
+    } elseif(strlen($password) < 6) {
+        $error = "Password must be at least 6 characters";
+        $show_signup_modal = true;
+    } else {
         if(registerUser($username, $email, $password, $year, $user_role)) {
-            // Set success message in session
-            $_SESSION['success_message'] = "Registration successful! Please log in to continue.";
-            
-            // Redirect to login with the selected role
-            header("Location: index.php?action=login&intent=" . $user_role);
+            $_SESSION['success_message'] = "Registration successful! Please login.";
+            header("Location: index.php?action=login&intent=$user_role");
             exit();
         } else {
-            $signup_error = "Registration failed. Email may already exist.";
+            $error = "Email/username already exists";
             $show_signup_modal = true;
         }
-    } else {
-        $signup_error = "Passwords do not match";
-        $show_signup_modal = true;
     }
 }
 
@@ -79,6 +89,37 @@ if(isset($_SESSION['success_message'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Crew - Your Campus Connection</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-icon {
+            position: absolute;
+            left: 10px;
+            z-index: 1;
+        }
+        .input-group input, .input-group select {
+            padding-left: 40px;
+            width: 100%;
+        }
+@media (max-width: 576px) {
+        .input-group input, .input-group select {
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+        }
+        .input-icon {
+            left: 8px;
+            font-size: 0.9rem;
+        }
+    }
+    @media (max-width: 400px) {
+        .input-group input,
+        .input-group select {
+            font-size: 0.9rem;
+        }
+    }
+    </style>
 </head>
 <body>
     <!-- Header Section -->
@@ -260,77 +301,85 @@ if(isset($_SESSION['success_message'])) {
     <?php endif; ?>
 
     <!-- Signup Modal -->
-    <?php if(isset($show_signup_modal) && $show_signup_modal): ?>
-    <div class="modal" style="display: block;">
-        <div class="modal-content">
-            <a href="index.php" class="close">&times;</a>
-            <div class="modal-header">
-                <div class="modal-logo">
-                    <span class="book-icon">📚</span>STUDY CREW
-                </div>
-            </div>
-            <div class="modal-body">
-                <h2>Join Study Crew</h2>
-                <p class="modal-subtitle">Create your account to <?php echo $assist_intent === 'assist' ? 'start helping others' : 'get the help you need'; ?>.</p>
-                
-                <?php if(isset($signup_error)): ?>
-                    <div class="error-message"><?php echo htmlspecialchars($signup_error); ?></div>
-                <?php endif; ?>
-
-                <form method="POST" action="">
-                    <input type="hidden" name="user_role" value="<?php echo htmlspecialchars($assist_intent ?? 'get'); ?>">
-                    
-                    <div class="form-group">
-                        <label>Username</label>
-                        <div class="input-group">
-                            <span class="input-icon">👤</span>
-                            <input type="text" name="signup_username" placeholder="Choose a username" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Email</label>
-                        <div class="input-group">
-                            <span class="input-icon">📧</span>
-                            <input type="email" name="signup_email" placeholder="Enter your email" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Academic Year</label>
-                        <div class="input-group">
-                            <span class="input-icon">🎓</span>
-                            <input type="text" name="signup_year" placeholder="e.g., 3rd Year" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Password</label>
-                        <div class="input-group">
-                            <span class="input-icon">🔒</span>
-                            <input type="password" name="signup_password" placeholder="Create a password" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Confirm Password</label>
-                        <div class="input-group">
-                            <span class="input-icon">🔒</span>
-                            <input type="password" name="confirm_password" placeholder="Confirm your password" required>
-                        </div>
-                    </div>
-
-                    <button type="submit" name="signup_submit" class="submit-btn">
-                        <span class="btn-icon">📝</span> Create Account
-                    </button>
-
-                    <p class="login-link">
-                        Already have an account? <a href="?action=login&intent=<?php echo htmlspecialchars($assist_intent ?? 'get'); ?>">Sign in</a>
-                    </p>
-                </form>
+<?php if($show_signup_modal): ?>
+<div class="modal" style="display: block;">
+    <div class="modal-content">
+        <a href="index.php" class="close">&times;</a>
+        <div class="modal-header">
+            <div class="modal-logo">
+                <span class="book-icon">📚</span>STUDY CREW
             </div>
         </div>
+        <div class="modal-body">
+            <h2>Join Study Crew</h2>
+            <p class="modal-subtitle">Create your account to <?= $assist_intent === 'assist' ? 'start helping others' : 'get the help you need'; ?>.</p>
+            
+            <?php if($error): ?>
+                <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
+            <?php endif; ?>
+
+            <form method="POST" action="">
+                <input type="hidden" name="user_role" value="<?= htmlspecialchars($assist_intent) ?>">
+                
+                <div class="form-group">
+                    <label>Username</label>
+                    <div class="input-group">
+                        <span class="input-icon">👤</span>
+                        <input type="text" name="signup_username" placeholder="Choose a username" required 
+                            value="<?= htmlspecialchars($_POST['signup_username'] ?? '') ?>">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <div class="input-group">
+                        <span class="input-icon">📧</span>
+                        <input type="email" name="signup_email" placeholder="Enter your email" required
+                            value="<?= htmlspecialchars($_POST['signup_email'] ?? '') ?>">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Academic Year</label>
+                    <div class="input-group">
+                        <span class="input-icon">🎓</span>
+                        <select name="signup_year" class="form-select" required>
+                            <option value="">Select Year</option>
+                            <option value="Freshman" <?= ($_POST['signup_year'] ?? '') === 'Freshman' ? 'selected' : '' ?>>Freshman</option>
+                            <option value="Sophomore" <?= ($_POST['signup_year'] ?? '') === 'Sophomore' ? 'selected' : '' ?>>Sophomore</option>
+                            <option value="Junior" <?= ($_POST['signup_year'] ?? '') === 'Junior' ? 'selected' : '' ?>>Junior</option>
+                            <option value="Senior" <?= ($_POST['signup_year'] ?? '') === 'Senior' ? 'selected' : '' ?>>Senior</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Password (min 6 characters)</label>
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" name="signup_password" placeholder="Create a password" minlength="6" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <div class="input-group">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" name="confirm_password" placeholder="Confirm your password" required>
+                    </div>
+                </div>
+
+                <button type="submit" name="signup_submit" class="submit-btn">
+                    <span class="btn-icon">📝</span> Create Account
+                </button>
+
+                <p class="login-link">
+                    Already have an account? <a href="?action=login&intent=<?= htmlspecialchars($assist_intent) ?>">Sign in</a>
+                </p>
+            </form>
+        </div>
     </div>
-    <?php endif; ?>
+</div>
+<?php endif; ?>
 </body>
 </html>
