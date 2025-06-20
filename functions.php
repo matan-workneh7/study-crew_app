@@ -241,9 +241,24 @@ function getUserData($userId) {
 function getCoursesByYearAndSemester($year, $semester) {
     $courses = readJsonFile(COURSES_FILE);
     $result = [];
+    
+    // Define year mapping for comparison
+    $yearMapping = [
+        1 => 'Freshman',
+        2 => 'Sophomore',
+        3 => 'Junior',
+        4 => 'Senior',
+        5 => 'Graduate'
+    ];
+    
+    // Get the year name if a numeric value was passed
+    $yearName = is_numeric($year) ? ($yearMapping[$year] ?? '') : $year;
 
     foreach ($courses as $course) {
-        if ($course['year'] == $year && $course['semester'] == $semester) {
+        $courseYear = $course['year'];
+        $courseSemester = (int)$course['semester'];
+        
+        if ($courseYear === $yearName && $courseSemester === (int)$semester) {
             $result[] = $course;
         }
     }

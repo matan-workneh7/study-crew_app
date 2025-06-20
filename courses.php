@@ -32,7 +32,14 @@ $userYearValue = $yearValues[$userYear] ?? 1;
 
 // Get selected year from URL parameter or default to user's year
 $selectedYear = isset($_GET['year']) ? (int)$_GET['year'] : $userYearValue;
-$selectedYearName = array_search($selectedYear, $yearValues) ?: $userYear;
+$selectedYearName = array_search($selectedYear, $yearValues);
+
+// Ensure we have a valid year name
+if ($selectedYearName === false) {
+    // If we can't find the year name, use the user's year
+    $selectedYear = $userYearValue;
+    $selectedYearName = array_search($selectedYear, $yearValues) ?: 'Freshman';
+}
 
 // Get selected semester from URL parameter or default to first semester
 $selectedSemester = isset($_GET['semester']) ? (int)$_GET['semester'] : 1;
@@ -102,10 +109,10 @@ if(isset($_SESSION['success_message'])) {
             <ul class="year-list">
                 <?php
                 // Display years up to and including user's year
-                for ($i = 1; $i <= $userYearValue; $i++) {
-                    $yearName = array_search($i, $yearValues);
-                    $activeClass = ($i == $selectedYear) ? 'active' : '';
-                    echo "<li class='$activeClass'><a href='courses.php?year=$i&semester=$selectedSemester'>$yearName</a></li>";
+                foreach ($yearValues as $yearName => $yearNum) {
+                    if ($yearNum > $userYearValue) continue;
+                    $activeClass = ($yearNum == $selectedYear) ? 'active' : '';
+                    echo "<li class='$activeClass'><a href='courses.php?year=$yearNum&semester=$selectedSemester'>$yearName</a></li>";
                 }
                 ?>
             </ul>
@@ -132,7 +139,7 @@ if(isset($_SESSION['success_message'])) {
             <!-- Course List -->
             <div class="course-list">
                 <?php foreach ($courses as $course): ?>
-                    <a href="course-details.php?id=<?php echo $course['id']; ?>" class="course-item">
+                    <div class="course-item">
                         <div class="course-icon">
                             <?php echo getCourseIcon($course['category']); ?>
                         </div>
@@ -142,7 +149,7 @@ if(isset($_SESSION['success_message'])) {
                         <div class="course-arrow">
                             &rsaquo;
                         </div>
-                    </a>
+                    </div>
                 <?php endforeach; ?>
                 
                 <?php if (empty($courses)): ?>

@@ -395,10 +395,10 @@ if(isset($_SESSION['success_message'])) {
                         <label>Academic Year</label>
                         <select class="form-select" name="academic_year" required>
                             <option value="">Select your academic year</option>
-                            <option value="1st Year">1st Year</option>
-                            <option value="2nd Year">2nd Year</option>
-                            <option value="3rd Year">3rd Year</option>
-                            <option value="4th Year">4th Year</option>
+                            <option value="Freshman">Freshman (1st Year)</option>
+                            <option value="Sophomore">Sophomore (2nd Year)</option>
+                            <option value="Junior">Junior (3rd Year)</option>
+                            <option value="Senior">Senior (4th Year)</option>
                             <option value="Graduate">Graduate</option>
                         </select>
                     </div>
