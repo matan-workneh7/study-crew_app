@@ -1,6 +1,6 @@
 <?php
-require_once 'session.php';
-include 'functions.php';
+require_once 'includes/session.php';
+include 'includes/functions.php';
 
 // Redirect to login if not logged in
 if (!isLoggedIn()) {
@@ -61,25 +61,7 @@ if(isset($_GET['logout'])) {
 </head>
 <body>
     <!-- Header Section -->
-    <header>
-        <div class="container">
-            <div class="logo">
-                <span class="book-icon">📚</span>STUDY CREW
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="index.php">Home</a></li>
-                    <li><a href="courses.php" class="active">Courses</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
-            </nav>
-            <div class="user-menu">
-                <span><?php echo htmlspecialchars($_SESSION['username']); ?></span>
-                <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
-            </div>
-        </div>
-    </header>
+    <?php include 'includes/header.php'; ?>
 
     <!-- Main Content -->
     <div class="container course-details-container">
@@ -144,10 +126,6 @@ if(isset($_GET['logout'])) {
     </div>
 
     <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 Study Crew. All rights reserved.</p>
-        </div>
-    </footer>
+    <?php include 'includes/footer.php'; ?>
 </body>
 </html>

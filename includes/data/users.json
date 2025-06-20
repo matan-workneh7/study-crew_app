@@ -1,0 +1,45 @@
+[
+    {
+        "id": 1,
+        "username": "admin",
+        "email": "admin@example.com",
+        "password": "$2y$10$spTWGujrYdfrO9pKEvuqWO5AvjMMdXjo5\/UDjncikREXlfCQaWLEq",
+        "academic_year": "Senior",
+        "created_at": "2025-06-20 15:02:50"
+    },
+    {
+        "id": 2,
+        "username": "buuz",
+        "email": "buuz@gmail.com",
+        "password": "$2y$10$iwe6zGPhND\/RBNuH6LZh8Ocy0p.AqZvKw9CqZsl5SiKjtLETLiNUe",
+        "academic_year": "Junior",
+        "user_role": "get",
+        "created_at": "2025-06-20 15:07:56",
+        "telegram": "",
+        "phone": "",
+        "bio": "",
+        "availability": ""
+    },
+    {
+        "id": 3,
+        "username": "mahh",
+        "email": "mahh@gmail.com",
+        "password": "$2y$10$ce7dEXGV8iRkYbacbCJTveBpwuvnThU3K97SAExJFQYSo5eorQGsK",
+        "academic_year": "Sophomore",
+        "user_role": "assist",
+        "created_at": "2025-06-20 15:21:05",
+        "telegram": "",
+        "phone": "",
+        "bio": "",
+        "availability": ""
+    },
+    {
+        "id": 4,
+        "username": "booz",
+        "email": "booz@gmail.com",
+        "password": "$2y$10$l29xIgOW9Z3bpPEdve42O.ZqZDjIE\/zTJ2FezxPUcUF7CGphNzTx2",
+        "academic_year": "Sophomore",
+        "user_role": "get",
+        "created_at": "2025-06-20 15:40:46"
+    }
+]

@@ -1,6 +1,6 @@
 <?php
-require_once 'session.php';
-include 'functions.php';
+require_once 'includes/session.php';
+include 'includes/functions.php';
 
 // Redirect to login if not logged in
 if (!isLoggedIn()) {
@@ -103,7 +103,7 @@ if(isset($_GET['logout'])) {
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_SESSION['email']); ?>" required>
                 </div>
-
+<!-- Course Selection 
                 <div class="form-group">
                     <label for="selected_course">Course to Assist</label>
                     <select id="selected_course" name="selected_course" required>
@@ -113,6 +113,7 @@ if(isset($_GET['logout'])) {
                         <?php endforeach; ?>
                     </select>
                 </div>
+                        -->
 
                 <div class="form-group">
                     <label for="telegram">Telegram Username (Optional)</label>
@@ -142,11 +143,7 @@ if(isset($_GET['logout'])) {
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 Study Crew. All rights reserved.</p>
-        </div>
-    </footer>
+<?php require 'footer.php'; ?>
+
 </body>
 </html>

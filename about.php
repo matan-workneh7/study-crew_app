@@ -1,6 +1,6 @@
 <?php
-require_once 'session.php';
-include 'functions.php';
+require_once 'includes/session.php';
+include 'includes/functions.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -10,18 +10,15 @@ include 'functions.php';
     <title>Study Crew - Academic Support Platform</title>
     <link rel="stylesheet" href="style.css">
     <style>
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
-
         /* Main Content Styles */
         main {
             padding: 2rem 0;
         }
-
         .section {
             background-color: white;
             margin: 2rem 0;
@@ -33,28 +30,23 @@ include 'functions.php';
             gap: 3rem;
             align-items: center;
         }
-
         .section:nth-child(even) {
             direction: rtl;
         }
-
         .section:nth-child(even) > * {
             direction: ltr;
         }
-
         .section h2 {
             color: #2c5aa0;
             font-size: 1.8rem;
             margin-bottom: 1rem;
             font-weight: 600;
         }
-
         .section p {
             color: #666;
             font-size: 1rem;
             line-height: 1.7;
         }
-
         .illustration {
             width: 100%;
             height: 200px;
@@ -67,7 +59,6 @@ include 'functions.php';
             position: relative;
             overflow: hidden;
         }
-
         .illustration::before {
             content: '';
             position: absolute;
@@ -78,105 +69,64 @@ include 'functions.php';
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
         }
-
         /* Specific illustration styles */
         .study-illustration {
             background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
         }
-
         .mission-illustration {
             background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
         }
-
         .join-illustration {
             background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
         }
-
         .works-illustration {
             background: linear-gradient(135deg, #e0c3fc 0%, #9bb5ff 100%);
         }
-
         .support-illustration {
             background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
         }
-
         .safety-illustration {
             background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
         }
-
         .students-illustration {
             background: linear-gradient(135deg, #fdbb2d 0%, #22c1c3 100%);
         }
-
         /* Icon styles */
         .icon {
             font-size: 3rem;
             z-index: 1;
             position: relative;
         }
-
         /* Responsive Design */
         @media (max-width: 768px) {
-
             .section {
                 grid-template-columns: 1fr;
                 gap: 2rem;
                 padding: 2rem;
             }
-
             .section:nth-child(even) {
                 direction: ltr;
             }
-
             .illustration {
                 height: 150px;
             }
-
             .section h2 {
                 font-size: 1.5rem;
             }
         }
-
         @media (max-width: 480px) {
             .container {
                 padding: 0 15px;
             }
-
             .section {
                 padding: 1.5rem;
             }
-
         }
     </style>
 </head>
 <body>
     <!-- Header Section -->
-    <header>
-        <div class="container">
-            <div class="logo">
-                <span class="book-icon">📚</span>STUDY CREW
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="index.php">Home</a></li>
-                    <?php if(isLoggedIn()): ?>
-                        <?php if(isUserAssistant($_SESSION['user_id'])): ?>
-                            <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
-                        <?php else: ?>
-                            <li><a href="courses.php">Courses</a></li>
-                        <?php endif; ?>
-                    <?php endif; ?>
-                    <li><a href="about.php"  class="active">About</a></li>
-                    <li><a href="contact.php">Contact Us</a></li>
-                </ul>
-            </nav>
-            <?php if(isLoggedIn()): ?>
-                <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
-            <?php else: ?>
-                <a href="?action=login" class="sign-in-btn">SIGN IN</a>
-            <?php endif; ?>
-        </div>
-    </header>
+    <?php include 'includes/header.php'; ?>
 
     <main class="container">
         <section class="section">
@@ -251,10 +201,7 @@ include 'functions.php';
     </main>
 
     <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 Study Crew. All rights reserved.</p>
-        </div>
-    </footer>
+    <?php include 'includes/footer.php'; ?>
+
 </body>
 </html>

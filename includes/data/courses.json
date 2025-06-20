@@ -1,0 +1,58 @@
+[
+    {
+        "id": 1,
+        "name": "Discrete Mathematics",
+        "year": 1,
+        "semester": 1,
+        "category": "math"
+    },
+    {
+        "id": 2,
+        "name": "Introduction to Programming",
+        "year": 1,
+        "semester": 1,
+        "category": "programming"
+    },
+    {
+        "id": 3,
+        "name": "College English I",
+        "year": 1,
+        "semester": 1,
+        "category": "language"
+    },
+    {
+        "id": 4,
+        "name": "Calculus I",
+        "year": 1,
+        "semester": 2,
+        "category": "math"
+    },
+    {
+        "id": 5,
+        "name": "Data Structures",
+        "year": 2,
+        "semester": 1,
+        "category": "programming"
+    },
+    {
+        "id": 6,
+        "name": "Physics I",
+        "year": 1,
+        "semester": 2,
+        "category": "science"
+    },
+    {
+        "id": 7,
+        "name": "Database Systems",
+        "year": 2,
+        "semester": 2,
+        "category": "programming"
+    },
+    {
+        "id": 8,
+        "name": "Linear Algebra",
+        "year": 2,
+        "semester": 1,
+        "category": "math"
+    }
+]
