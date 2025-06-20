@@ -68,86 +68,161 @@ function isUserAssistant($userId) {
     return false;
 }
 
-// Process login with intent handling
-function processLogin($email, $password, $assistIntent = '') {
-    if(loginUser($email, $password)) {
-        $userId = $_SESSION['user_id'];
-        $isAssistant = isUserAssistant($userId);
-        
-        // If user is trying to login as assistant but isn't one
-        if($assistIntent === 'assist' && !$isAssistant) {
-            return "This account is not registered as an assistant. Please sign up as an assistant or login as a student.";
+// Process login with intent handling (multi-role)
+function processLogin($email, $password, $intent = '') {
+    // Map legacy 'get' intent to 'student' for backward compatibility
+    if ($intent === 'get') {
+        $intent = 'student';
+    }
+    // First check if user exists
+    $users = readJsonFile(USERS_FILE);
+    $user = null;
+    
+    foreach ($users as $u) {
+        if ($u['email'] === $email && password_verify($password, $u['password'])) {
+            $user = $u;
+            break;
         }
-        
-        // If user is trying to login as student but is an assistant
-        if($assistIntent === 'get' && $isAssistant) {
-            return "This account is registered as an assistant. Please use the assistant login.";
-        }
-        
-        // If specific intent is provided, follow it
-        if($assistIntent === 'assist') {
-            header("Location: assistant-dashboard.php");
-            exit();
-        } else {
-            // Default to courses page for 'get' intent or no specific intent
-            header("Location: courses.php");
-            exit();
-        }
-    } else {
+    }
+
+    if (!$user) {
         return "Invalid email or password";
     }
+
+    // Ensure roles is an array (backward compatibility)
+    if (!isset($user['roles']) || !is_array($user['roles'])) {
+        if (isset($user['user_role'])) {
+            $user['roles'] = [$user['user_role']];
+        } else {
+            $user['roles'] = [];
+        }
+    }
+
+    // If no intent specified, use first role
+    if (empty($intent)) {
+        $intent = isset($user['roles'][0]) ? $user['roles'][0] : '';
+    }
+
+    // Check if the user has the requested role
+    if (!in_array($intent, $user['roles'])) {
+        return "This account does not have the requested role.";
+    }
+
+    // Set session data
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['username'] = $user['username'];
+    $_SESSION['email'] = $user['email'];
+    $_SESSION['user_role'] = $intent; // Set role based on intent
+
+    // Redirect based on intent
+    if ($intent === 'assist') {
+        header("Location: assistant-dashboard.php");
+    } else {
+        header("Location: courses.php");
+    }
+    exit();
 }
+
 
 // Helper function to check if user is logged in
 function isLoggedIn() {
     return isset($_SESSION['user_id']);
 }
 
-// Function to register new users
-function registerUser($username, $email, $password, $year, $user_role = 'get') {
+// Function to register new users (multi-role support)
+function registerUser($username, $email, $password, $year, $user_role = 'student') {
+    // Read existing users and assistants
     $users = readJsonFile(USERS_FILE);
+    $assistants = readJsonFile(ASSISTANTS_FILE);
 
-    // Check if email or username already exists
-    foreach ($users as $user) {
-        if ($user['email'] === $email || $user['username'] === $username) {
-            return false;
+    $userFound = false;
+    foreach ($users as &$user) {
+        if ($user['email'] === $email) {
+            $userFound = true;
+            // Ensure roles is always an array
+            if (!isset($user['roles']) || !is_array($user['roles'])) {
+                $user['roles'] = isset($user['user_role']) ? [$user['user_role']] : [];
+            }
+            // If the role already exists, error
+            if (in_array($user_role, $user['roles'])) {
+                return "You already have this role.";
+            }
+            // Add the new role
+            $user['roles'][] = $user_role;
+            // If registering as assistant, add to assistants file if not already present
+            if ($user_role === 'assist') {
+                $alreadyAssistant = false;
+                foreach ($assistants as $assistant) {
+                    if ($assistant['user_id'] == $user['id']) {
+                        $alreadyAssistant = true;
+                        break;
+                    }
+                }
+                if (!$alreadyAssistant) {
+                    $newAssistant = [
+                        'id' => $user['id'],
+                        'user_id' => $user['id'],
+                        'academic_year' => $year,
+                        'courses' => [],
+                        'telegram' => '',
+                        'phone' => '',
+                        'bio' => '',
+                        'availability' => '',
+                        'created_at' => date('Y-m-d H:i:s')
+                    ];
+                    $assistants[] = $newAssistant;
+                    if (!writeJsonFile(ASSISTANTS_FILE, $assistants)) {
+                        return false;
+                    }
+                }
+            }
+            // Save updated users file
+            if (!writeJsonFile(USERS_FILE, $users)) {
+                return false;
+            }
+            return true;
+        }
+        if ($user['username'] === $username) {
+            return "Username already taken.";
         }
     }
+    unset($user);
 
-    // Generate new user ID
-    $newId = 1;
-    if (!empty($users)) {
-        $ids = array_column($users, 'id');
-        $newId = max($ids) + 1;
-    }
-
-    // Hash password
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-    // Create new user
+    // New user registration
+    $newId = empty($users) ? 1 : max(array_column($users, 'id')) + 1;
     $newUser = [
         'id' => $newId,
         'username' => $username,
         'email' => $email,
-        'password' => $hashedPassword,
+        'password' => password_hash($password, PASSWORD_DEFAULT),
         'academic_year' => $year,
-        'user_role' => $user_role,
+        'roles' => [$user_role],
         'created_at' => date('Y-m-d H:i:s')
     ];
-
     $users[] = $newUser;
-
-    if (writeJsonFile(USERS_FILE, $users) !== false) {
-        // If user wants to be an assistant, redirect to assistant form
-        if ($user_role === 'assist') {
-            header("Location: assistant-form.php");
-            exit();
-        }
-        return true;
+    if (!writeJsonFile(USERS_FILE, $users)) {
+        return false;
     }
-
-    return false;
+    if ($user_role === 'assist') {
+        $newAssistant = [
+            'id' => $newId,
+            'user_id' => $newId,
+            'academic_year' => $year,
+            'courses' => [],
+            'telegram' => '',
+            'phone' => '',
+            'bio' => '',
+            'availability' => '',
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+        $assistants[] = $newAssistant;
+        if (!writeJsonFile(ASSISTANTS_FILE, $assistants)) {
+            return false;
+        }
+    }
+    return true;
 }
+
 
 // Function to get user data
 function getUserData($userId) {

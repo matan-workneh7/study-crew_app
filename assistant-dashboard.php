@@ -8,8 +8,8 @@ if (!isLoggedIn()) {
     exit();
 }
 
-// Redirect non-assistants to courses page
-if (!isUserAssistant($_SESSION['user_id'])) {
+// Redirect users not logged in as assistant to courses page
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'assist') {
     header("Location: courses.php");
     exit();
 }

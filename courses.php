@@ -8,8 +8,8 @@ if (!isLoggedIn()) {
     exit();
 }
 
-// Redirect assistants to their dashboard
-if (isUserAssistant($_SESSION['user_id'])) {
+// Redirect users logged in as assistant to their dashboard
+if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'assist') {
     header("Location: assistant-dashboard.php");
     exit();
 }

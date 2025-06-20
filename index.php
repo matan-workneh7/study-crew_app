@@ -1,49 +1,75 @@
 <?php
 require_once 'session.php';
-include 'functions.php';
+require_once 'functions.php';
+
+// Initialize variables
+// DATA RESET: This is a fresh start after data wipe. All users, assistants, courses, and connections have been cleared.
+$error = '';
+$success = '';
+$show_login_modal = false;
+$show_signup_modal = false;
+$assist_intent = $_GET['intent'] ?? 'get';
 
 // Handle login form submission
-if(isset($_POST['login_submit'])) {
-    $email = $_POST['login_email'];
-    $password = $_POST['login_password'];
-    $assistIntent = $_POST['assist_intent'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login_submit'])) {
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $intent = $_POST['intent'] ?? 'get';
     
-    if(empty($email) || empty($password)) {
-        $login_error = "Please enter both email and password";
+    if (empty($email) || empty($password)) {
+        $error = 'Please enter both email and password';
         $show_login_modal = true;
     } else {
-        $loginResult = processLogin($email, $password, $assistIntent);
-        if($loginResult !== true) {
-            $login_error = $loginResult;
+        $loginResult = processLogin($email, $password, $intent);
+        if ($loginResult !== true) {
+            $error = $loginResult;
             $show_login_modal = true;
+        } else {
+            // Redirect based on selected intent (role)
+            if ($_SESSION['user_role'] === 'assist') {
+                header("Location: assistant-dashboard.php");
+            } else {
+                header("Location: courses.php");
+            }
+            exit();
         }
     }
 }
 
 // Handle signup form submission
-if(isset($_POST['signup_submit'])) {
-    $username = $_POST['signup_username'];
-    $email = $_POST['signup_email'];
-    $year = $_POST['signup_year'];
-    $password = $_POST['signup_password'];
-    $confirm_password = $_POST['confirm_password'];
-    $user_role = $_POST['user_role'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup_submit'])) {
+    $username = $_POST['username'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $password = $_POST['password'] ?? '';
+    $confirm_password = $_POST['confirm_password'] ?? '';
+    $academic_year = $_POST['academic_year'] ?? '';
+    $user_role = $_POST['user_role'] ?? 'student';
+    if ($user_role === 'get') {
+        $user_role = 'student';
+    }
     
-    if($password === $confirm_password) {
-        if(registerUser($username, $email, $password, $year, $user_role)) {
-            // Set success message in session
-            $_SESSION['success_message'] = "Registration successful! Please log in to continue.";
-            
-            // Redirect to login with the selected role
-            header("Location: index.php?action=login&intent=" . $user_role);
+    if (empty($username) || empty($email) || empty($password) || empty($confirm_password) || empty($academic_year)) {
+        $error = 'Please fill in all fields';
+        $show_signup_modal = true;
+    } elseif ($password !== $confirm_password) {
+        $error = 'Passwords do not match';
+        $show_signup_modal = true;
+    } elseif (strlen($password) < 6) {
+        $error = 'Password must be at least 6 characters long';
+        $show_signup_modal = true;
+    } else {
+        $registrationResult = registerUser($username, $email, $password, $academic_year, $user_role);
+        if ($registrationResult === true) {
+            // Redirect to login with success message
+            // Ensure user_role is consistent: 'assist' for assistants, 'student' for students
+$login_intent = ($user_role === 'assist') ? 'assist' : 'get';
+            $_SESSION['success_message'] = 'Registration successful! Please log in to continue.';
+            header("Location: index.php?action=login&intent=" . $login_intent);
             exit();
         } else {
-            $signup_error = "Registration failed. Email may already exist.";
+            $error = $registrationResult;
             $show_signup_modal = true;
         }
-    } else {
-        $signup_error = "Passwords do not match";
-        $show_signup_modal = true;
     }
 }
 
@@ -79,6 +105,7 @@ if(isset($_SESSION['success_message'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Crew - Your Campus Connection</title>
     <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="modal-styles.css">
 </head>
 <body>
     <!-- Header Section -->
@@ -167,7 +194,7 @@ if(isset($_SESSION['success_message'])) {
                     <?php if(isLoggedIn()): ?>
                         <a href="courses.php" class="assistance-btn">Browse Courses</a>
                     <?php else: ?>
-                        <a href="?action=login&intent=get" class="assistance-btn">I'm looking for assistance</a>
+                        <a href="?action=login&intent=student" class="assistance-btn">I'm looking for assistance</a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -209,9 +236,9 @@ if(isset($_SESSION['success_message'])) {
         </div>
     </footer>
 
-    <!-- Login Modal -->
-    <?php if(isset($show_login_modal) && $show_login_modal): ?>
-    <div class="modal" style="display: block;">
+    <!-- Student Login Modal -->
+    <?php if(isset($show_login_modal) && $show_login_modal && ($assist_intent === 'student' || $assist_intent === 'get')): ?>
+    <div class="modal student-modal" style="display: block;">
         <div class="modal-content">
             <a href="index.php" class="close">&times;</a>
             <div class="modal-header">
@@ -220,21 +247,25 @@ if(isset($_SESSION['success_message'])) {
                 </div>
             </div>
             <div class="modal-body">
-                <h2><?php echo $assist_intent === 'assist' ? 'Assistant Login' : 'Student Login'; ?></h2>
-                <p class="modal-subtitle">Sign in to <?php echo $assist_intent === 'assist' ? 'start helping others' : 'get the help you need'; ?>.</p>
+                <h2>Student Login</h2>
+                <p class="modal-subtitle">Sign in to get the help you need</p>
                 
                 <?php if(isset($login_error)): ?>
                     <div class="error-message"><?php echo htmlspecialchars($login_error); ?></div>
                 <?php endif; ?>
 
+                <?php if (isset($error) && $show_login_modal): ?>
+                    <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+                <?php endif; ?>
+                
                 <form method="POST" action="">
-                    <input type="hidden" name="assist_intent" value="<?php echo htmlspecialchars($assist_intent ?? ''); ?>">
+                    <input type="hidden" name="intent" value="student">
                     
                     <div class="form-group">
-                        <label>Username or Email</label>
+                        <label>Email</label>
                         <div class="input-group">
-                            <span class="input-icon">👤</span>
-                            <input type="text" name="login_email" placeholder="Enter your username or email" required>
+                            <span class="input-icon">📧</span>
+                            <input type="email" name="email" placeholder="Enter your student email" required>
                         </div>
                     </div>
 
@@ -242,16 +273,76 @@ if(isset($_SESSION['success_message'])) {
                         <label>Password</label>
                         <div class="input-group">
                             <span class="input-icon">🔒</span>
-                            <input type="password" name="login_password" placeholder="Enter your password" required>
+                            <input type="password" name="password" placeholder="Enter your password" required>
                         </div>
                     </div>
 
-                    <button type="submit" name="login_submit" class="submit-btn">
-                        <span class="btn-icon">🔑</span> Sign In
+                    <button type="submit" name="login_submit" class="submit-btn student-btn">
+                        <span class="btn-icon">🔑</span> Sign In as Student
                     </button>
 
                     <p class="signup-link">
-                        Don't have an account? <a href="?action=signup&intent=<?php echo htmlspecialchars($assist_intent ?? 'get'); ?>">Sign up</a>
+                        Don't have an account? <a href="?action=signup&intent=student">Sign up as Student</a>
+                    </p>
+                    <p class="switch-link">
+                        <a href="?action=login&intent=assist">Switch to Assistant Login</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Assistant Login Modal -->
+    <?php if(isset($show_login_modal) && $show_login_modal && $assist_intent === 'assist'): ?>
+    <div class="modal assistant-modal" style="display: block;">
+        <div class="modal-content">
+            <a href="index.php" class="close">&times;</a>
+            <div class="modal-header">
+                <div class="modal-logo">
+                    <span class="book-icon">📚</span>STUDY CREW
+                </div>
+            </div>
+            <div class="modal-body">
+                <h2>Assistant Login</h2>
+                <p class="modal-subtitle">Sign in to start helping others</p>
+                
+                <?php if(isset($login_error)): ?>
+                    <div class="error-message"><?php echo htmlspecialchars($login_error); ?></div>
+                <?php endif; ?>
+
+                <?php if (isset($error) && $show_login_modal): ?>
+                    <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+                <?php endif; ?>
+                
+                <form method="POST" action="">
+                    <input type="hidden" name="intent" value="assist">
+                    
+                    <div class="form-group">
+                        <label>Email</label>
+                        <div class="input-group">
+                            <span class="input-icon">📧</span>
+                            <input type="email" name="email" placeholder="Enter your assistant email" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password</label>
+                        <div class="input-group">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" name="password" placeholder="Enter your password" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" name="login_submit" class="submit-btn assistant-btn">
+                        <span class="btn-icon">🔑</span> Sign In as Assistant
+                    </button>
+
+                    <p class="signup-link">
+                        Don't have an account? <a href="?action=signup&intent=assist">Sign up as Assistant</a>
+                    </p>
+                    <p class="switch-link">
+                        <a href="?action=login&intent=get">Switch to Student Login</a>
                     </p>
                 </form>
             </div>
@@ -277,38 +368,47 @@ if(isset($_SESSION['success_message'])) {
                     <div class="error-message"><?php echo htmlspecialchars($signup_error); ?></div>
                 <?php endif; ?>
 
+                <?php if (isset($error) && $show_signup_modal): ?>
+                    <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+                <?php endif; ?>
+                
                 <form method="POST" action="">
-                    <input type="hidden" name="user_role" value="<?php echo htmlspecialchars($assist_intent ?? 'get'); ?>">
+                    <input type="hidden" name="user_role" value="<?php echo ($assist_intent === 'assist') ? 'assist' : 'student'; ?>">
                     
                     <div class="form-group">
                         <label>Username</label>
                         <div class="input-group">
                             <span class="input-icon">👤</span>
-                            <input type="text" name="signup_username" placeholder="Choose a username" required>
+                            <input type="text" name="username" placeholder="Choose a username" required>
                         </div>
                     </div>
+
 
                     <div class="form-group">
                         <label>Email</label>
                         <div class="input-group">
                             <span class="input-icon">📧</span>
-                            <input type="email" name="signup_email" placeholder="Enter your email" required>
+                            <input type="email" name="email" placeholder="Enter your email" required>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label>Academic Year</label>
-                        <div class="input-group">
-                            <span class="input-icon">🎓</span>
-                            <input type="text" name="signup_year" placeholder="e.g., 3rd Year" required>
-                        </div>
+                        <select class="form-select" name="academic_year" required>
+                            <option value="">Select your academic year</option>
+                            <option value="1st Year">1st Year</option>
+                            <option value="2nd Year">2nd Year</option>
+                            <option value="3rd Year">3rd Year</option>
+                            <option value="4th Year">4th Year</option>
+                            <option value="Graduate">Graduate</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
-                        <label>Password</label>
+                        <label>Password (min 6 characters)</label>
                         <div class="input-group">
                             <span class="input-icon">🔒</span>
-                            <input type="password" name="signup_password" placeholder="Create a password" required>
+                            <input type="password" name="password" placeholder="Create a password" minlength="6" required>
                         </div>
                     </div>
 
@@ -316,7 +416,7 @@ if(isset($_SESSION['success_message'])) {
                         <label>Confirm Password</label>
                         <div class="input-group">
                             <span class="input-icon">🔒</span>
-                            <input type="password" name="confirm_password" placeholder="Confirm your password" required>
+                            <input type="password" name="confirm_password" placeholder="Confirm your password" minlength="6" required>
                         </div>
                     </div>
 
@@ -325,7 +425,7 @@ if(isset($_SESSION['success_message'])) {
                     </button>
 
                     <p class="login-link">
-                        Already have an account? <a href="?action=login&intent=<?php echo htmlspecialchars($assist_intent ?? 'get'); ?>">Sign in</a>
+                        Already have an account? <a href="?action=login&intent=student">Sign in</a>
                     </p>
                 </form>
             </div>
