@@ -48,12 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
             <nav>
                 <ul>
                     <li><a href="index.php">Home</a></li>
-                    <?php if(isLoggedIn()): ?>
-                        <?php if(isUserAssistant($_SESSION['user_id'])): ?>
-                            <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
-                        <?php else: ?>
-                            <li><a href="courses.php">Courses</a></li>
-                        <?php endif; ?>
+                    <?php if(isLoggedIn() && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'assist'): ?>
+                        <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
+                    <?php elseif(isLoggedIn()): ?>
+                        <li><a href="courses.php">Courses</a></li>
                     <?php endif; ?>
                     <li><a href="#">About</a></li>
                     <li><a href="contact.php" class="active">Contact Us</a></li>
