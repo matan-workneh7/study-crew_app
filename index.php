@@ -117,15 +117,13 @@ if(isset($_SESSION['success_message'])) {
             <nav>
                 <ul>
                     <li><a href="index.php" class="active">Home</a></li>
-                    <?php if(isLoggedIn()): ?>
-                        <?php if(isUserAssistant($_SESSION['user_id'])): ?>
-                            <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
-                        <?php else: ?>
-                            <li><a href="courses.php">Courses</a></li>
-                        <?php endif; ?>
+                    <?php if(isLoggedIn() && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'assist'): ?>
+                        <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
+                    <?php elseif(isLoggedIn()): ?>
+                        <li><a href="courses.php">Courses</a></li>
                     <?php endif; ?>
                     <li><a href="#">About</a></li>
-<li><a href="contact.php">Contact</a></li>
+                    <li><a href="contact.php">Contact Us</a></li>
                     
                 </ul>
             </nav>
