@@ -125,7 +125,8 @@ if(isset($_SESSION['success_message'])) {
                         <?php endif; ?>
                     <?php endif; ?>
                     <li><a href="#">About</a></li>
-                    <li><a href="contact.php">Contact Us</a></li>
+<li><a href="contact.php">Contact</a></li>
+                    
                 </ul>
             </nav>
             <?php if(isLoggedIn()): ?>
@@ -432,5 +433,6 @@ if(isset($_SESSION['success_message'])) {
         </div>
     </div>
     <?php endif; ?>
+
 </body>
 </html>

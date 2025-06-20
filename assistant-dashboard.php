@@ -255,6 +255,7 @@ if(isset($_SESSION['success_message'])) {
                     <li><a href="index.php">Home</a></li>
                     <li><a href="assistant-dashboard.php" class="active">Assistant Dashboard</a></li>
                     <li><a href="#">About</a></li>
+<li><a href="contact.php">Contact</a></li>
                     <li><a href="contact.php">Contact Us</a></li>
                 </ul>
             </nav>
