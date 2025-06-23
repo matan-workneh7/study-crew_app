@@ -307,17 +307,34 @@ function getCoursesForAssistant($userYearValue) {
     $courses = readJsonFile(COURSES_FILE);
     $result = [];
     
+    // Define year values for comparison
+    $yearValues = [
+        'Freshman' => 1,
+        'Sophomore' => 2,
+        'Junior' => 3,
+        'Senior' => 4,
+        'Graduate' => 5
+    ];
+    
     foreach ($courses as $course) {
+        // Get numeric value for the course year
+        $courseYear = $course['year'];
+        $courseYearValue = is_numeric($courseYear) ? $courseYear : ($yearValues[$courseYear] ?? 0);
+        
         // Assistants can only assist courses from years below their current year
-        if ($course['year'] < $userYearValue) {
+        if ($courseYearValue < $userYearValue) {
             $result[] = $course;
         }
     }
     
     // Sort by year, semester, name
-    usort($result, function($a, $b) {
-        if ($a['year'] != $b['year']) {
-            return $a['year'] - $b['year'];
+    usort($result, function($a, $b) use ($yearValues) {
+        // Get numeric values for comparison
+        $aYear = is_numeric($a['year']) ? $a['year'] : ($yearValues[$a['year']] ?? 0);
+        $bYear = is_numeric($b['year']) ? $b['year'] : ($yearValues[$b['year']] ?? 0);
+        
+        if ($aYear != $bYear) {
+            return $aYear - $bYear;
         }
         if ($a['semester'] != $b['semester']) {
             return $a['semester'] - $b['semester'];
@@ -560,20 +577,41 @@ function getYearName($year) {
 // Function to get course icon
 function getCourseIcon($category) {
     $icons = [
-        'math' => '📊',
-        'programming' => '💻',
-        'language' => '📝',
-        'science' => '🔬',
-        'humanities' => '📚',
+        'math' => '∫',
+        'physics' => '⚡',
+        'chemistry' => '⚗',
+        'biology' => '🧬',
+        'computer' => '💻',
+        'engineering' => '⚙',
         'business' => '💼',
-        'engineering' => '⚙️',
-        'arts' => '🎨',
-        'geography' => '🌍',
-        'logic' => '🧠',
-        'computer' => '🖥️'
+        'humanities' => '📚',
+        'languages' => '🌍',
+        'other' => '📝'
     ];
 
-    return $icons[$category] ?? '📚';
+    return $icons[strtolower($category)] ?? '📚';
+}
+
+/**
+ * Get courses by their IDs
+ * @param array $courseIds Array of course IDs
+ * @return array Array of course data
+ */
+function getCoursesByIds($courseIds) {
+    if (empty($courseIds)) {
+        return [];
+    }
+    
+    $allCourses = readJsonFile(COURSES_FILE);
+    $result = [];
+    
+    foreach ($allCourses as $course) {
+        if (in_array($course['id'], $courseIds)) {
+            $result[] = $course;
+        }
+    }
+    
+    return $result;
 }
 
 // Initialize with sample data if files are empty
