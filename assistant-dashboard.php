@@ -30,25 +30,31 @@ $yearValues = [
 
 $userYearValue = $yearValues[$userYear] ?? 1;
 
-// Get all courses for years below the user's year
-$availableCourses = getCoursesForAssistant($userYearValue);
-
-// Group courses by year and semester
-$groupedCourses = [];
-foreach ($availableCourses as $course) {
-    $yearName = getYearName($course['year']);
-    $semesterName = $course['semester'] == 1 ? 'First Semester' : 'Second Semester';
-    
-    if (!isset($groupedCourses[$yearName])) {
-        $groupedCourses[$yearName] = [];
+// Get selected year from URL parameter or default to first available year below user's year
+$selectedYear = 1;
+foreach ($yearValues as $yearName => $yearNum) {
+    if ($yearNum < $userYearValue) {
+        $selectedYear = $yearNum;
+        break;
     }
-    
-    if (!isset($groupedCourses[$yearName][$semesterName])) {
-        $groupedCourses[$yearName][$semesterName] = [];
-    }
-    
-    $groupedCourses[$yearName][$semesterName][] = $course;
 }
+$selectedYear = isset($_GET['year']) ? (int)$_GET['year'] : $selectedYear;
+
+// Ensure we have a valid year name
+$selectedYearName = array_search($selectedYear, $yearValues);
+if ($selectedYearName === false) {
+    $selectedYear = 1;
+    $selectedYearName = 'Freshman';
+}
+
+// Get selected semester from URL parameter or default to first semester
+$selectedSemester = isset($_GET['semester']) ? (int)$_GET['semester'] : 1;
+
+// Get courses for the selected year and semester
+$courses = array_filter(getCoursesForAssistant($userYearValue), function($course) use ($selectedYear, $selectedSemester, $yearValues) {
+    $courseYearValue = is_numeric($course['year']) ? $course['year'] : ($yearValues[$course['year']] ?? 0);
+    return $courseYearValue == $selectedYear && $course['semester'] == $selectedSemester;
+});
 
 // Get courses the user is already assisting
 $assistingCourses = getAssistantCourses($userId);
@@ -57,29 +63,43 @@ $assistingCourseIds = array_column($assistingCourses, 'course_id');
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $selectedCourses = $_POST['selected_courses'] ?? [];
-    $telegram = $_POST['telegram'] ?? '';
-    $phone = $_POST['phone'] ?? '';
-    $bio = $_POST['bio'] ?? '';
-    $availability = $_POST['availability'] ?? '';
+    $telegram = trim($_POST['telegram'] ?? '');
+    $phone = trim($_POST['phone'] ?? '');
+    $bio = trim($_POST['bio'] ?? '');
+    $availability = trim($_POST['availability'] ?? '');
     
-    // Save assistant profile
-    if (saveAssistantProfile($userId, $selectedCourses, $telegram, $phone, $bio, $availability)) {
-        $_SESSION['success_message'] = "Your assistant profile has been updated successfully!";
-        header("Location: assistant-dashboard.php");
-        exit();
+    // Basic validation
+    $error = '';
+    
+    if (empty($telegram)) {
+        $error = 'Telegram username is required';
+    } elseif (empty($bio)) {
+        $error = 'Please provide some information about yourself';
+    } elseif (empty($availability)) {
+        $error = 'Please provide your availability';
     } else {
-        $error = "Failed to update your assistant profile. Please try again.";
+        // Save the assistant's profile and course selections
+        if (saveAssistantProfile($userId, $selectedCourses, $telegram, $phone, $bio, $availability)) {
+            // Update user data in session
+            $userData = array_merge($userData, [
+                'telegram' => $telegram,
+                'phone' => $phone,
+                'bio' => $bio,
+                'availability' => $availability
+            ]);
+            $_SESSION['user_data'] = $userData;
+            
+            // Set success message and redirect to avoid form resubmission
+            $_SESSION['success_message'] = 'Your profile has been updated successfully!';
+            header('Location: ' . $_SERVER['PHP_SELF']);
+            exit();
+        } else {
+            $error = 'Failed to save profile. Please try again.';
+        }
     }
 }
 
-// Handle logout
-if(isset($_GET['logout'])) {
-    session_destroy();
-    header("Location: index.php");
-    exit();
-}
-
-// Check for success messages
+// Check for success message
 if(isset($_SESSION['success_message'])) {
     $success_message = $_SESSION['success_message'];
     unset($_SESSION['success_message']);
@@ -93,153 +113,100 @@ if(isset($_SESSION['success_message'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assistant Dashboard - Study Crew</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="courses.css">
     <style>
-        /* Assistant Dashboard Styles */
-        .assistant-dashboard {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            margin: 2rem 0;
-            overflow: hidden;
-        }
-
-        .dashboard-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-        }
-
-        .dashboard-header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            color: white;
-        }
-
-        .dashboard-subtitle {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1rem;
-            margin: 0;
-        }
-
+        /* Form styles */
         .assistant-form {
-            padding: 2rem;
+            margin-top: 30px;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-
+        
         .form-section {
-            margin-bottom: 3rem;
-            background: #f9fafb;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
         }
-
+        
         .form-section h2 {
-            color: #1f2937;
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-            text-align: left;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
         }
-
-        .section-description {
-            color: #6b7280;
-            margin-bottom: 2rem;
+        
+        .form-group {
+            margin-bottom: 20px;
         }
-
-        .course-selection {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
         }
-
-        .year-group {
-            margin-bottom: 1.5rem;
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+            transition: border-color 0.3s;
         }
-
-        .year-group h3 {
-            color: #1f2937;
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e5e7eb;
-            text-align: left;
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
         }
-
-        .semester-group {
-            margin-bottom: 1.5rem;
+        
+        .submit-btn {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
         }
-
-        .semester-group h4 {
-            color: #4b5563;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            text-align: left;
+        
+        .submit-btn:hover {
+            background: #27ae60;
         }
-
-        .course-checkboxes {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1rem;
-        }
-
+        
+        /* Course checkboxes */
         .course-checkbox {
             display: flex;
             align-items: center;
-            padding: 1rem;
+            padding: 10px 15px;
             background: white;
-            border-radius: 12px;
-            border: 2px solid #e5e7eb;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
         }
-
+        
         .course-checkbox:hover {
-            border-color: #667eea;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            background: #f8f9fa;
+            border-color: #bdc3c7;
         }
-
+        
         .course-checkbox input[type="checkbox"] {
-            margin-right: 1rem;
-            width: 20px;
-            height: 20px;
-            accent-color: #667eea;
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
         }
-
-        .course-checkbox .course-name {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-            color: #1f2937;
-        }
-
-        .course-checkbox .course-icon {
-            font-size: 1.5rem;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 10px;
-            color: white;
-        }
-
-        .no-courses-message {
-            background: #f3f4f6;
-            border: 2px dashed #d1d5db;
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            color: #6b7280;
-        }
-
-        .field-hint {
-            color: #6b7280;
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-            font-style: italic;
+        
+        .course-icon {
+            margin-right: 10px;
+            font-size: 1.2em;
         }
     </style>
 </head>
@@ -254,8 +221,8 @@ if(isset($_SESSION['success_message'])) {
                 <ul>
                     <li><a href="index.php">Home</a></li>
                     <li><a href="assistant-dashboard.php" class="active">Assistant Dashboard</a></li>
-                    <li><a href="#">About</a></li>
-<li><a href="contact.php">Contact Us</a></li>
+                    <li><a href="about.php">About</a></li>
+                    <li><a href="contact.php">Contact Us</a></li>
                 </ul>
             </nav>
             <div class="user-menu">
@@ -274,96 +241,109 @@ if(isset($_SESSION['success_message'])) {
         </div>
     <?php endif; ?>
 
-    <div class="container">
-        <div class="assistant-dashboard">
-            <div class="dashboard-header">
-                <h1>Assistant Dashboard</h1>
-                <p class="dashboard-subtitle">Select courses you'd like to assist with and complete your profile</p>
+    <!-- Error Message -->
+    <?php if(isset($error)): ?>
+        <div class="error-banner">
+            <div class="container">
+                <p><?php echo htmlspecialchars($error); ?></p>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- Main Content -->
+    <div class="courses-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h3>Academic Year</h3>
+            <ul class="year-list">
+                <?php
+                // Display years below user's year
+                foreach ($yearValues as $yearName => $yearNum) {
+                    if ($yearNum >= $userYearValue) continue;
+                    $activeClass = ($yearNum == $selectedYear) ? 'active' : '';
+                    echo "<li class='$activeClass'><a href='assistant-dashboard.php?year=$yearNum&semester=$selectedSemester'>$yearName</a></li>";
+                }
+                ?>
+            </ul>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <div class="courses-header">
+                <h2><?php echo getYearName($selectedYear); ?> Courses</h2>
+                
+                <!-- Semester Toggle -->
+                <div class="semester-toggle">
+                    <a href="assistant-dashboard.php?year=<?php echo $selectedYear; ?>&semester=1" 
+                       class="<?php echo $selectedSemester == 1 ? 'active' : ''; ?>">
+                        First Semester
+                    </a>
+                    <a href="assistant-dashboard.php?year=<?php echo $selectedYear; ?>&semester=2" 
+                       class="<?php echo $selectedSemester == 2 ? 'active' : ''; ?>">
+                        Second Semester
+                    </a>
+                </div>
             </div>
 
-            <?php if(isset($error)): ?>
-                <div class="error-message"><?php echo htmlspecialchars($error); ?></div>
-            <?php endif; ?>
-
-            <form method="POST" action="" class="assistant-form">
-                <div class="form-section">
-                    <h2>Available Courses</h2>
-                    <p class="section-description">Select the courses you can assist with (based on your academic year: <?php echo htmlspecialchars($userYear); ?>)</p>
-                    
-                    <div class="course-selection">
-                        <?php foreach ($groupedCourses as $yearName => $semesters): ?>
-                            <div class="year-group">
-                                <h3><?php echo htmlspecialchars($yearName); ?> Courses</h3>
-                                
-                                <?php foreach ($semesters as $semesterName => $courses): ?>
-                                    <div class="semester-group">
-                                        <h4><?php echo htmlspecialchars($semesterName); ?></h4>
-                                        
-                                        <div class="course-checkboxes">
-                                            <?php foreach ($courses as $course): ?>
-                                                <label class="course-checkbox">
-                                                    <input type="checkbox" name="selected_courses[]" value="<?php echo $course['id']; ?>" 
-                                                        <?php echo in_array($course['id'], $assistingCourseIds) ? 'checked' : ''; ?>>
-                                                    <span class="course-name">
-                                                        <span class="course-icon"><?php echo getCourseIcon($course['category']); ?></span>
-                                                        <?php echo htmlspecialchars($course['name']); ?>
-                                                    </span>
-                                                </label>
-                                            <?php endforeach; ?>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php endforeach; ?>
+            <!-- Course List -->
+            <div class="course-list">
+                <form method="POST" action="" class="assistant-form">
+                    <div class="form-section">
+                        <h3>Select courses you can assist with</h3>
+                        <p class="section-description">Your academic year: <?php echo htmlspecialchars($userYear); ?></p>
                         
-                        <?php if (empty($groupedCourses)): ?>
-                            <div class="no-courses-message">
-                                No courses available for you to assist with. As a <?php echo htmlspecialchars($userYear); ?>, 
-                                you can only assist with courses from years below your current academic year.
+                        <?php if (!empty($courses)): ?>
+                            <?php foreach ($courses as $course): ?>
+                                <label class="course-checkbox">
+                                    <input type="checkbox" name="selected_courses[]" value="<?php echo $course['id']; ?>" 
+                                        <?php echo in_array($course['id'], $assistingCourseIds) ? 'checked' : ''; ?>>
+                                    <span class="course-name">
+                                        <span class="course-icon"><?php echo getCourseIcon($course['category']); ?></span>
+                                        <?php echo htmlspecialchars($course['name']); ?>
+                                    </span>
+                                </label>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="no-courses">
+                                No courses available for this semester.
                             </div>
                         <?php endif; ?>
                     </div>
-                </div>
 
-                <div class="form-section">
-                    <h2>Your Profile</h2>
-                    <p class="section-description">This information will be visible to students seeking assistance</p>
-                    
-                    <div class="form-group">
-                        <label for="telegram">Telegram Username</label>
-                        <div class="input-group">
-                            <span class="input-icon">✈️</span>
-                            <input type="text" id="telegram" name="telegram" placeholder="@yourusername" 
-                                value="<?php echo htmlspecialchars($userData['telegram'] ?? ''); ?>">
+                    <div class="form-section">
+                        <h3>Your Profile</h3>
+                        <p class="section-description">This information will be visible to students</p>
+                        
+                        <div class="form-group">
+                            <label for="telegram">Telegram Username</label>
+                            <input type="text" id="telegram" name="telegram" class="form-control" 
+                                placeholder="@yourusername" value="<?php echo htmlspecialchars($userData['telegram'] ?? ''); ?>">
                         </div>
-                        <p class="field-hint">This is the preferred contact method for students</p>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="phone">Phone Number (Optional)</label>
-                        <div class="input-group">
-                            <span class="input-icon">📞</span>
-                            <input type="text" id="phone" name="phone" placeholder="+251---------" 
-                                value="<?php echo htmlspecialchars($userData['phone'] ?? ''); ?>">
+                        <div class="form-group">
+                            <label for="phone">Phone Number (Optional)</label>
+                            <input type="text" id="phone" name="phone" class="form-control" 
+                                placeholder="+251---------" value="<?php echo htmlspecialchars($userData['phone'] ?? ''); ?>">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bio">About You</label>
+                            <textarea id="bio" name="bio" class="form-control" 
+                                placeholder="Share your expertise, experience, and teaching style..."><?php echo htmlspecialchars($userData['bio'] ?? ''); ?></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="availability">Your Availability</label>
+                            <textarea id="availability" name="availability" class="form-control" 
+                                placeholder="E.g., Weekdays after 4pm, Weekends 10am-6pm..."><?php echo htmlspecialchars($userData['availability'] ?? ''); ?></textarea>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="bio">About You</label>
-                        <textarea id="bio" name="bio" rows="4" placeholder="Share your expertise, experience, and teaching style..."><?php echo htmlspecialchars($userData['bio'] ?? ''); ?></textarea>
-                        <p class="field-hint">Help students understand why they should choose you as their assistant</p>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="availability">Your Availability</label>
-                        <textarea id="availability" name="availability" rows="3" placeholder="E.g., Weekdays after 4pm, Weekends 10am-6pm..."><?php echo htmlspecialchars($userData['availability'] ?? ''); ?></textarea>
-                    </div>
-                </div>
-
-                <button type="submit" class="submit-btn">
-                    <span class="btn-icon">✅</span> Save Assistant Profile
-                </button>
-            </form>
+                    <button type="submit" class="submit-btn">
+                        Save Profile
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 

@@ -122,7 +122,7 @@ if(isset($_SESSION['success_message'])) {
                     <?php elseif(isLoggedIn()): ?>
                         <li><a href="courses.php">Courses</a></li>
                     <?php endif; ?>
-                    <li><a href="#">About</a></li>
+                    <li><a href="about.php">About</a></li>
                     <li><a href="contact.php">Contact Us</a></li>
                     
                 </ul>

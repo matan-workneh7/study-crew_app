@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
                     <?php elseif(isLoggedIn()): ?>
                         <li><a href="courses.php">Courses</a></li>
                     <?php endif; ?>
-                    <li><a href="#">About</a></li>
+                    <li><a href="about.php">About</a></li>
                     <li><a href="contact.php" class="active">Contact Us</a></li>
                 </ul>
             </nav>
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
         </div>
     </header>
     <main>
-        <div class="container" style="margin-top: 40px; max-width: 1200px;">
+        <div class="container" style="margin-top: 40px; margin-bottom: 40px; max-width: 1200px;">
             <h1>Contact Us</h1>
             <p>Welcome to the Study Crew Contact Page! Have questions, feedback, or need support? Reach out via the contact form or email us, and we’ll respond promptly. Thank you for choosing Study Crew!</p>
             <hr>
@@ -112,12 +112,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
                 <div class="contact-form">
                     <h2>Send Message</h2>
                     <form method="POST" action="">
-    <?php if(isset($error) && $error): ?>
-        <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
-    <?php endif; ?>
-    <?php if(isset($success) && $success): ?>
-        <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
-    <?php endif; ?>
+                        <?php if(isset($error) && $error): ?>
+                            <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+                        <?php endif; ?>
+                        <?php if(isset($success) && $success): ?>
+                            <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
+                        <?php endif; ?>
 
                         <div class="form-group">
                             <label for="name">Full Name</label>
@@ -137,5 +137,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
             </div>
         </div>
     </main>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Study Crew. All rights reserved.</p>
+        </div>
+    </footer>
 </body>
 </html>
