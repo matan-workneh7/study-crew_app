@@ -53,6 +53,7 @@
 .modal .input-group select {
     width: 100%;
     padding: 0.75rem;
+    padding-left: 2rem;
     border: none;
     background: transparent;
     color: #1f2937;
@@ -265,3 +266,4 @@
 .assistant-modal .switch-link a:hover {
     color: #764ba2;
 }
+
