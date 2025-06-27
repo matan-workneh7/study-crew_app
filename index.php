@@ -60,12 +60,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup_submit'])) {
     } else {
         $registrationResult = registerUser($username, $email, $password, $academic_year, $user_role);
         if ($registrationResult === true) {
-            // Redirect to login with success message
-            // Ensure user_role is consistent: 'assist' for assistants, 'student' for students
-$login_intent = ($user_role === 'assist') ? 'assist' : 'get';
-            $_SESSION['success_message'] = 'Registration successful! Please log in to continue.';
-            header("Location: index.php?action=login&intent=" . $login_intent);
-            exit();
+            // If assistant, login automatically and redirect to assistant dashboard
+            if ($user_role === 'assist') {
+                $loginResult = processLogin($email, $password, 'assist');
+                if ($loginResult === true) {
+                    header("Location: assistant-dashboard.php");
+                    exit();
+                } else {
+                    // fallback: show login modal with intent=assist
+                    $_SESSION['success_message'] = 'Registration successful! Please log in to continue.';
+                    header("Location: index.php?action=login&intent=assist");
+                    exit();
+                }
+            } elseif ($user_role === 'student' || $user_role === 'get') {
+                $loginResult = processLogin($email, $password, 'get');
+                if ($loginResult === true) {
+                    header("Location: courses.php");
+                    exit();
+                } else {
+                    // fallback: show login modal with intent=get
+                    $_SESSION['success_message'] = 'Registration successful! Please log in to continue.';
+                    header("Location: index.php?action=login&intent=get");
+                    exit();
+                }
+            } else {
+                // fallback for any other roles
+                $_SESSION['success_message'] = 'Registration successful! Please log in to continue.';
+                header("Location: index.php?action=login");
+                exit();
+            }
         } else {
             $error = $registrationResult;
             $show_signup_modal = true;
@@ -128,9 +151,12 @@ if(isset($_SESSION['success_message'])) {
                 </ul>
             </nav>
             <?php if(isLoggedIn()): ?>
-                <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
+                <div class="user-menu">
+                    <span><?php echo htmlspecialchars($_SESSION['username']); ?></span>
+                    <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
+                </div>
             <?php else: ?>
-                <a href="?action=login" class="sign-in-btn">SIGN IN</a>
+                
             <?php endif; ?>
         </div>
     </header>
@@ -162,41 +188,46 @@ if(isset($_SESSION['success_message'])) {
     <!-- Main Content Section -->
     <section class="main-content">
         <div class="container">
-            <h2>Need help with a tough subject?</h2>
-            <h3>Want to offer help and make a difference?</h3>
-            <p class="description">
-                Study Crew connects students who are looking for academic assistance with peers who are 
-                ready to help. Whether you're stuck in calculus or fluent in Java, this is your space to learn and 
-                support each other.
-            </p>
+            <?php if(!isLoggedIn()): ?>
+                <h2>Struggling with Coursework?</h2>
+                <h3>Connect with Peer Tutors or Become One</h3>
+                <p class="description">
+                    Study Crew bridges the gap between students seeking academic support and those ready to help.
+                    Get personalized 1-on-1 assistance in challenging subjects or share your expertise with fellow students.
+                    Our platform makes it easy to find the perfect study match based on courses, schedules, and learning styles.
+                </p>
 
-            <div class="cards">
-                <div class="card">
-                    <div class="card-icon">🔗</div>
-                    <h3>Assist Others</h3>
-                    <p>Share your knowledge, reinforce your understanding, and help fellow students succeed. Become a tutor and make a positive impact.</p>
-                    <?php if(isLoggedIn()): ?>
-                        <?php if(isUserAssistant($_SESSION['user_id'])): ?>
-                            <a href="assistant-dashboard.php" class="assist-btn">Go to Assistant Dashboard</a>
-                        <?php else: ?>
-                            <a href="assistant-form.php" class="assist-btn">Become an Assistant</a>
-                        <?php endif; ?>
-                    <?php else: ?>
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-icon">🔗</div>
+                        <h3>Become a Tutor</h3>
+                        <p>Reinforce your knowledge by teaching others. Set your own schedule, earn recognition, and make a real impact on your peers' academic journey. Perfect for students who excel in specific subjects.</p>
                         <a href="?action=login&intent=assist" class="assist-btn">I'm here to assist others</a>
-                    <?php endif; ?>
-                </div>
+                    </div>
 
-                <div class="card">
-                    <div class="card-icon">💡</div>
-                    <h3>Get Assistance</h3>
-                    <p>Find knowledgeable peers to help you understand challenging concepts, prepare for exams, and improve your grades.</p>
-                    <?php if(isLoggedIn()): ?>
-                        <a href="courses.php" class="assistance-btn">Browse Courses</a>
-                    <?php else: ?>
+                    <div class="card">
+                        <div class="card-icon">💡</div>
+                        <h3>Find a Tutor</h3>
+                        <p>Get personalized help from top students who've aced the courses you're taking. Schedule sessions at your convenience and receive targeted support for your specific challenges.</p>
                         <a href="?action=login&intent=student" class="assistance-btn">I'm looking for assistance</a>
-                    <?php endif; ?>
+                    </div>
                 </div>
-            </div>
+            <?php else: ?>
+                <div class="welcome-message">
+                    <h2>Welcome back, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h2>
+                    <p class="description">
+                        <?php if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'assist'): ?>
+Your expertise is in high demand! You currently have <strong>3 pending assistance requests</strong> from students in your courses. Your dashboard is ready with your schedule, upcoming sessions, and student messages. Don't forget to update your availability for next week!
+                        <?php else: ?>
+You're making great progress in your studies! There are <strong>5 new tutors available</strong> in your courses this week. Check out their profiles and schedule a session to get the help you need. Your next study session could be the breakthrough you've been waiting for!
+                        <?php endif; ?>
+                    </p>
+                    <a href="<?php echo (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'assist') ? 'assistant-dashboard.php' : 'courses.php'; ?>" class="get-started-btn">
+                        <?php echo (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'assist') ? 'Go to Dashboard' : 'Browse Courses'; ?>
+                        <span class="arrow">→</span>
+                    </a>
+                </div>
+            <?php endif; ?>
         </div>
     </section>
 

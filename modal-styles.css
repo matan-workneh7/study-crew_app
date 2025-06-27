@@ -42,11 +42,35 @@
 }
 
 .modal .input-group {
-    position: relative;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 0.5rem;
-    background: white;
+    display: flex;
+    align-items: center;
+    background: #f4f4f8;
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 0.5rem;
+}
+
+.modal .input-icon {
+    color: #667eea;
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+.modal .input-static-value {
+    margin-left: 6px;
+    font-size: 1rem;
+    color: #222;
+    background: none;
+    border: none;
+    padding: 0.25rem 0;
+    line-height: 1.5;
+    min-height: 1.5em;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    /* Mimic readonly input look */
+    opacity: 0.85;
 }
 
 .modal .input-group input,
