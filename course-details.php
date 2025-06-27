@@ -2,21 +2,57 @@
 require_once 'session.php';
 include 'functions.php';
 
+// Debug: Log request parameters to a file
+$debugLog = __DIR__ . '/debug.log';
+$debugMsg = '[' . date('Y-m-d H:i:s') . '] Course Details - GET: ' . print_r($_GET, true) . "\n";
+file_put_contents($debugLog, $debugMsg, FILE_APPEND);
+
 // Redirect to login if not logged in
 if (!isLoggedIn()) {
     header("Location: index.php?action=login&intent=get");
     exit();
 }
 
-// Get course ID from URL
+// Get course ID and context from URL
 $courseId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$selectedYear = isset($_GET['year']) ? (int)$_GET['year'] : 1;
+$selectedSemester = isset($_GET['semester']) ? (int)$_GET['semester'] : 1;
 
 // Get course details
 $course = getCourseById($courseId);
+
+// Debug: Log course lookup
+$debugMsg = '[' . date('Y-m-d H:i:s') . "] Looking up course ID: $courseId, Found: " . ($course ? 'Yes' : 'No') . "\n";
+file_put_contents($debugLog, $debugMsg, FILE_APPEND);
+
+// If course not found, try to find it with the provided year and semester
 if (!$course) {
+    $debugMsg = '[' . date('Y-m-d H:i:s') . "] Course not found by ID, trying year: $selectedYear, semester: $selectedSemester\n";
+    file_put_contents($debugLog, $debugMsg, FILE_APPEND);
+    $courses = getCoursesByYearAndSemester($selectedYear, $selectedSemester);
+    $debugMsg = '[' . date('Y-m-d H:i:s') . '] Found ' . count($courses) . " courses for year $selectedYear semester $selectedSemester\n";
+    file_put_contents($debugLog, $debugMsg, FILE_APPEND);
+    
+    foreach ($courses as $c) {
+        if ($c['id'] == $courseId) {
+            $course = $c;
+            $debugMsg = '[' . date('Y-m-d H:i:s') . '] Found course in year/semester filter: ' . $course['name'] . "\n";
+            file_put_contents($debugLog, $debugMsg, FILE_APPEND);
+            break;
+        }
+    }
+}
+
+if (!$course) {
+    $debugMsg = '[' . date('Y-m-d H:i:s') . "] Course not found, redirecting to courses.php\n";
+    file_put_contents($debugLog, $debugMsg, FILE_APPEND);
     header("Location: courses.php");
     exit();
 }
+
+// Debug: Log found course details
+$debugMsg = '[' . date('Y-m-d H:i:s') . '] Found course: ' . print_r($course, true) . "\n";
+file_put_contents($debugLog, $debugMsg, FILE_APPEND);
 
 // Get search query
 $searchQuery = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -91,6 +127,8 @@ if(isset($_GET['logout'])) {
         <div class="search-container">
             <form method="GET" action="" class="search-box">
                 <input type="hidden" name="id" value="<?php echo $courseId; ?>">
+                <input type="hidden" name="year" value="<?php echo $selectedYear; ?>">
+                <input type="hidden" name="semester" value="<?php echo $selectedSemester; ?>">
                 <input type="hidden" name="sort" value="<?php echo htmlspecialchars($sortBy); ?>">
                 <input type="hidden" name="order" value="<?php echo htmlspecialchars($sortOrder); ?>">
                 <input type="text" name="search" placeholder="Search by Name" value="<?php echo htmlspecialchars($searchQuery); ?>">
@@ -115,7 +153,7 @@ if(isset($_GET['logout'])) {
 
             <?php foreach ($tutors as $tutor): ?>
                 <div class="tutor-item-container">
-                    <a href="connect.php?course=<?php echo $courseId; ?>&tutor=<?php echo $tutor['id']; ?>" class="tutor-item">
+                    <a href="connect.php?course=<?php echo $courseId; ?>&tutor=<?php echo $tutor['id']; ?>&year=<?php echo $course['year']; ?>&semester=<?php echo $course['semester']; ?>" class="tutor-item">
                         <div class="tutor-name"><?php echo htmlspecialchars($tutor['name']); ?></div>
                         <div class="tutor-year"><?php echo htmlspecialchars($tutor['year']); ?></div>
                         <div class="tutor-visits"><?php echo $tutor['visits']; ?> Visits</div>

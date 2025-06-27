@@ -139,7 +139,7 @@ if(isset($_SESSION['success_message'])) {
             <!-- Course List -->
             <div class="course-list">
                 <?php foreach ($courses as $course): ?>
-                    <div class="course-item">
+                    <a href="course-details.php?id=<?php echo $course['id']; ?>&year=<?php echo $course['year']; ?>&semester=<?php echo $course['semester']; ?>" class="course-item">
                         <div class="course-icon">
                             <?php echo getCourseIcon($course['category']); ?>
                         </div>
@@ -149,7 +149,7 @@ if(isset($_SESSION['success_message'])) {
                         <div class="course-arrow">
                             &rsaquo;
                         </div>
-                    </div>
+                    </a>
                 <?php endforeach; ?>
                 
                 <?php if (empty($courses)): ?>
