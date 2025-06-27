@@ -292,13 +292,20 @@ function getAllCourses() {
 // Function to get course by ID
 function getCourseById($courseId) {
     $courses = readJsonFile(COURSES_FILE);
-
+    
+    // Trim and ensure string comparison
+    $courseId = is_string($courseId) ? trim($courseId) : $courseId;
+    
     foreach ($courses as $course) {
-        if ($course['id'] == $courseId) {
+        // Use loose comparison to handle string vs integer IDs
+        if ((string)$course['id'] === (string)$courseId) {
             return $course;
         }
     }
-
+    
+    // Debug: Log the failure to find the course
+    error_log('Course not found - ID: ' . $courseId . ' (Type: ' . gettype($courseId) . ')');
+    
     return null;
 }
 
@@ -378,32 +385,46 @@ function saveAssistantProfile($userId, $selectedCourses, $telegram, $phone, $bio
     // Write updated user data
     writeJsonFile(USERS_FILE, $users);
     
-    // Remove existing assistant entries for this user
-    $assistants = array_filter($assistants, function($assistant) use ($userId) {
-        return $assistant['user_id'] != $userId;
+    // Remove only deselected courses for this user
+    $assistants = array_filter($assistants, function($assistant) use ($userId, $selectedCourses) {
+        // Keep if not this user, or if this user and course is still selected
+        return $assistant['user_id'] != $userId || in_array($assistant['course_id'], $selectedCourses);
     });
-    
-    // Add new assistant entries for selected courses
+
+    // Recalculate maxId from current assistants
     $maxId = 0;
     foreach ($assistants as $assistant) {
-        if ($assistant['id'] > $maxId) {
+        if (isset($assistant['id']) && $assistant['id'] > $maxId) {
             $maxId = $assistant['id'];
         }
     }
-    
+
+    // Add or update entries for selected courses
+    $existingCourseIds = [];
+    foreach ($assistants as $assistant) {
+        if ($assistant['user_id'] == $userId) {
+            $existingCourseIds[] = $assistant['course_id'];
+        }
+    }
+
     foreach ($selectedCourses as $courseId) {
-        $maxId++;
-        $assistants[] = [
-            'id' => $maxId,
-            'user_id' => $userId,
-            'course_id' => $courseId,
-            'telegram' => $telegram,
-            'phone' => $phone,
-            'bio' => $bio,
-            'availability' => $availability,
-            'visits' => 0,
-            'created_at' => date('Y-m-d H:i:s')
-        ];
+        if (!in_array($courseId, $existingCourseIds)) {
+            $maxId++;
+            $course = getCourseById($courseId);
+            $assistants[] = [
+                'id' => $maxId,
+                'user_id' => $userId,
+                'course_id' => $courseId,
+                'year' => $course ? $course['year'] : null,
+                'semester' => $course ? $course['semester'] : null,
+                'telegram' => $telegram,
+                'phone' => $phone,
+                'bio' => $bio,
+                'availability' => $availability,
+                'visits' => 0,
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+        }
     }
     
     return writeJsonFile(ASSISTANTS_FILE, $assistants);
@@ -451,6 +472,7 @@ function getTutorsByCourse($courseId, $searchQuery = '') {
                 
                 $result[] = [
                     'id' => $assistant['id'],
+                    'user_id' => $assistant['user_id'],  // Add user_id to the result
                     'name' => $user['username'],
                     'year' => $user['academic_year'],
                     'bio' => $assistant['bio'] ?? $user['bio'] ?? '',

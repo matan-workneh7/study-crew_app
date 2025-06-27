@@ -485,6 +485,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
     </header>
     
     <div class="container">
+        <a href="index.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Home</a>
         <h1>Get In Touch</h1>
         <p class="subtitle">We'd love to hear from you! Whether you have questions about our services, need technical support, or want to provide feedback, our team is ready to assist you. Reach out through the form or contact us directly, and we'll respond as quickly as possible.</p>
         

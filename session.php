@@ -1,5 +1,5 @@
 <?php
-session_start();
+    session_start();
 
 // Handle logout
 if(isset($_GET['logout'])) {

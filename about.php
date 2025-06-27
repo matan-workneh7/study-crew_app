@@ -358,6 +358,7 @@ require_once 'functions.php';
     </header>
 
     <main class="container">
+        <a href="index.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Home</a>
         <div class="page-header">
             <h1>About Study Crew</h1>
             <p>Your campus connection for academic support - built by students, for students</p>

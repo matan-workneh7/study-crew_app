@@ -86,6 +86,7 @@ if(isset($_GET['logout'])) {
 
     <!-- Main Content -->
     <div class="container connect-container">
+        <a href="javascript:history.back()" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a>
         <div class="connect-card">
             <h1>Connect with Your Assistant</h1>
             <p class="connect-info">

@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $selectedCourses = $_POST['selected_courses'] ?? [];
     
     // Save selected courses
-    if (saveAssistantCourses($userId, $selectedCourses)) {
+    if (saveAssistantProfile($userId, $selectedCourses, $userData['telegram'] ?? '', $userData['phone'] ?? '', $userData['bio'] ?? '', $userData['availability'] ?? '')) {
         $_SESSION['success_message'] = 'Your course selections have been saved successfully!';
         header('Location: ' . $_SERVER['PHP_SELF'] . '?year=' . $selectedYear . '&semester=' . $selectedSemester);
         exit();
@@ -244,6 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <!-- Main Content Area -->
         <div class="main-content">
+            <a href="index.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Home</a>
             <div class="courses-header">
                 <h2><?php echo getYearName($selectedYear); ?> Courses You Can Assist</h2>
                 
@@ -304,5 +305,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p>&copy; 2025 Study Crew. All rights reserved.</p>
         </div>
     </footer>
+    <script>
+    // Key for localStorage
+    const STORAGE_KEY = 'assistant_selected_courses';
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        document.querySelectorAll('input[type=checkbox][name="selected_courses[]"]').forEach(cb => {
+            if (saved.includes(cb.value)) cb.checked = true;
+            cb.addEventListener('change', function() {
+                let current = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                if (cb.checked) {
+                    if (!current.includes(cb.value)) current.push(cb.value);
+                } else {
+                    current = current.filter(id => id !== cb.value);
+                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(current));
+            });
+        });
+    });
+
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        document.querySelectorAll('input[name="selected_courses[]"][type=hidden]').forEach(el => el.remove());
+        saved.forEach(id => {
+            if (!document.querySelector('input[type=checkbox][name="selected_courses[]"][value="' + id + '"]')) {
+                const hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = 'selected_courses[]';
+                hidden.value = id;
+                this.appendChild(hidden);
+            }
+        });
+        localStorage.removeItem(STORAGE_KEY);
+    });
+    </script>
 </body>
 </html>

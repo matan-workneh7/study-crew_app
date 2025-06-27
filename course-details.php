@@ -14,44 +14,43 @@ if (!isLoggedIn()) {
 }
 
 // Get course ID and context from URL
-$courseId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-$selectedYear = isset($_GET['year']) ? (int)$_GET['year'] : 1;
+$courseId = $_GET['id'] ?? '';  // Keep as string to match the data format
+$yearValues = [
+    'Freshman' => 1,
+    'Sophomore' => 2,
+    'Junior' => 3,
+    'Senior' => 4,
+    'Graduate' => 5
+];
+$selectedYear = 1;
+if (isset($_GET['year'])) {
+    if (is_numeric($_GET['year'])) {
+        $selectedYear = (int)$_GET['year'];
+    } elseif (isset($yearValues[$_GET['year']])) {
+        $selectedYear = $yearValues[$_GET['year']];
+    }
+}
 $selectedSemester = isset($_GET['semester']) ? (int)$_GET['semester'] : 1;
+
+// Debug: Log the course ID and its type
+error_log('Course ID: ' . $courseId . ', Type: ' . gettype($courseId));
 
 // Get course details
 $course = getCourseById($courseId);
 
-// Debug: Log course lookup
-$debugMsg = '[' . date('Y-m-d H:i:s') . "] Looking up course ID: $courseId, Found: " . ($course ? 'Yes' : 'No') . "\n";
-file_put_contents($debugLog, $debugMsg, FILE_APPEND);
-
-// If course not found, try to find it with the provided year and semester
+// If course not found, show error and exit
 if (!$course) {
-    $debugMsg = '[' . date('Y-m-d H:i:s') . "] Course not found by ID, trying year: $selectedYear, semester: $selectedSemester\n";
-    file_put_contents($debugLog, $debugMsg, FILE_APPEND);
-    $courses = getCoursesByYearAndSemester($selectedYear, $selectedSemester);
-    $debugMsg = '[' . date('Y-m-d H:i:s') . '] Found ' . count($courses) . " courses for year $selectedYear semester $selectedSemester\n";
-    file_put_contents($debugLog, $debugMsg, FILE_APPEND);
+    // Debug: Log available courses for troubleshooting
+    $courses = readJsonFile(COURSES_FILE);
+    $courseIds = array_column($courses, 'id');
+    error_log('Available course IDs: ' . print_r($courseIds, true));
     
-    foreach ($courses as $c) {
-        if ($c['id'] == $courseId) {
-            $course = $c;
-            $debugMsg = '[' . date('Y-m-d H:i:s') . '] Found course in year/semester filter: ' . $course['name'] . "\n";
-            file_put_contents($debugLog, $debugMsg, FILE_APPEND);
-            break;
-        }
-    }
-}
-
-if (!$course) {
-    $debugMsg = '[' . date('Y-m-d H:i:s') . "] Course not found, redirecting to courses.php\n";
-    file_put_contents($debugLog, $debugMsg, FILE_APPEND);
-    header("Location: courses.php");
+    echo '<h2>Course not found (ID: ' . htmlspecialchars($courseId) . '). Please go back to the <a href="courses.php">courses list</a>.</h2>';
     exit();
 }
 
-// Debug: Log found course details
-$debugMsg = '[' . date('Y-m-d H:i:s') . '] Found course: ' . print_r($course, true) . "\n";
+// Debug: Log course lookup
+$debugMsg = '[' . date('Y-m-d H:i:s') . "] Looking up course ID: $courseId, Found: " . ($course ? 'Yes' : 'No') . "\n";
 file_put_contents($debugLog, $debugMsg, FILE_APPEND);
 
 // Get search query
@@ -136,46 +135,34 @@ if(isset($_GET['logout'])) {
             </form>
         </div>
 
+        <a href="courses.php?year=<?php echo urlencode($selectedYear); ?>&semester=<?php echo urlencode($selectedSemester); ?>" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Courses</a>
+
         <div class="tutors-list">
             <div class="tutors-header">
-                <div class="tutor-name">
-                    Assistant Name
-                    <a href="?id=<?php echo $courseId; ?>&sort=name&order=asc&search=<?php echo urlencode($searchQuery); ?>" class="sort-arrow">↑</a>
-                    <a href="?id=<?php echo $courseId; ?>&sort=name&order=desc&search=<?php echo urlencode($searchQuery); ?>" class="sort-arrow">↓</a>
-                </div>
+                <div class="tutor-name">Assistant Name</div>
                 <div class="tutor-year">Academic Year</div>
-                <div class="tutor-visits">
-                    Visit Count
-                    <a href="?id=<?php echo $courseId; ?>&sort=visits&order=asc&search=<?php echo urlencode($searchQuery); ?>" class="sort-arrow">↑</a>
-                    <a href="?id=<?php echo $courseId; ?>&sort=visits&order=desc&search=<?php echo urlencode($searchQuery); ?>" class="sort-arrow">↓</a>
-                </div>
+                <div class="tutor-visits">Visit Count</div>
             </div>
 
-            <?php foreach ($tutors as $tutor): ?>
-                <div class="tutor-item-container">
-                    <a href="connect.php?course=<?php echo $courseId; ?>&tutor=<?php echo $tutor['id']; ?>&year=<?php echo $course['year']; ?>&semester=<?php echo $course['semester']; ?>" class="tutor-item">
-                        <div class="tutor-name"><?php echo htmlspecialchars($tutor['name']); ?></div>
-                        <div class="tutor-year"><?php echo htmlspecialchars($tutor['year']); ?></div>
-                        <div class="tutor-visits"><?php echo $tutor['visits']; ?> Visits</div>
-                    </a>
-                    <?php if (!empty($tutor['bio'])): ?>
-                        <div class="tutor-bio">
-                            <p><?php echo htmlspecialchars($tutor['bio']); ?></p>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach; ?>
-
-            <?php if (empty($tutors)): ?>
-                <div class="no-tutors">
-                    <?php if($searchQuery): ?>
-                        No assistants found matching "<?php echo htmlspecialchars($searchQuery); ?>".
-                        <br><a href="?id=<?php echo $courseId; ?>">Show all assistants</a>
-                    <?php else: ?>
-                        No assistants available for this course yet.
-                        <br><br>
-                        <a href="assistant-dashboard.php" class="become-assistant-btn">Become an Assistant</a>
-                    <?php endif; ?>
+            <?php if (!empty($tutors)): ?>
+                <?php foreach ($tutors as $tutor): ?>
+                    <div class="tutor-item-container">
+                        <a href="tutor-details.php?id=<?php echo $tutor['user_id']; ?>" class="tutor-item">
+                            <div class="tutor-name"><?php echo htmlspecialchars($tutor['name']); ?></div>
+                            <div class="tutor-year"><?php echo htmlspecialchars($tutor['year']); ?></div>
+                            <div class="tutor-visits"><?php echo $tutor['visits']; ?> Visits</div>
+                        </a>
+                        <?php if (!empty($tutor['bio'])): ?>
+                            <div class="tutor-bio">
+                                <p><?php echo htmlspecialchars($tutor['bio']); ?></p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="no-tutors" style="text-align:center; padding:2em; color:#888;">
+                    <strong>No assistants are currently available for this course.</strong><br>
+                    <span>Check back soon, or consider becoming the first assistant for this course!</span>
                 </div>
             <?php endif; ?>
         </div>

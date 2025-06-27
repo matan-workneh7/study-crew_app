@@ -139,7 +139,13 @@ if(isset($_SESSION['success_message'])) {
             <!-- Course List -->
             <div class="course-list">
                 <?php foreach ($courses as $course): ?>
-                    <a href="course-details.php?id=<?php echo $course['id']; ?>&year=<?php echo $course['year']; ?>&semester=<?php echo $course['semester']; ?>" class="course-item">
+                    <?php
+                    $courseYear = $course['year'];
+                    if (!is_numeric($courseYear) && isset($yearValues[$courseYear])) {
+                        $courseYear = $yearValues[$courseYear];
+                    }
+                    ?>
+                    <a href="course-details.php?id=<?php echo $course['id']; ?>&year=<?php echo $courseYear; ?>&semester=<?php echo $course['semester']; ?>" class="course-item">
                         <div class="course-icon">
                             <?php echo getCourseIcon($course['category']); ?>
                         </div>

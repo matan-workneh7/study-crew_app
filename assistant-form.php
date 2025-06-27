@@ -80,6 +80,7 @@ if(isset($_GET['logout'])) {
 
     <!-- Main Content -->
     <div class="container assistant-form-container">
+        <a href="courses.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Courses</a>
         <div class="assistant-card">
             <h1>Become a Student Assistant</h1>
             <p class="form-subtitle">Complete this form to start helping other students while maintaining your student status.</p>

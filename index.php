@@ -288,6 +288,7 @@ if(isset($_SESSION['success_message'])) {
                     </p>
                 </form>
             </div>
+            <button type="button" onclick="window.location.href='index.php'" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Home</button>
         </div>
     </div>
     <?php endif; ?>
@@ -345,6 +346,7 @@ if(isset($_SESSION['success_message'])) {
                     </p>
                 </form>
             </div>
+            <button type="button" onclick="window.location.href='index.php'" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Home</button>
         </div>
     </div>
     <?php endif; ?>
@@ -428,6 +430,7 @@ if(isset($_SESSION['success_message'])) {
                     </p>
                 </form>
             </div>
+            <button type="button" onclick="window.location.href='index.php'" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Home</button>
         </div>
     </div>
     <?php endif; ?>

@@ -1,0 +1,1303 @@
+[2025-06-27 14:03:00] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:03:00] Looking up course ID: 0, Found: No
+[2025-06-27 14:03:00] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:03:00] Found 0 courses for year 0 semester 1
+[2025-06-27 14:03:00] Course not found, redirecting to courses.php
+[2025-06-27 14:03:01] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:03:01] Looking up course ID: 0, Found: No
+[2025-06-27 14:03:01] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:03:01] Found 0 courses for year 0 semester 1
+[2025-06-27 14:03:01] Course not found, redirecting to courses.php
+[2025-06-27 14:03:02] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:03:02] Looking up course ID: 0, Found: No
+[2025-06-27 14:03:02] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:03:02] Found 0 courses for year 0 semester 1
+[2025-06-27 14:03:02] Course not found, redirecting to courses.php
+[2025-06-27 14:03:03] Course Details - GET: Array
+(
+    [id] => SE301
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:03:03] Looking up course ID: 0, Found: No
+[2025-06-27 14:03:03] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:03:03] Found 0 courses for year 0 semester 1
+[2025-06-27 14:03:03] Course not found, redirecting to courses.php
+[2025-06-27 14:03:03] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:03:03] Looking up course ID: 0, Found: No
+[2025-06-27 14:03:03] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:03:03] Found 0 courses for year 0 semester 1
+[2025-06-27 14:03:03] Course not found, redirecting to courses.php
+[2025-06-27 14:03:11] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 14:03:11] Looking up course ID: 0, Found: No
+[2025-06-27 14:03:11] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:03:11] Found 0 courses for year 0 semester 1
+[2025-06-27 14:03:11] Course not found, redirecting to courses.php
+[2025-06-27 14:03:16] Course Details - GET: Array
+(
+    [id] => SE201
+    [year] => Sophomore
+    [semester] => 1
+)
+
+[2025-06-27 14:03:16] Looking up course ID: 0, Found: No
+[2025-06-27 14:03:16] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:03:16] Found 0 courses for year 0 semester 1
+[2025-06-27 14:03:16] Course not found, redirecting to courses.php
+[2025-06-27 14:19:28] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:19:28] Looking up course ID: 0, Found: No
+[2025-06-27 14:19:28] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:19:28] Found 0 courses for year 0 semester 1
+[2025-06-27 14:19:28] Course not found, redirecting to courses.php
+[2025-06-27 14:19:30] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:19:30] Looking up course ID: 0, Found: No
+[2025-06-27 14:19:30] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:19:30] Found 0 courses for year 0 semester 1
+[2025-06-27 14:19:30] Course not found, redirecting to courses.php
+[2025-06-27 14:20:22] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 14:20:22] Looking up course ID: 0, Found: No
+[2025-06-27 14:20:22] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:20:22] Found 0 courses for year 0 semester 1
+[2025-06-27 14:20:22] Course not found, redirecting to courses.php
+[2025-06-27 14:30:30] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 14:30:30] Looking up course ID: 0, Found: No
+[2025-06-27 14:30:30] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:30:30] Found 0 courses for year 0 semester 1
+[2025-06-27 14:30:30] Course not found, redirecting to courses.php
+[2025-06-27 14:30:33] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:30:33] Looking up course ID: 0, Found: No
+[2025-06-27 14:30:33] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:30:33] Found 0 courses for year 0 semester 1
+[2025-06-27 14:30:33] Course not found, redirecting to courses.php
+[2025-06-27 14:30:34] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:30:34] Looking up course ID: 0, Found: No
+[2025-06-27 14:30:34] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:30:34] Found 0 courses for year 0 semester 1
+[2025-06-27 14:30:34] Course not found, redirecting to courses.php
+[2025-06-27 14:30:34] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:30:34] Looking up course ID: 0, Found: No
+[2025-06-27 14:30:34] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:30:34] Found 0 courses for year 0 semester 1
+[2025-06-27 14:30:34] Course not found, redirecting to courses.php
+[2025-06-27 14:30:35] Course Details - GET: Array
+(
+    [id] => SE301
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:30:35] Looking up course ID: 0, Found: No
+[2025-06-27 14:30:35] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:30:35] Found 0 courses for year 0 semester 1
+[2025-06-27 14:30:35] Course not found, redirecting to courses.php
+[2025-06-27 14:30:38] Course Details - GET: Array
+(
+    [id] => SE201
+    [year] => Sophomore
+    [semester] => 1
+)
+
+[2025-06-27 14:30:38] Looking up course ID: 0, Found: No
+[2025-06-27 14:30:38] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:30:38] Found 0 courses for year 0 semester 1
+[2025-06-27 14:30:38] Course not found, redirecting to courses.php
+[2025-06-27 14:30:40] Course Details - GET: Array
+(
+    [id] => SE203
+    [year] => Sophomore
+    [semester] => 1
+)
+
+[2025-06-27 14:30:40] Looking up course ID: 0, Found: No
+[2025-06-27 14:30:40] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:30:40] Found 0 courses for year 0 semester 1
+[2025-06-27 14:30:40] Course not found, redirecting to courses.php
+[2025-06-27 14:32:33] Course Details - GET: Array
+(
+    [id] => SE201
+    [year] => Sophomore
+    [semester] => 1
+)
+
+[2025-06-27 14:32:33] Looking up course ID: 0, Found: No
+[2025-06-27 14:32:33] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:32:33] Found 0 courses for year 0 semester 1
+[2025-06-27 14:32:33] Course not found, redirecting to courses.php
+[2025-06-27 14:32:34] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:32:34] Looking up course ID: 0, Found: No
+[2025-06-27 14:32:34] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:32:34] Found 0 courses for year 0 semester 1
+[2025-06-27 14:32:34] Course not found, redirecting to courses.php
+[2025-06-27 14:32:36] Course Details - GET: Array
+(
+    [id] => SE301
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:32:36] Looking up course ID: 0, Found: No
+[2025-06-27 14:32:36] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:32:36] Found 0 courses for year 0 semester 1
+[2025-06-27 14:32:36] Course not found, redirecting to courses.php
+[2025-06-27 14:32:38] Course Details - GET: Array
+(
+    [id] => SE103
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 14:32:38] Looking up course ID: 0, Found: No
+[2025-06-27 14:32:38] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:32:38] Found 0 courses for year 0 semester 1
+[2025-06-27 14:32:38] Course not found, redirecting to courses.php
+[2025-06-27 14:35:38] Course Details - GET: Array
+(
+    [id] => SE103
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 14:35:38] Looking up course ID: 0, Found: No
+[2025-06-27 14:35:38] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:35:38] Found 0 courses for year 0 semester 1
+[2025-06-27 14:35:38] Course not found, redirecting to courses.php
+[2025-06-27 14:35:39] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:35:39] Looking up course ID: 0, Found: No
+[2025-06-27 14:35:39] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:35:39] Found 0 courses for year 0 semester 1
+[2025-06-27 14:35:39] Course not found, redirecting to courses.php
+[2025-06-27 14:35:40] Course Details - GET: Array
+(
+    [id] => SE301
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:35:40] Looking up course ID: 0, Found: No
+[2025-06-27 14:35:40] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:35:40] Found 0 courses for year 0 semester 1
+[2025-06-27 14:35:40] Course not found, redirecting to courses.php
+[2025-06-27 14:35:41] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:35:41] Looking up course ID: 0, Found: No
+[2025-06-27 14:35:41] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:35:41] Found 0 courses for year 0 semester 1
+[2025-06-27 14:35:41] Course not found, redirecting to courses.php
+[2025-06-27 14:35:43] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:35:43] Looking up course ID: 0, Found: No
+[2025-06-27 14:35:43] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:35:43] Found 0 courses for year 0 semester 1
+[2025-06-27 14:35:43] Course not found, redirecting to courses.php
+[2025-06-27 14:35:43] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:35:43] Looking up course ID: 0, Found: No
+[2025-06-27 14:35:43] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:35:43] Found 0 courses for year 0 semester 1
+[2025-06-27 14:35:43] Course not found, redirecting to courses.php
+[2025-06-27 14:35:48] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:35:48] Looking up course ID: 0, Found: No
+[2025-06-27 14:35:48] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:35:48] Found 0 courses for year 0 semester 1
+[2025-06-27 14:35:48] Course not found, redirecting to courses.php
+[2025-06-27 14:35:51] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:35:51] Looking up course ID: 0, Found: No
+[2025-06-27 14:35:51] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:35:51] Found 0 courses for year 0 semester 1
+[2025-06-27 14:35:51] Course not found, redirecting to courses.php
+[2025-06-27 14:35:53] Course Details - GET: Array
+(
+    [id] => SE203
+    [year] => Sophomore
+    [semester] => 1
+)
+
+[2025-06-27 14:35:53] Looking up course ID: 0, Found: No
+[2025-06-27 14:35:53] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:35:53] Found 0 courses for year 0 semester 1
+[2025-06-27 14:35:53] Course not found, redirecting to courses.php
+[2025-06-27 14:36:21] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:36:21] Looking up course ID: 0, Found: No
+[2025-06-27 14:36:21] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:36:21] Found 0 courses for year 0 semester 1
+[2025-06-27 14:36:21] Course not found, redirecting to courses.php
+[2025-06-27 14:36:23] Course Details - GET: Array
+(
+    [id] => SE203
+    [year] => Sophomore
+    [semester] => 1
+)
+
+[2025-06-27 14:36:23] Looking up course ID: 0, Found: No
+[2025-06-27 14:36:23] Course not found by ID, trying year: 0, semester: 1
+[2025-06-27 14:36:23] Found 0 courses for year 0 semester 1
+[2025-06-27 14:36:23] Course not found, redirecting to courses.php
+[2025-06-27 14:41:01] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:41:05] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:41:07] Course Details - GET: Array
+(
+    [id] => SE301
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 14:41:11] Course Details - GET: Array
+(
+    [id] => SE203
+    [year] => Sophomore
+    [semester] => 1
+)
+
+[2025-06-27 14:41:13] Course Details - GET: Array
+(
+    [id] => SE203
+    [year] => Sophomore
+    [semester] => 1
+)
+
+[2025-06-27 14:41:15] Course Details - GET: Array
+(
+    [id] => SE202
+    [year] => Sophomore
+    [semester] => 1
+)
+
+[2025-06-27 14:41:22] Course Details - GET: Array
+(
+    [id] => SE207
+    [year] => Sophomore
+    [semester] => 2
+)
+
+[2025-06-27 14:41:26] Course Details - GET: Array
+(
+    [id] => SE109
+    [year] => Freshman
+    [semester] => 2
+)
+
+[2025-06-27 14:41:30] Course Details - GET: Array
+(
+    [id] => SE108
+    [year] => Freshman
+    [semester] => 2
+)
+
+[2025-06-27 14:42:17] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 14:42:22] Course Details - GET: Array
+(
+    [id] => SE109
+    [year] => Freshman
+    [semester] => 2
+)
+
+[2025-06-27 14:42:25] Course Details - GET: Array
+(
+    [id] => SE110
+    [year] => Freshman
+    [semester] => 2
+)
+
+[2025-06-27 14:55:01] Course Details - GET: Array
+(
+    [id] => SE109
+    [year] => Freshman
+    [semester] => 2
+)
+
+[2025-06-27 14:55:04] Course Details - GET: Array
+(
+    [id] => SE110
+    [year] => Freshman
+    [semester] => 2
+)
+
+[2025-06-27 14:55:13] Course Details - GET: Array
+(
+    [id] => SE109
+    [year] => Freshman
+    [semester] => 2
+)
+
+[2025-06-27 14:55:21] Course Details - GET: Array
+(
+    [id] => SE306
+    [year] => Junior
+    [semester] => 2
+)
+
+[2025-06-27 14:55:25] Course Details - GET: Array
+(
+    [id] => SE109
+    [year] => Freshman
+    [semester] => 2
+)
+
+[2025-06-27 14:55:30] Course Details - GET: Array
+(
+    [id] => SE206
+    [year] => Sophomore
+    [semester] => 2
+)
+
+[2025-06-27 14:55:35] Course Details - GET: Array
+(
+    [id] => SE110
+    [year] => Freshman
+    [semester] => 2
+)
+
+[2025-06-27 14:55:44] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:19:51] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:23:27] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:30:32] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:30:35] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:30:38] Course Details - GET: Array
+(
+    [id] => SE103
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:31:23] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:33:15] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:33:15] Looking up course ID: SE104, Found: Yes
+[2025-06-27 15:40:04] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:40:04] Looking up course ID: SE303, Found: Yes
+[2025-06-27 15:49:46] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:49:46] Looking up course ID: SE303, Found: Yes
+[2025-06-27 15:50:27] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:50:27] Looking up course ID: SE302, Found: Yes
+[2025-06-27 15:50:30] Course Details - GET: Array
+(
+    [id] => SE203
+    [year] => Sophomore
+    [semester] => 1
+)
+
+[2025-06-27 15:50:30] Looking up course ID: SE203, Found: Yes
+[2025-06-27 15:50:40] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:50:40] Looking up course ID: SE104, Found: Yes
+[2025-06-27 15:51:19] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:51:19] Looking up course ID: SE302, Found: Yes
+[2025-06-27 15:51:22] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:51:22] Looking up course ID: SE104, Found: Yes
+[2025-06-27 15:51:28] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:51:28] Looking up course ID: SE104, Found: Yes
+[2025-06-27 15:51:32] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:51:32] Looking up course ID: SE302, Found: Yes
+[2025-06-27 15:51:40] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:51:40] Looking up course ID: SE302, Found: Yes
+[2025-06-27 15:51:42] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:51:42] Looking up course ID: SE302, Found: Yes
+[2025-06-27 15:51:55] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:51:55] Looking up course ID: SE302, Found: Yes
+[2025-06-27 15:51:57] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:51:57] Looking up course ID: SE302, Found: Yes
+[2025-06-27 15:51:59] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:51:59] Looking up course ID: SE303, Found: Yes
+[2025-06-27 15:52:01] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:52:01] Looking up course ID: SE302, Found: Yes
+[2025-06-27 15:52:06] Course Details - GET: Array
+(
+    [id] => SE201
+    [year] => Sophomore
+    [semester] => 1
+)
+
+[2025-06-27 15:52:06] Looking up course ID: SE201, Found: Yes
+[2025-06-27 15:52:42] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:52:42] Looking up course ID: SE302, Found: Yes
+[2025-06-27 15:52:45] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:52:45] Looking up course ID: SE104, Found: Yes
+[2025-06-27 15:52:50] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:52:50] Looking up course ID: SE104, Found: Yes
+[2025-06-27 15:53:23] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:53:23] Looking up course ID: SE104, Found: Yes
+[2025-06-27 15:53:26] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:53:26] Looking up course ID: SE302, Found: Yes
+[2025-06-27 15:54:09] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:54:09] Looking up course ID: SE302, Found: Yes
+[2025-06-27 15:55:11] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:55:11] Looking up course ID: SE302, Found: Yes
+[2025-06-27 15:55:22] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:55:22] Looking up course ID: SE303, Found: Yes
+[2025-06-27 15:55:24] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:55:24] Looking up course ID: SE302, Found: Yes
+[2025-06-27 15:55:28] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:55:28] Looking up course ID: SE104, Found: Yes
+[2025-06-27 15:55:49] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 15:55:49] Looking up course ID: SE302, Found: Yes
+[2025-06-27 15:55:55] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:55:55] Looking up course ID: SE104, Found: Yes
+[2025-06-27 15:59:16] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:59:16] Looking up course ID: SE104, Found: Yes
+[2025-06-27 15:59:22] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 15:59:22] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:00:43] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 16:00:43] Looking up course ID: SE302, Found: Yes
+[2025-06-27 16:00:46] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 16:00:46] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:00:59] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 16:00:59] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:01:20] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => Freshman
+    [semester] => 1
+)
+
+[2025-06-27 16:01:20] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:02:07] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => Junior
+    [semester] => 1
+)
+
+[2025-06-27 16:02:07] Looking up course ID: SE302, Found: Yes
+[2025-06-27 16:04:40] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:04:40] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:04:44] Course Details - GET: Array
+(
+    [id] => SE201
+    [year] => 2
+    [semester] => 1
+)
+
+[2025-06-27 16:04:44] Looking up course ID: SE201, Found: Yes
+[2025-06-27 16:04:48] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 16:04:48] Looking up course ID: SE303, Found: Yes
+[2025-06-27 16:04:53] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 16:04:53] Looking up course ID: SE302, Found: Yes
+[2025-06-27 16:04:57] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:04:57] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:05:59] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 16:05:59] Looking up course ID: SE302, Found: Yes
+[2025-06-27 16:06:02] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:06:02] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:08:38] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:08:38] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:10:33] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:10:33] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:11:25] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:11:25] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:11:29] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:11:29] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:11:33] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:11:33] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:11:36] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:11:36] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:11:38] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:11:38] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:11:41] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:11:41] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:11:45] Course Details - GET: Array
+(
+    [id] => SE103
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:11:45] Looking up course ID: SE103, Found: Yes
+[2025-06-27 16:11:47] Course Details - GET: Array
+(
+    [id] => SE102
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:11:47] Looking up course ID: SE102, Found: Yes
+[2025-06-27 16:14:38] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:14:38] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:14:42] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:14:42] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:14:54] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:14:54] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:19:34] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:19:34] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:19:49] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:19:49] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:20:04] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+    [search] => matan
+)
+
+[2025-06-27 16:20:04] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:20:09] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:20:09] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:20:16] Course Details - GET: Array
+(
+    [id] => SE109
+    [year] => 1
+    [semester] => 2
+)
+
+[2025-06-27 16:20:16] Looking up course ID: SE109, Found: Yes
+[2025-06-27 16:20:20] Course Details - GET: Array
+(
+    [id] => SE109
+    [year] => 1
+    [semester] => 2
+)
+
+[2025-06-27 16:20:20] Looking up course ID: SE109, Found: Yes
+[2025-06-27 16:21:15] Course Details - GET: Array
+(
+    [id] => SE109
+    [year] => 1
+    [semester] => 2
+)
+
+[2025-06-27 16:21:15] Looking up course ID: SE109, Found: Yes
+[2025-06-27 16:21:19] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 16:21:19] Looking up course ID: SE302, Found: Yes
+[2025-06-27 16:24:00] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 16:24:00] Looking for course ID: SE302
+[2025-06-27 16:24:00] Course data: Array
+(
+    [id] => SE302
+    [name] => Computer Networks
+    [code] => SE302
+    [credit_hours] => 3
+    [year] => Junior
+    [semester] => 1
+    [description] => Network architectures and protocols.
+)
+
+[2025-06-27 16:24:00] Looking up course ID: SE302, Found: Yes
+[2025-06-27 16:24:00] Getting tutors for course ID: SE302 (Year: Junior, Semester: 1)
+[2025-06-27 16:24:00] Found 1 tutors: Array
+(
+    [0] => Array
+        (
+            [id] => 
+            [user_id] => 4
+            [name] => kalab
+            [year] => Senior
+            [bio] => 
+            [visits] => 0
+        )
+
+)
+
+[2025-06-27 16:24:11] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:24:11] Looking for course ID: SE104
+[2025-06-27 16:24:11] Course data: Array
+(
+    [id] => SE104
+    [name] => Calculus I
+    [code] => MATH101
+    [credit_hours] => 4
+    [year] => Freshman
+    [semester] => 1
+    [description] => Differential and integral calculus.
+)
+
+[2025-06-27 16:24:11] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:24:11] Getting tutors for course ID: SE104 (Year: Freshman, Semester: 1)
+[2025-06-27 16:24:11] Found 2 tutors: Array
+(
+    [0] => Array
+        (
+            [id] => 
+            [user_id] => 2
+            [name] => matan
+            [year] => Junior
+            [bio] => khbkb
+            [visits] => 0
+        )
+
+    [1] => Array
+        (
+            [id] => 
+            [user_id] => 4
+            [name] => kalab
+            [year] => Senior
+            [bio] => 
+            [visits] => 0
+        )
+
+)
+
+[2025-06-27 16:24:24] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+    [search] => matt
+)
+
+[2025-06-27 16:24:24] Looking for course ID: SE104
+[2025-06-27 16:24:24] Course data: Array
+(
+    [id] => SE104
+    [name] => Calculus I
+    [code] => MATH101
+    [credit_hours] => 4
+    [year] => Freshman
+    [semester] => 1
+    [description] => Differential and integral calculus.
+)
+
+[2025-06-27 16:24:24] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:24:24] Getting tutors for course ID: SE104 (Year: Freshman, Semester: 1)
+[2025-06-27 16:24:24] Found 0 tutors: Array
+(
+)
+
+[2025-06-27 16:24:40] Course Details - GET: Array
+(
+    [id] => SE103
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:24:40] Looking for course ID: SE103
+[2025-06-27 16:24:40] Course data: Array
+(
+    [id] => SE103
+    [name] => Computer Fundamentals
+    [code] => SE103
+    [credit_hours] => 3
+    [year] => Freshman
+    [semester] => 1
+    [description] => Introduction to computer systems and architecture.
+)
+
+[2025-06-27 16:24:40] Looking up course ID: SE103, Found: Yes
+[2025-06-27 16:24:40] Getting tutors for course ID: SE103 (Year: Freshman, Semester: 1)
+[2025-06-27 16:24:40] Found 1 tutors: Array
+(
+    [0] => Array
+        (
+            [id] => 
+            [user_id] => 2
+            [name] => matan
+            [year] => Junior
+            [bio] => khbkb
+            [visits] => 0
+        )
+
+)
+
+[2025-06-27 16:24:48] Course Details - GET: Array
+(
+    [id] => SE103
+    [year] => 1
+    [semester] => 1
+    [search] => matan
+)
+
+[2025-06-27 16:24:48] Looking for course ID: SE103
+[2025-06-27 16:24:48] Course data: Array
+(
+    [id] => SE103
+    [name] => Computer Fundamentals
+    [code] => SE103
+    [credit_hours] => 3
+    [year] => Freshman
+    [semester] => 1
+    [description] => Introduction to computer systems and architecture.
+)
+
+[2025-06-27 16:24:48] Looking up course ID: SE103, Found: Yes
+[2025-06-27 16:24:48] Getting tutors for course ID: SE103 (Year: Freshman, Semester: 1)
+[2025-06-27 16:24:48] Found 1 tutors: Array
+(
+    [0] => Array
+        (
+            [id] => 
+            [user_id] => 2
+            [name] => matan
+            [year] => Junior
+            [bio] => khbkb
+            [visits] => 0
+        )
+
+)
+
+[2025-06-27 16:24:51] Course Details - GET: Array
+(
+    [id] => SE103
+    [year] => 1
+    [semester] => 1
+    [search] => matan
+)
+
+[2025-06-27 16:24:51] Looking for course ID: SE103
+[2025-06-27 16:24:51] Course data: Array
+(
+    [id] => SE103
+    [name] => Computer Fundamentals
+    [code] => SE103
+    [credit_hours] => 3
+    [year] => Freshman
+    [semester] => 1
+    [description] => Introduction to computer systems and architecture.
+)
+
+[2025-06-27 16:24:51] Looking up course ID: SE103, Found: Yes
+[2025-06-27 16:24:51] Getting tutors for course ID: SE103 (Year: Freshman, Semester: 1)
+[2025-06-27 16:24:51] Found 1 tutors: Array
+(
+    [0] => Array
+        (
+            [id] => 
+            [user_id] => 2
+            [name] => matan
+            [year] => Junior
+            [bio] => khbkb
+            [visits] => 0
+        )
+
+)
+
+[2025-06-27 16:24:55] Course Details - GET: Array
+(
+    [id] => SE103
+    [year] => 1
+    [semester] => 1
+    [search] => matt
+)
+
+[2025-06-27 16:24:55] Looking for course ID: SE103
+[2025-06-27 16:24:55] Course data: Array
+(
+    [id] => SE103
+    [name] => Computer Fundamentals
+    [code] => SE103
+    [credit_hours] => 3
+    [year] => Freshman
+    [semester] => 1
+    [description] => Introduction to computer systems and architecture.
+)
+
+[2025-06-27 16:24:55] Looking up course ID: SE103, Found: Yes
+[2025-06-27 16:24:55] Getting tutors for course ID: SE103 (Year: Freshman, Semester: 1)
+[2025-06-27 16:24:55] Found 0 tutors: Array
+(
+)
+
+[2025-06-27 16:25:44] Course Details - GET: Array
+(
+    [id] => SE103
+    [year] => 1
+    [semester] => 1
+    [search] => matt
+)
+
+[2025-06-27 16:25:44] Looking up course ID: SE103, Found: Yes
+[2025-06-27 16:25:48] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:25:48] Looking up course ID: SE104, Found: Yes

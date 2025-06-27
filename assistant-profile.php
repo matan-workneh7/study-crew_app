@@ -94,6 +94,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
                 </div>
             <?php endif; ?>
             
+            <a href="assistant-dashboard.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+            
             <form method="POST" action="" class="profile-form">
                 <div class="form-group">
                     <label for="full_name">Full Name *</label>
@@ -137,7 +139,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
                 </div>
                 
                 <div class="form-actions">
-                    <a href="assistant-dashboard.php" class="btn btn-secondary">Back</a>
                     <button type="submit" name="save_profile" class="btn btn-primary">
                         <i class="fas fa-save"></i> Save Profile
                     </button>

@@ -36,13 +36,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Add new course selections
     foreach ($selectedCourses as $courseId) {
-        $assistants[] = [
-            'user_id' => $userId,
-            'course_id' => $courseId,
-            'year' => $course['year'],
-            'semester' => $course['semester'],
-            'created_at' => date('Y-m-d H:i:s')
-        ];
+        // Get course details to get year and semester
+        $course = getCourseById($courseId);
+        if ($course) {
+            $assistants[] = [
+                'user_id' => $userId,
+                'course_id' => $courseId,
+                'year' => $course['year'],
+                'semester' => $course['semester'],
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+        }
     }
     
     // Save to file
