@@ -415,9 +415,17 @@ function getTutorsByCourse($courseId, $searchQuery = '') {
     $users = readJsonFile(USERS_FILE);
     $connections = readJsonFile(CONNECTIONS_FILE);
     $result = [];
+    
+    // Get course details to ensure we have the correct year/semester
+    $course = getCourseById($courseId);
+    if (!$course) {
+        return [];
+    }
 
     foreach ($assistants as $assistant) {
-        if ($assistant['course_id'] == $courseId) {
+        if ($assistant['course_id'] == $courseId && 
+            $assistant['year'] == $course['year'] && 
+            $assistant['semester'] == $course['semester']) {
             // Find user data
             $user = null;
             foreach ($users as $u) {

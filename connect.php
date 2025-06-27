@@ -7,9 +7,11 @@ if (!isLoggedIn()) {
     exit();
 }
 
-// Get course and tutor IDs from URL
+// Get course, tutor IDs and context from URL
 $courseId = isset($_GET['course']) ? (int)$_GET['course'] : 0;
 $tutorId = isset($_GET['tutor']) ? (int)$_GET['tutor'] : 0;
+$selectedYear = isset($_GET['year']) ? (int)$_GET['year'] : 1;
+$selectedSemester = isset($_GET['semester']) ? (int)$_GET['semester'] : 1;
 
 // Get course and tutor details
 $course = getCourseById($courseId);
@@ -35,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Set success message
         $_SESSION['success_message'] = "Your request has been sent to {$tutor['name']}. They will contact you soon.";
         
-        // Redirect to courses page
-        header("Location: courses.php");
+        // Redirect back to course details with context
+        header("Location: course-details.php?id=$courseId&year=$selectedYear&semester=$selectedSemester");
         exit();
     } else {
         $error = "Failed to send your request. Please try again.";
@@ -97,6 +99,10 @@ if(isset($_GET['logout'])) {
             <?php endif; ?>
 
             <form method="POST" action="">
+    <input type="hidden" name="year" value="<?php echo $selectedYear; ?>">
+    <input type="hidden" name="semester" value="<?php echo $selectedSemester; ?>">
+    <input type="hidden" name="course" value="<?php echo $courseId; ?>">
+    <input type="hidden" name="tutor" value="<?php echo $tutorId; ?>">
                 <div class="form-group">
                     <label for="student_name">Student Name</label>
                     <input type="text" id="student_name" name="student_name" value="<?php echo htmlspecialchars($_SESSION['username']); ?>" required>

@@ -261,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <!-- Course List -->
-            <form method="POST" action="assistant-dashboard.php">
+            <form method="POST" action="save-courses.php">
                 <div class="course-list">
                     <?php if (!empty($courses)): ?>
                         <?php foreach ($courses as $course): ?>
