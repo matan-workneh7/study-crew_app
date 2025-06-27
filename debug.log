@@ -1347,3 +1347,976 @@
 )
 
 [2025-06-27 16:33:37] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:36:40] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 16:36:40] Looking up course ID: SE302, Found: Yes
+[2025-06-27 16:36:45] Course Details - GET: Array
+(
+    [id] => SE104
+)
+
+[2025-06-27 16:36:45] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:36:50] Course Details - GET: Array
+(
+    [id] => SE104
+)
+
+[2025-06-27 16:36:50] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:37:30] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 16:37:30] Looking up course ID: SE302, Found: Yes
+[2025-06-27 16:37:36] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:37:36] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:37:44] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:37:44] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:39:34] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:39:34] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:40:30] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:40:30] Looking up course ID: SE104, Found: Yes
+[2025-06-27 17:02:12] Course Details - GET: Array
+(
+    [id] => SE104
+)
+
+[2025-06-27 17:02:12] Looking up course ID: SE104, Found: Yes
+[2025-06-27 17:05:40] Course Details - GET: Array
+(
+    [id] => SE110
+)
+
+[2025-06-27 17:05:40] Looking up course ID: SE110, Found: Yes
+[2025-06-27 17:08:38] Course Details - GET: Array
+(
+    [id] => SE109
+)
+
+[2025-06-27 17:08:38] Looking up course ID: SE109, Found: Yes
+[2025-06-27 17:08:42] Course Details - GET: Array
+(
+    [id] => SE109
+)
+
+[2025-06-27 17:08:42] Looking up course ID: SE109, Found: Yes
+[2025-06-27 17:08:44] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 17:08:44] Looking up course ID: SE104, Found: Yes
+[2025-06-27 17:08:49] Course Details - GET: Array
+(
+    [id] => SE109
+)
+
+[2025-06-27 17:08:49] Looking up course ID: SE109, Found: Yes
+[2025-06-27 17:08:58] Course Details - GET: Array
+(
+    [id] => SE109
+)
+
+[2025-06-27 17:08:58] Looking up course ID: SE109, Found: Yes
+[2025-06-27 17:09:01] Course Details - GET: Array
+(
+    [id] => SE109
+)
+
+[2025-06-27 17:09:01] Looking up course ID: SE109, Found: Yes
+[2025-06-27 17:09:22] Course Details - GET: Array
+(
+    [id] => SE102
+)
+
+[2025-06-27 17:09:22] Looking up course ID: SE102, Found: Yes
+[2025-06-27 17:09:27] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 17:09:27] Looking up course ID: SE104, Found: Yes
+[2025-06-27 17:09:31] Course Details - GET: Array
+(
+    [id] => SE109
+)
+
+[2025-06-27 17:09:31] Looking up course ID: SE109, Found: Yes
+[2025-06-27 17:09:50] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 17:09:50] Looking up course ID: SE303, Found: Yes
+[2025-06-27 17:09:55] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 17:09:55] Looking up course ID: SE302, Found: Yes
+[2025-06-27 17:09:59] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 17:09:59] Looking up course ID: SE104, Found: Yes
+[2025-06-27 17:12:30] Course Details - GET: Array
+(
+    [id] => SE104
+)
+
+[2025-06-27 17:12:30] Looking up course ID: SE104, Found: Yes
+[2025-06-27 17:21:02] Course Details - GET: Array
+(
+    [id] => SE109
+)
+
+[2025-06-27 17:21:02] Looking up course ID: SE109, Found: Yes
+[2025-06-27 17:27:48] Course Details - GET: Array
+(
+    [id] => SE109
+)
+
+[2025-06-27 17:27:48] Looking up course ID: SE109, Found: Yes
+[2025-06-27 17:49:27] Course Details - GET: Array
+(
+    [id] => SE109
+)
+
+[2025-06-27 17:49:27] Looking up course ID: SE109, Found: Yes
+[2025-06-27 17:49:33] Course Details - GET: Array
+(
+    [id] => SE109
+)
+
+[2025-06-27 17:49:33] Looking up course ID: SE109, Found: Yes
+[2025-06-27 17:49:38] Course Details - GET: Array
+(
+    [id] => SE109
+)
+
+[2025-06-27 17:49:38] Looking up course ID: SE109, Found: Yes
+[2025-06-27 17:49:41] Course Details - GET: Array
+(
+    [id] => SE103
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 17:49:41] Looking up course ID: SE103, Found: Yes
+[2025-06-27 17:49:56] Course Details - GET: Array
+(
+    [id] => SE103
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 17:49:56] Looking up course ID: SE103, Found: Yes
+[2025-06-27 17:50:31] Course Details - GET: Array
+(
+    [id] => SE103
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 17:50:31] Looking up course ID: SE103, Found: Yes
+[2025-06-27 17:53:05] Course Details - GET: Array
+(
+    [id] => SE103
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 17:53:05] Looking up course ID: SE103, Found: Yes
+[2025-06-27 17:56:01] Course Details - GET: Array
+(
+    [id] => SE103
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 17:56:01] Looking up course ID: SE103, Found: Yes
+[2025-06-27 17:58:45] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 17:58:45] Looking up course ID: SE302, Found: Yes
+[2025-06-27 17:59:17] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 17:59:17] Looking up course ID: SE302, Found: Yes
+[2025-06-27 18:00:04] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 18:00:04] Looking up course ID: SE302, Found: Yes
+[2025-06-27 18:00:07] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 18:00:07] Looking up course ID: SE302, Found: Yes
+[2025-06-27 18:00:12] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 18:00:12] Looking up course ID: SE302, Found: Yes
+[2025-06-27 18:00:20] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 18:00:20] Looking up course ID: SE104, Found: Yes
+[2025-06-27 18:00:24] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 18:00:24] Looking up course ID: SE104, Found: Yes
+[2025-06-27 18:00:28] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 18:00:28] Looking up course ID: SE302, Found: Yes
+[2025-06-27 18:00:30] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 18:00:30] Looking up course ID: SE302, Found: Yes
+[2025-06-27 18:00:35] Course Details - GET: Array
+(
+    [id] => SE203
+    [year] => 2
+    [semester] => 1
+)
+
+[2025-06-27 18:00:35] Looking up course ID: SE203, Found: Yes
+[2025-06-27 18:00:59] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 18:00:59] Looking up course ID: SE303, Found: Yes
+[2025-06-27 18:01:33] Course Details - GET: Array
+(
+    [id] => SE301
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 18:01:33] Looking up course ID: SE301, Found: Yes
+[2025-06-27 18:01:36] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 18:01:36] Looking up course ID: SE303, Found: Yes
+[2025-06-27 18:01:41] Course Details - GET: Array
+(
+    [id] => SE202
+    [year] => 2
+    [semester] => 1
+)
+
+[2025-06-27 18:01:41] Looking up course ID: SE202, Found: Yes
+[2025-06-27 18:10:34] Course Details - GET: Array
+(
+    [id] => SE301
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 18:10:34] Looking up course ID: SE301, Found: Yes
+[2025-06-27 18:10:38] Course Details - GET: Array
+(
+    [id] => SE202
+    [year] => 2
+    [semester] => 1
+)
+
+[2025-06-27 18:10:38] Looking up course ID: SE202, Found: Yes
+[2025-06-27 18:18:12] Course Details - GET: Array
+(
+    [id] => SE502
+    [year] => 5
+    [semester] => 1
+)
+
+[2025-06-27 18:18:12] Looking up course ID: SE502, Found: Yes
+[2025-06-27 18:18:20] Course Details - GET: Array
+(
+    [id] => SE402
+    [year] => 4
+    [semester] => 1
+)
+
+[2025-06-27 18:18:20] Looking up course ID: SE402, Found: Yes
+[2025-06-27 18:19:28] Course Details - GET: Array
+(
+    [id] => SE402
+    [year] => 4
+    [semester] => 1
+)
+
+[2025-06-27 18:19:28] Looking up course ID: SE402, Found: Yes
+[2025-06-27 18:22:54] Course Details - GET: Array
+(
+    [id] => SE402
+    [year] => 4
+    [semester] => 1
+)
+
+[2025-06-27 18:23:10] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 18:23:10] Looking up course ID: SE303, Found: Yes
+[2025-06-27 18:23:13] Course Details - GET: Array
+(
+    [id] => SE301
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 18:23:13] Looking up course ID: SE301, Found: Yes
+[2025-06-27 18:23:18] Course Details - GET: Array
+(
+    [id] => SE101
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 18:23:18] Looking up course ID: SE101, Found: Yes
+[2025-06-27 18:23:25] Course Details - GET: Array
+(
+    [id] => SE208
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:23:25] Looking up course ID: SE208, Found: Yes
+[2025-06-27 18:23:43] Course Details - GET: Array
+(
+    [id] => SE208
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:23:43] Looking up course ID: SE208, Found: Yes
+[2025-06-27 18:24:17] Course Details - GET: Array
+(
+    [id] => SE402
+    [year] => 4
+    [semester] => 1
+)
+
+[2025-06-27 18:24:17] Looking up course ID: SE402, Found: Yes
+[2025-06-27 18:26:04] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 18:26:04] Looking up course ID: SE302, Found: Yes
+[2025-06-27 18:26:10] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:26:10] Looking up course ID: SE304, Found: Yes
+[2025-06-27 18:26:20] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:26:20] Looking up course ID: SE304, Found: Yes
+[2025-06-27 18:28:56] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:28:56] Looking up course ID: SE304, Found: Yes
+[2025-06-27 18:29:05] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:29:05] Looking up course ID: SE304, Found: Yes
+[2025-06-27 18:31:15] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:31:15] Looking up course ID: SE304, Found: Yes
+[2025-06-27 18:32:26] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:32:26] Looking up course ID: SE304, Found: Yes
+[2025-06-27 18:32:43] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:32:43] Looking up course ID: SE304, Found: Yes
+[2025-06-27 18:33:47] Course Details - GET: Array
+(
+    [id] => SE306
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:33:47] Looking up course ID: SE306, Found: Yes
+[2025-06-27 18:34:34] Course Details - GET: Array
+(
+    [id] => SE306
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:34:34] Looking up course ID: SE306, Found: Yes
+[2025-06-27 18:35:41] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 18:35:41] Looking up course ID: SE303, Found: Yes
+[2025-06-27 18:35:45] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:35:45] Looking up course ID: SE304, Found: Yes
+[2025-06-27 18:36:22] Course Details - GET: Array
+(
+    [id] => SE401
+    [year] => 4
+    [semester] => 1
+)
+
+[2025-06-27 18:36:22] Looking up course ID: SE401, Found: Yes
+[2025-06-27 18:36:30] Course Details - GET: Array
+(
+    [id] => SE207
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:36:30] Looking up course ID: SE207, Found: Yes
+[2025-06-27 18:38:34] Course Details - GET: Array
+(
+    [id] => SE207
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:38:34] Looking up course ID: SE207, Found: Yes
+[2025-06-27 18:38:59] Course Details - GET: Array
+(
+    [id] => SE208
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:38:59] Looking up course ID: SE208, Found: Yes
+[2025-06-27 18:43:16] Course Details - GET: Array
+(
+    [id] => SE301
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 18:43:16] Looking up course ID: SE301, Found: Yes
+[2025-06-27 18:43:21] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:43:21] Looking up course ID: SE304, Found: Yes
+[2025-06-27 18:43:55] Course Details - GET: Array
+(
+    [id] => SE208
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:43:55] Looking up course ID: SE208, Found: Yes
+[2025-06-27 18:44:03] Course Details - GET: Array
+(
+    [id] => SE305
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:44:03] Looking up course ID: SE305, Found: Yes
+[2025-06-27 18:44:09] Course Details - GET: Array
+(
+    [id] => SE110
+    [year] => 1
+    [semester] => 2
+)
+
+[2025-06-27 18:44:09] Looking up course ID: SE110, Found: Yes
+[2025-06-27 18:44:12] Course Details - GET: Array
+(
+    [id] => SE106
+    [year] => 1
+    [semester] => 2
+)
+
+[2025-06-27 18:44:12] Looking up course ID: SE106, Found: Yes
+[2025-06-27 18:44:56] Course Details - GET: Array
+(
+    [id] => SE109
+    [year] => 1
+    [semester] => 2
+)
+
+[2025-06-27 18:44:56] Looking up course ID: SE109, Found: Yes
+[2025-06-27 18:45:01] Course Details - GET: Array
+(
+    [id] => SE108
+    [year] => 1
+    [semester] => 2
+)
+
+[2025-06-27 18:45:01] Looking up course ID: SE108, Found: Yes
+[2025-06-27 18:45:40] Course Details - GET: Array
+(
+    [id] => SE108
+    [year] => 1
+    [semester] => 2
+)
+
+[2025-06-27 18:45:40] Looking up course ID: SE108, Found: Yes
+[2025-06-27 18:45:46] Course Details - GET: Array
+(
+    [id] => SE109
+    [year] => 1
+    [semester] => 2
+)
+
+[2025-06-27 18:45:46] Looking up course ID: SE109, Found: Yes
+[2025-06-27 18:45:50] Course Details - GET: Array
+(
+    [id] => SE208
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:45:50] Looking up course ID: SE208, Found: Yes
+[2025-06-27 18:46:12] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:46:12] Looking up course ID: SE304, Found: Yes
+[2025-06-27 18:46:17] Course Details - GET: Array
+(
+    [id] => SE206
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:46:17] Looking up course ID: SE206, Found: Yes
+[2025-06-27 18:47:56] Course Details - GET: Array
+(
+    [id] => SE206
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:47:56] Looking up course ID: SE206, Found: Yes
+[2025-06-27 18:48:14] Course Details - GET: Array
+(
+    [id] => SE108
+    [year] => 1
+    [semester] => 2
+)
+
+[2025-06-27 18:48:14] Looking up course ID: SE108, Found: Yes
+[2025-06-27 18:48:24] Course Details - GET: Array
+(
+    [id] => SE305
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:48:24] Looking up course ID: SE305, Found: Yes
+[2025-06-27 18:48:33] Course Details - GET: Array
+(
+    [id] => SE207
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:48:33] Looking up course ID: SE207, Found: Yes
+[2025-06-27 18:48:59] Course Details - GET: Array
+(
+    [id] => SE110
+    [year] => 1
+    [semester] => 2
+)
+
+[2025-06-27 18:48:59] Looking up course ID: SE110, Found: Yes
+[2025-06-27 18:49:07] Course Details - GET: Array
+(
+    [id] => SE108
+    [year] => 1
+    [semester] => 2
+)
+
+[2025-06-27 18:49:07] Looking up course ID: SE108, Found: Yes
+[2025-06-27 18:49:22] Course Details - GET: Array
+(
+    [id] => SE207
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:49:22] Looking up course ID: SE207, Found: Yes
+[2025-06-27 18:49:33] Course Details - GET: Array
+(
+    [id] => SE305
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:49:33] Looking up course ID: SE305, Found: Yes
+[2025-06-27 18:52:48] Course Details - GET: Array
+(
+    [id] => SE305
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:52:48] Looking up course ID: SE305, Found: Yes
+[2025-06-27 18:52:50] Course Details - GET: Array
+(
+    [id] => SE305
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:52:50] Looking up course ID: SE305, Found: Yes
+[2025-06-27 18:52:54] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:52:54] Looking up course ID: SE304, Found: Yes
+[2025-06-27 18:53:01] Course Details - GET: Array
+(
+    [id] => SE207
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:53:01] Looking up course ID: SE207, Found: Yes
+[2025-06-27 18:53:15] Course Details - GET: Array
+(
+    [id] => SE305
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:53:15] Looking up course ID: SE305, Found: Yes
+[2025-06-27 18:53:49] Course Details - GET: Array
+(
+    [id] => SE305
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:53:49] Looking up course ID: SE305, Found: Yes
+[2025-06-27 18:53:53] Course Details - GET: Array
+(
+    [id] => SE305
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:53:53] Looking up course ID: SE305, Found: Yes
+[2025-06-27 18:53:59] Course Details - GET: Array
+(
+    [id] => SE205
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:53:59] Looking up course ID: SE205, Found: Yes
+[2025-06-27 18:54:06] Course Details - GET: Array
+(
+    [id] => SE205
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:54:06] Looking up course ID: SE205, Found: Yes
+[2025-06-27 18:55:20] Course Details - GET: Array
+(
+    [id] => SE205
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:55:20] Looking up course ID: SE205, Found: Yes
+[2025-06-27 18:55:25] Course Details - GET: Array
+(
+    [id] => SE205
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:55:25] Looking up course ID: SE205, Found: Yes
+[2025-06-27 18:55:36] Course Details - GET: Array
+(
+    [id] => SE205
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:55:36] Looking up course ID: SE205, Found: Yes
+[2025-06-27 18:56:41] Course Details - GET: Array
+(
+    [id] => SE205
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:56:41] Looking up course ID: SE205, Found: Yes
+[2025-06-27 18:57:35] Course Details - GET: Array
+(
+    [id] => SE205
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:57:35] Looking up course ID: SE205, Found: Yes
+[2025-06-27 18:57:49] Course Details - GET: Array
+(
+    [id] => SE205
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:57:49] Looking up course ID: SE205, Found: Yes
+[2025-06-27 18:58:03] Course Details - GET: Array
+(
+    [id] => SE205
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 18:58:03] Looking up course ID: SE205, Found: Yes
+[2025-06-27 18:58:45] Course Details - GET: Array
+(
+    [id] => SE402
+    [year] => 4
+    [semester] => 1
+)
+
+[2025-06-27 18:58:45] Looking up course ID: SE402, Found: Yes
+[2025-06-27 18:58:53] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 18:58:53] Looking up course ID: SE304, Found: Yes
+[2025-06-27 19:01:11] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 19:01:11] Looking up course ID: SE304, Found: Yes
+[2025-06-27 19:01:56] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 19:01:56] Looking up course ID: SE304, Found: Yes
+[2025-06-27 19:02:14] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 19:02:14] Looking up course ID: SE304, Found: Yes
+[2025-06-27 19:03:16] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 19:03:16] Looking up course ID: SE304, Found: Yes
+[2025-06-27 19:04:25] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 19:04:25] Looking up course ID: SE304, Found: Yes
+[2025-06-27 19:29:11] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 19:29:11] Looking up course ID: SE302, Found: Yes
+[2025-06-27 19:34:52] Course Details - GET: Array
+(
+    [id] => SE208
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 19:34:52] Looking up course ID: SE208, Found: Yes
+[2025-06-27 20:11:17] Course Details - GET: Array
+(
+    [id] => SE303
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 20:11:17] Looking up course ID: SE303, Found: Yes
+[2025-06-27 20:11:23] Course Details - GET: Array
+(
+    [id] => SE304
+    [year] => 3
+    [semester] => 2
+)
+
+[2025-06-27 20:11:23] Looking up course ID: SE304, Found: Yes
+[2025-06-27 20:11:29] Course Details - GET: Array
+(
+    [id] => SE107
+    [year] => 1
+    [semester] => 2
+)
+
+[2025-06-27 20:11:29] Looking up course ID: SE107, Found: Yes
+[2025-06-27 20:23:56] Course Details - GET: Array
+(
+    [id] => SE208
+    [year] => 2
+    [semester] => 2
+)
+
+[2025-06-27 20:23:56] Looking up course ID: SE208, Found: Yes
+[2025-06-27 20:55:30] Course Details - GET: Array
+(
+    [id] => SE302
+    [year] => 3
+    [semester] => 1
+)
+
+[2025-06-27 20:55:30] Looking up course ID: SE302, Found: Yes
