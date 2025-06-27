@@ -1301,3 +1301,49 @@
 )
 
 [2025-06-27 16:25:48] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:33:10] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:33:10] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:33:18] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:33:18] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:33:20] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+)
+
+[2025-06-27 16:33:20] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:33:34] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+    [sort] => visits
+    [order] => desc
+    [search] => matan
+)
+
+[2025-06-27 16:33:34] Looking up course ID: SE104, Found: Yes
+[2025-06-27 16:33:37] Course Details - GET: Array
+(
+    [id] => SE104
+    [year] => 1
+    [semester] => 1
+    [sort] => visits
+    [order] => desc
+    [search] => 
+)
+
+[2025-06-27 16:33:37] Looking up course ID: SE104, Found: Yes

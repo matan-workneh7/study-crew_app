@@ -91,8 +91,11 @@ if(isset($_GET['logout'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($course['name']); ?> - Study Crew</title>
+    <title><?php echo htmlspecialchars($course['name'] ?? 'Course Details'); ?> - Study Crew</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="course-details.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Header Section -->
@@ -118,9 +121,21 @@ if(isset($_GET['logout'])) {
 
     <!-- Main Content -->
     <div class="container course-details-container">
+        <a href="courses.php?year=<?php echo urlencode($selectedYear); ?>&semester=<?php echo urlencode($selectedSemester); ?>" class="back-button">
+            <i class="fas fa-arrow-left"></i> Back to Courses
+        </a>
+        
         <div class="course-header">
-            <h2>Course Selected:</h2>
             <h1><?php echo htmlspecialchars($course['name']); ?></h1>
+            <div class="course-meta">
+                <span><i class="fas fa-hashtag"></i> <?php echo htmlspecialchars($course['code']); ?></span>
+                <span><i class="fas fa-star"></i> <?php echo htmlspecialchars($course['credit_hours']); ?> Credits</span>
+                <span><i class="fas fa-calendar-alt"></i> Year <?php echo htmlspecialchars($course['year']); ?></span>
+                <span><i class="fas fa-layer-group"></i> Semester <?php echo htmlspecialchars($course['semester']); ?></span>
+            </div>
+            <div class="course-description">
+                <?php echo nl2br(htmlspecialchars($course['description'])); ?>
+            </div>
         </div>
 
         <div class="search-container">
@@ -135,8 +150,6 @@ if(isset($_GET['logout'])) {
             </form>
         </div>
 
-        <a href="courses.php?year=<?php echo urlencode($selectedYear); ?>&semester=<?php echo urlencode($selectedSemester); ?>" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Courses</a>
-
         <div class="tutors-list">
             <div class="tutors-header">
                 <div class="tutor-name">Assistant Name</div>
@@ -148,31 +161,59 @@ if(isset($_GET['logout'])) {
                 <?php foreach ($tutors as $tutor): ?>
                     <div class="tutor-item-container">
                         <a href="tutor-details.php?id=<?php echo $tutor['user_id']; ?>" class="tutor-item">
-                            <div class="tutor-name"><?php echo htmlspecialchars($tutor['name']); ?></div>
-                            <div class="tutor-year"><?php echo htmlspecialchars($tutor['year']); ?></div>
-                            <div class="tutor-visits"><?php echo $tutor['visits']; ?> Visits</div>
+                            <div class="tutor-name">
+                                <i class="fas fa-user-graduate" style="margin-right: 8px; color: #667eea;"></i>
+                                <?php echo htmlspecialchars($tutor['name']); ?>
+                            </div>
+                            <div class="tutor-year">
+                                <i class="fas fa-calendar" style="margin-right: 8px; color: #6c757d;"></i>
+                                <?php echo htmlspecialchars($tutor['year']); ?>
+                            </div>
+                            <div class="tutor-visits">
+                                <i class="fas fa-eye" style="margin-right: 8px; color: #6c757d;"></i>
+                                <?php echo $tutor['visits']; ?> <?php echo $tutor['visits'] === 1 ? 'Visit' : 'Visits'; ?>
+                            </div>
                         </a>
                         <?php if (!empty($tutor['bio'])): ?>
                             <div class="tutor-bio">
-                                <p><?php echo htmlspecialchars($tutor['bio']); ?></p>
+                                <p><i class="fas fa-quote-left" style="color: #adb5bd; margin-right: 8px;"></i> 
+                                <?php echo nl2br(htmlspecialchars($tutor['bio'])); ?></p>
                             </div>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <div class="no-tutors" style="text-align:center; padding:2em; color:#888;">
-                    <strong>No assistants are currently available for this course.</strong><br>
-                    <span>Check back soon, or consider becoming the first assistant for this course!</span>
+                <div class="no-tutors">
+                    <i class="fas fa-user-graduate" style="font-size: 2.5rem; color: #dee2e6; margin-bottom: 1rem;"></i>
+                    <h3 style="color: #6c757d; margin-bottom: 0.5rem;">No Assistants Available</h3>
+                    <p style="color: #adb5bd; max-width: 500px; margin: 0 auto 1.5rem;">
+                        There are currently no assistants available for this course. Please check back later or consider becoming an assistant yourself!
+                    </p>
+                    <a href="assistant-dashboard.php" class="btn" style="background: #667eea; color: white; text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 50px; font-weight: 500; transition: all 0.2s ease;">
+                        <i class="fas fa-user-plus" style="margin-right: 8px;"></i> Become an Assistant
+                    </a>
                 </div>
             <?php endif; ?>
         </div>
     </div>
+    </div>
 
     <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 Study Crew. All rights reserved.</p>
+        <footer style="background: white; padding: 2rem 0; margin-top: 3rem; border-top: 1px solid #e9ecef;">
+        <div class="container" style="text-align: center; color: #6c757d; font-size: 0.9rem;">
+            <p>&copy; <?php echo date('Y'); ?> Study Crew. All rights reserved.</p>
         </div>
     </footer>
+    
+    <script>
+    // Auto-submit search form when typing stops
+    let searchTimer;
+    document.querySelector('.search-form input[name="search"]')?.addEventListener('input', function() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            this.form.submit();
+        }, 500);
+    });
+    </script>
 </body>
 </html>
