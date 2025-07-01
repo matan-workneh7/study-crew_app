@@ -127,6 +127,7 @@ if(isset($_SESSION['success_message'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study Crew - Your Campus Connection</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="modal-styles.css">
 </head>
@@ -135,9 +136,23 @@ if(isset($_SESSION['success_message'])) {
     <header>
         <div class="container">
             <div class="logo">
-                <span class="book-icon">📚</span>STUDY CREW
+                <span class="book-icon">📚</span><span class="logo-text">STUDY CREW</span>
             </div>
-            <nav>
+            
+            <button class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <?php if(isLoggedIn()): ?>
+                <div class="mobile-user-circle" id="userCircle">
+                    <?php echo strtoupper(substr(htmlspecialchars($_SESSION['username']), 0, 1)); ?>
+                    <div class="mobile-logout-dropdown" id="logoutDropdown">
+                        <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
+                    </div>
+                </div>
+            <?php endif; ?>
+            
+            <nav id="nav">
                 <ul>
                     <li><a href="index.php" class="active">Home</a></li>
                     <?php if(isLoggedIn() && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'assist'): ?>
@@ -147,16 +162,19 @@ if(isset($_SESSION['success_message'])) {
                     <?php endif; ?>
                     <li><a href="about.php">About</a></li>
                     <li><a href="contact.php">Contact Us</a></li>
-                    
+
                 </ul>
             </nav>
+            
             <?php if(isLoggedIn()): ?>
-                <div class="user-menu">
+                <div class="user-menu desktop-only">
                     <span><?php echo htmlspecialchars($_SESSION['username']); ?></span>
                     <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
                 </div>
             <?php else: ?>
-                
+                <div class="auth-buttons">
+                    <a href="#cards-section" class="sign-in-btn" id="signin-btn">SIGNIN</a>
+                </div>
             <?php endif; ?>
         </div>
     </header>
@@ -187,7 +205,7 @@ if(isset($_SESSION['success_message'])) {
 
     <!-- Main Content Section -->
     <section class="main-content">
-        <div class="container">
+        <div class="container" id="cards-section">
             <?php if(!isLoggedIn()): ?>
                 <h2>Struggling with Coursework?</h2>
                 <h3>Connect with Peer Tutors or Become One</h3>
@@ -466,5 +484,56 @@ You're making great progress in your studies! There are <strong>5 new tutors ava
     </div>
     <?php endif; ?>
 
+<script>
+    var userCircle = document.getElementById('userCircle');
+    var logoutDropdown = document.getElementById('logoutDropdown');
+
+    if (userCircle && logoutDropdown) {
+        userCircle.onclick = function(e) {
+            e.stopPropagation();
+            logoutDropdown.style.display = logoutDropdown.style.display === 'block' ? 'none' : 'block';
+        };
+
+        document.addEventListener('click', function() {
+            logoutDropdown.style.display = 'none';
+        });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const hamburger = document.getElementById('hamburger');
+        const nav = document.getElementById('nav');
+        
+        if (hamburger && nav) {
+            hamburger.addEventListener('click', function() {
+                nav.classList.toggle('active');
+                const icon = hamburger.querySelector('i');
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-times');
+            });
+            
+            // Close menu when clicking on links
+            document.querySelectorAll('nav a').forEach(link => {
+                link.addEventListener('click', () => {
+                    nav.classList.remove('active');
+                    const icon = hamburger.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                });
+            });
+        }
+
+        // Signin button scroll functionality
+        const signinBtn = document.getElementById('signin-btn');
+        if (signinBtn) {
+            signinBtn.addEventListener('click', function(e) {
+                if(!<?php echo $show_login_modal ? 'true' : 'false'; ?>) {
+                    e.preventDefault();
+                    document.getElementById('cards-section')?.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        }
+    });
+</script>
 </body>
 </html>
