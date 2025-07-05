@@ -21,48 +21,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $selectedCourses = [];
     }
     
-    // Get existing assistant courses
-    $assistants = readJsonFile(ASSISTANTS_FILE);
-    $existingCourses = [];
-    
-    // Remove existing courses for this user
-    $assistants = array_filter($assistants, function($assistant) use ($userId, &$existingCourses) {
-        if ($assistant['user_id'] == $userId) {
-            $existingCourses[] = $assistant;
-            return false;
-        }
-        return true;
-    });
-    
-    // Add new course selections
-    foreach ($selectedCourses as $courseId) {
-        // Get course details to get year and semester
-        $course = getCourseById($courseId);
-        if ($course) {
-            $assistants[] = [
-                'user_id' => $userId,
-                'course_id' => $courseId,
-                'year' => $course['year'],
-                'semester' => $course['semester'],
-                'created_at' => date('Y-m-d H:i:s')
-            ];
-        }
-    }
-    
-    // Save to file
-    if (writeJsonFile(ASSISTANTS_FILE, $assistants)) {
-        // Store selected courses in session
-        $_SESSION['assistant_courses'] = $selectedCourses;
-        $_SESSION['success_message'] = 'Your course selections have been saved successfully!';
+    try {
+        $conn = getDbConnection();
         
-        // Redirect to profile page
-        header("Location: assistant-profile.php");
-        exit();
-    } else {
-        $_SESSION['error_message'] = 'There was an error saving your course selections. Please try again.';
-        header("Location: assistant-dashboard.php");
-        exit();
+        // Start transaction
+        $conn->beginTransaction();
+        
+        // First, remove all existing course assignments for this user
+        $stmt = $conn->prepare("DELETE FROM assistants WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        
+        // Add new course selections
+        $stmt = $conn->prepare("INSERT INTO assistants (user_id, course_id, created_at) VALUES (?, ?, NOW())");
+        
+        foreach ($selectedCourses as $courseId) {
+            // Validate course exists
+            $course = getCourseById($courseId);
+            if ($course) {
+                $stmt->execute([$userId, $courseId]);
+            }
+        }
+        
+        // Commit transaction
+        $conn->commit();
+        $success = true;
+        
+    } catch (PDOException $e) {
+        // Rollback transaction on error
+        if (isset($conn) && $conn->inTransaction()) {
+            $conn->rollBack();
+        }
+        error_log("Error saving assistant courses: " . $e->getMessage());
+        $error = "An error occurred while saving your course selections. Please try again.";
     }
+    
+    // If we reach here, the database operation was successful
+    // Store selected courses in session
+    $_SESSION['assistant_courses'] = $selectedCourses;
+    $_SESSION['success_message'] = 'Your course selections have been saved successfully!';
+    
+    // Redirect to profile page
+    header("Location: assistant-profile.php");
+    exit();
 } else {
     // If not a POST request, redirect back to dashboard
     header("Location: assistant-dashboard.php");

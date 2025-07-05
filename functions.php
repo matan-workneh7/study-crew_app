@@ -340,9 +340,23 @@ function getCoursesForAssistant($userYearValue) {
         'Graduate' => 5
     ];
     
-    // Get all courses first
-    $stmt = $conn->query("SELECT * FROM courses ORDER BY year, semester, name");
+    // Get all courses first (without category since it doesn't exist in the database yet)
+    $stmt = $conn->query("SELECT id, name, code, year, semester, credit_hours, description FROM courses ORDER BY year, semester, name");
     $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Add a default category to each course
+    foreach ($courses as &$course) {
+        // Determine category based on course code or name if needed
+        $courseCode = strtoupper($course['code']);
+        if (strpos($courseCode, 'CS') === 0 || strpos($course['name'], 'Computer') !== false) {
+            $course['category'] = 'computer';
+        } elseif (strpos($courseCode, 'MATH') === 0 || strpos($course['name'], 'Math') !== false) {
+            $course['category'] = 'math';
+        } else {
+            $course['category'] = 'default'; // Default category
+        }
+    }
+    unset($course); // Break the reference
     
     // Filter courses based on year
     $filteredCourses = array_filter($courses, function($course) use ($userYearValue, $yearValues) {

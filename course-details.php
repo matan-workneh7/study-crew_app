@@ -193,7 +193,17 @@ if(isset($_GET['logout'])) {
 
     <!-- Main Content -->
     <div class="container course-details-container">
-        <a href="courses.php?year=<?php echo urlencode($selectedYear); ?>&semester=<?php echo urlencode($selectedSemester); ?>" class="btn btn-secondary">
+        <?php
+        // Get the course's year and semester from the course data
+        $backYear = $course['year'] ?? $selectedYear;
+        $backSemester = $course['semester'] ?? $selectedSemester;
+        
+        // If year is a string (like 'Freshman'), convert it to a number
+        if (!is_numeric($backYear) && isset($yearValues[$backYear])) {
+            $backYear = $yearValues[$backYear];
+        }
+        ?>
+        <a href="courses.php?year=<?php echo urlencode($backYear); ?>&semester=<?php echo urlencode($backSemester); ?>" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back to Courses
         </a>
         
