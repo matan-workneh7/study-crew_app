@@ -73,10 +73,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply_assistant'])) {
 }
 
 
-// Debug: Log request parameters to a file
-$debugLog = __DIR__ . '/debug.log';
-$debugMsg = '[' . date('Y-m-d H:i:s') . '] Course Details - GET: ' . print_r($_GET, true) . "\n";
-file_put_contents($debugLog, $debugMsg, FILE_APPEND);
+// Log request parameters using PHP's error log
+if (defined('DEBUG_MODE') && DEBUG_MODE === true) {
+    error_log('Course Details - GET: ' . print_r($_GET, true));
+}
 
 // Redirect to login if not logged in
 if (!isLoggedIn()) {
@@ -120,9 +120,10 @@ if (!$course) {
     exit();
 }
 
-// Debug: Log course lookup
-$debugMsg = '[' . date('Y-m-d H:i:s') . "] Looking up course ID: $courseId, Found: " . ($course ? 'Yes' : 'No') . "\n";
-file_put_contents($debugLog, $debugMsg, FILE_APPEND);
+// Log course lookup result if in debug mode
+if (defined('DEBUG_MODE') && DEBUG_MODE === true) {
+    error_log("Looking up course ID: $courseId - " . ($course ? 'Found' : 'Not Found'));
+}
 
 // Get search query
 $searchQuery = isset($_GET['search']) ? trim($_GET['search']) : '';
