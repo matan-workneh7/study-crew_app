@@ -44,8 +44,31 @@ if ($selectedYearName === false) {
 // Get selected semester from URL parameter or default to first semester
 $selectedSemester = isset($_GET['semester']) ? (int)$_GET['semester'] : 1;
 
-// Get courses for the selected year and semester
+// Debug: Check database connection
+$db = getDBConnection();
+$dbStatus = $db ? 'Connected to database successfully' : 'Failed to connect to database';
+
+error_log("Fetching courses for year: $selectedYear ($selectedYearName), semester: $selectedSemester");
 $courses = getCoursesByYearAndSemester($selectedYear, $selectedSemester);
+$coursesCount = is_array($courses) ? count($courses) : 0;
+error_log("Retrieved $coursesCount courses");
+
+// Debug: Log the courses array
+if (empty($courses)) {
+    error_log("No courses found for year: $selectedYear, semester: $selectedSemester");
+    // Try to get all courses to see what's available
+    $allCourses = getAllCourses();
+    error_log("All available courses: " . print_r($allCourses, true));
+    
+    // If still no courses, try to initialize sample data
+    if (empty($allCourses)) {
+        error_log("No courses found in database. Initializing sample data...");
+        initializeSampleData();
+        $courses = getCoursesByYearAndSemester($selectedYear, $selectedSemester);
+        $coursesCount = is_array($courses) ? count($courses) : 0;
+        error_log("After initialization, found $coursesCount courses");
+    }
+}
 
 // Handle logout
 if(isset($_GET['logout'])) {
@@ -67,6 +90,8 @@ if(isset($_SESSION['success_message'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Courses - Study Crew</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="courses.css">
 </head>
@@ -145,12 +170,15 @@ if(isset($_SESSION['success_message'])) {
                         $courseYear = $yearValues[$courseYear];
                     }
                     ?>
-                    <a href="course-details.php?id=<?php echo $course['id']; ?>&year=<?php echo $courseYear; ?>&semester=<?php echo $course['semester']; ?>" class="course-item">
+                    <a href="course-details.php?id=<?php echo urlencode($course['id']); ?>" class="course-card">
                         <div class="course-icon">
-                            <?php echo getCourseIcon($course['category']); ?>
+                            <?php echo getCourseIcon($course['category'] ?? 'default'); ?>
                         </div>
                         <div class="course-name">
                             <?php echo htmlspecialchars($course['name']); ?>
+                            <div class="course-code">
+                                <?php echo htmlspecialchars($course['code'] ?? ''); ?>
+                            </div>
                         </div>
                         <div class="course-arrow">
                             &rsaquo;

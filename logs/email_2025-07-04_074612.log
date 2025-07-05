@@ -1,0 +1,52 @@
+To: matan@gmail.com
+Subject: [Study Crew] hey there
+Headers: Array
+(
+    [0] => From: matan <matan@gmail.com>
+    [1] => Reply-To: matan@gmail.com
+    [2] => X-Mailer: PHP/8.2.12
+    [3] => MIME-Version: 1.0
+    [4] => Content-type: text/html; charset=utf-8
+)
+
+
+
+    <html>
+    <head>
+        <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background-color: #4a6fa5; color: white; padding: 15px; text-align: center; border-radius: 5px 5px 0 0; }
+            .content { padding: 20px; background-color: #f9f9f9; border: 1px solid #ddd; border-top: none; border-radius: 0 0 5px 5px; }
+            .footer { margin-top: 20px; font-size: 0.9em; color: #777; text-align: center; }
+            .button { display: inline-block; padding: 10px 20px; background-color: #4a6fa5; color: white; text-decoration: none; border-radius: 4px; margin-top: 15px; }
+            .course-info { background-color: #e9f0f9; padding: 15px; border-radius: 4px; margin: 15px 0; }
+            .course-info h3 { margin-top: 0; color: #2c3e50; }
+            .course-info ul { margin: 10px 0; }
+        </style>
+    </head>
+    <body>
+        <div class='header'>
+            <h2>New Message from matan</h2>
+        </div>
+        <div class='content'>
+            <p><strong>Message:</strong></p>
+            <p>i really need help on math and programing</p>
+            
+            <div class='course-info'><h3>Selected Courses</h3><ul style='padding-left: 20px; margin: 10px 0;'><li><strong>SE101</strong> - Introduction to Programming</li><li><strong>SE102</strong> - Discrete Mathematics</li></ul></div>
+            
+            <div style='margin-top: 20px;'>
+                <p><strong>Student Contact Information:</strong></p>
+                <p>Name: matan</p>
+                <p>Email: matan@gmail.com</p>
+            </div>
+            
+            <p style='margin-top: 20px;'>
+                <a href='mailto:matan@gmail.com' class='button'>Reply to Student</a>
+            </p>
+        </div>
+        <div class='footer'>
+            <p>This message was sent via Study Crew platform. Please do not reply to this email directly.</p>
+        </div>
+    </body>
+    </html>
+    

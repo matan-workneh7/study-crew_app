@@ -1,0 +1,525 @@
+<?php
+require_once 'session.php';
+include 'functions.php';
+
+// Redirect to login if not logged in
+if (!isLoggedIn()) {
+    header("Location: index.php?action=login&intent=assist");
+    exit();
+}
+
+// Redirect users not logged in as assistant to courses page
+if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'assist') {
+    header("Location: courses.php");
+    exit();
+}
+
+// Check for success or error messages from profile creation
+$successMessage = '';
+$errorMessage = '';
+
+if (isset($_SESSION['success'])) {
+    $successMessage = $_SESSION['success'];
+    unset($_SESSION['success']); // Clear the message after displaying
+}
+
+if (isset($_SESSION['error_message'])) {
+    $errorMessage = $_SESSION['error_message'];
+    unset($_SESSION['error_message']); // Clear the message after displaying
+}
+
+// Get user data
+$userId = $_SESSION['user_id'];
+$userData = getUserData($userId);
+$userYear = $userData['academic_year'];
+
+// Convert academic year to numeric value for comparison
+$yearValues = [
+    'Freshman' => 1,
+    'Sophomore' => 2,
+    'Junior' => 3,
+    'Senior' => 4,
+    'Graduate' => 5
+];
+
+$userYearValue = $yearValues[$userYear] ?? 1;
+
+// Get selected year from URL parameter or default to first available year below user's year
+$selectedYear = 1;
+foreach ($yearValues as $yearName => $yearNum) {
+    if ($yearNum < $userYearValue) {
+        $selectedYear = $yearNum;
+        break;
+    }
+}
+$selectedYear = isset($_GET['year']) ? (int)$_GET['year'] : $selectedYear;
+
+// Ensure we have a valid year name
+$selectedYearName = array_search($selectedYear, $yearValues);
+if ($selectedYearName === false) {
+    $selectedYear = 1;
+    $selectedYearName = 'Freshman';
+}
+
+// Get selected semester from URL parameter or default to first semester
+$selectedSemester = isset($_GET['semester']) ? (int)$_GET['semester'] : 1;
+
+// Get all courses assigned to this assistant
+$assistantCourses = getCoursesForAssistant($userId);
+
+// Debug log
+error_log("Assistant ID: " . $userId . ", Assistant courses: " . count($assistantCourses));
+
+// Filter courses by selected year and semester
+$selectedYearName = is_numeric($selectedYear) ? getYearName($selectedYear) : $selectedYear;
+$courses = [];
+
+// Debug log
+error_log("Filtering courses - Selected Year: $selectedYear ($selectedYearName), Semester: $selectedSemester");
+
+foreach ($assistantCourses as $course) {
+    $courseYear = $course['year'];
+    $courseSemester = $course['semester'];
+    
+    // Debug log for each course
+    error_log(sprintf(
+        "Course: %-30s | Year: %-10s | Semester: %d | Selected Year: %s | Selected Semester: %d",
+        $course['name'],
+        $courseYear,
+        $courseSemester,
+        $selectedYearName,
+        $selectedSemester
+    ));
+    
+    if ($courseYear === $selectedYearName && $courseSemester == $selectedSemester) {
+        $courses[] = $course;
+    }
+}
+
+// Debug log
+error_log("Total available courses: " . count($assistantCourses));
+error_log("Filtered courses for {$selectedYearName} Semester {$selectedSemester}: " . count($courses));
+
+// Get courses the user is already assisting
+$assistingCourses = getAssistantCourses($userId);
+$assistingCourseIds = array_column($assistingCourses, 'course_id');
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    error_log("Form submitted in assistant-dashboard.php");
+    
+    // Get and clean selected courses
+    $selectedCourses = [];
+    if (isset($_POST['selected_courses']) && is_array($_POST['selected_courses'])) {
+        $selectedCourses = array_map('trim', $_POST['selected_courses']);
+        $selectedCourses = array_filter($selectedCourses, function($value) {
+            return !empty($value);
+        });
+        // Ensure unique course IDs
+        $selectedCourses = array_values(array_unique($selectedCourses));
+    }
+    
+    error_log("Processed selected courses: " . print_r($selectedCourses, true));
+    
+    // Store selected courses in session
+    $_SESSION['assistant_courses'] = $selectedCourses;
+    
+    // Check if user already has an assistant profile
+    error_log("Checking if user has an assistant profile...");
+    $assistantId = isUserAssistant($userId);
+    error_log("Assistant ID from isUserAssistant: " . ($assistantId ?: 'false'));
+    
+    if ($assistantId !== false) {
+        error_log("Updating existing assistant profile with ID: $assistantId");
+        
+        try {
+            // If assistant profile exists, update courses directly
+            error_log("Calling updateAssistantCourses with assistant ID: $assistantId");
+            $result = updateAssistantCourses($assistantId, $selectedCourses);
+            error_log("updateAssistantCourses result: " . ($result ? 'true' : 'false'));
+            
+            if ($result) {
+                $_SESSION['success_message'] = 'Your course selections have been updated successfully!';
+                header('Location: ' . $_SERVER['PHP_SELF']);
+                exit();
+            } else {
+                throw new Exception("updateAssistantCourses returned false");
+            }
+            
+        } catch (Exception $e) {
+            // Get the last error from error log
+            $error_log = file_get_contents('/opt/lampp/logs/php_error_log');
+            $last_error = $e->getMessage();
+            
+            error_log("Error updating assistant courses: " . $last_error);
+            error_log("Stack trace: " . $e->getTraceAsString());
+            
+            $_SESSION['error_message'] = 'Failed to update course selections. ' . 
+                                      ($last_error ? "Error: $last_error" : "Please try again.");
+        }
+    } else {
+        error_log("No assistant profile found, checking if user has a profile...");
+        
+        // Check if user has a basic profile (not just assistant profile)
+        $userData = getUserData($userId);
+        if (!$userData) {
+            error_log("User data not found for ID: $userId");
+            $_SESSION['error_message'] = 'User data not found. Please log in again.';
+        } else {
+            error_log("Redirecting to assistant-profile.php to complete profile");
+            // Store selected courses in session for the profile page
+            $_SESSION['temp_selected_courses'] = $selectedCourses;
+            
+            // Redirect to profile completion
+            header('Location: assistant-profile.php');
+            exit();
+        }
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant Dashboard - Study Crew</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Course List */
+        .course-list {
+            margin-top: 20px;
+        }
+
+        .course-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid #e5e7eb;
+        }
+
+        .course-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: #d1d5db;
+        }
+
+        .course-icon {
+            font-size: 1.5rem;
+            margin-right: 15px;
+            color: #4f46e5;
+            width: 40px;
+            text-align: center;
+        }
+
+        .course-name {
+            flex: 1;
+            font-weight: 500;
+            color: #111827;
+        }
+
+        .course-arrow {
+            color: #9ca3af;
+            transition: all 0.2s;
+        }
+
+        .course-item:hover .course-arrow {
+            color: #4f46e5;
+            transform: translateX(4px);
+        }
+
+        /* Checkbox styling */
+        .course-checkbox {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        /* Form actions */
+        .form-actions {
+            margin-top: 25px;
+            text-align: right;
+        }
+
+        .save-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .save-btn:hover {
+            background: #4338ca;
+        }
+
+        .save-btn i {
+            margin-right: 8px;
+        }
+
+        /* Message Banners */
+        .message-banner {
+            padding: 15px 0;
+            color: white;
+            position: relative;
+            z-index: 1000;
+        }
+
+        .message-banner .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .message-banner p {
+            margin: 0;
+            padding-right: 30px;
+        }
+
+        .message-banner.success {
+            background-color: #10b981; /* Green */
+        }
+
+        .message-banner.error {
+            background-color: #ef4444; /* Red */
+        }
+
+        .close-message {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0 10px;
+            line-height: 1;
+        }
+
+        .close-message:hover {
+            opacity: 0.8;
+        }
+
+        /* No courses message */
+        .no-courses {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <span class="book-icon">📚</span>STUDY CREW
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.php">Home</a></li>
+                    <li><a href="assistant-dashboard.php" class="active">Assistant Dashboard</a></li>
+                    <li><a href="about.php">About</a></li>
+                    <li><a href="contact.php">Contact Us</a></li>
+                </ul>
+            </nav>
+            <div class="user-menu">
+                <span><?php echo htmlspecialchars($_SESSION['username']); ?></span>
+                <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Success/Error Messages -->
+    <?php if (!empty($successMessage)): ?>
+    <div class="message-banner success">
+        <div class="container">
+            <p><?php echo htmlspecialchars($successMessage); ?></p>
+            <button class="close-message" onclick="this.parentElement.parentElement.style.display='none'">&times;</button>
+        </div>
+    </div>
+    <?php endif; ?>
+    
+    <?php if (!empty($errorMessage)): ?>
+    <div class="message-banner error">
+        <div class="container">
+            <p><?php echo htmlspecialchars($errorMessage); ?></p>
+            <button class="close-message" onclick="this.parentElement.parentElement.style.display='none'">&times;</button>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Main Content -->
+    <div class="courses-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h3>Academic Year</h3>
+            <ul class="year-list">
+                <?php
+                // Display years below user's year
+                foreach ($yearValues as $yearName => $yearNum) {
+                    if ($yearNum >= $userYearValue) continue;
+                    $activeClass = ($yearNum == $selectedYear) ? 'active' : '';
+                    echo "<li class='$activeClass'><a href='assistant-dashboard.php?year=$yearNum&semester=$selectedSemester'>$yearName</a></li>";
+                }
+                ?>
+            </ul>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <a href="index.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Home</a>
+            <div class="courses-header">
+                <h2><?php echo getYearName($selectedYear); ?> Courses You Can Assist</h2>
+                
+                <!-- Semester Toggle -->
+                <div class="semester-toggle">
+                    <a href="assistant-dashboard.php?year=<?php echo $selectedYear; ?>&semester=1" 
+                       class="<?php echo $selectedSemester == 1 ? 'active' : ''; ?>">
+                        First Semester
+                    </a>
+                    <a href="assistant-dashboard.php?year=<?php echo $selectedYear; ?>&semester=2" 
+                       class="<?php echo $selectedSemester == 2 ? 'active' : ''; ?>">
+                        Second Semester
+                    </a>
+                </div>
+            </div>
+
+            <!-- Course List -->
+            <form method="POST" action="">
+                <div class="course-list">
+                    <?php if (!empty($courses)): ?>
+                                            <?php foreach ($courses as $course): ?>
+                            <label class="course-item">
+                                <input type="checkbox" 
+                                       name="selected_courses[]" 
+                                       value="<?php echo $course['id']; ?>" 
+                                       class="course-checkbox"
+                                                        <?php echo in_array($course['id'], $assistingCourseIds) ? 'checked' : ''; ?>>
+                                <div class="course-icon">
+                                    <?php 
+                                    // Use course name for icon since category column doesn't exist
+                                    echo getCourseIcon($course['name']);
+                                    ?>
+                                </div>
+                                <div class="course-name">
+                                                        <?php echo htmlspecialchars($course['name']); ?>
+                                        </div>
+                                <div class="course-arrow">
+                                    &rsquo;
+                                    </div>
+                            </label>
+                        <?php endforeach; ?>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="save-btn">
+                                <i class="fas fa-save"></i> Save Selections
+                            </button>
+                        </div>
+                    <?php else: ?>
+                        <div class="no-courses">
+                            No courses available for this semester.
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Study Crew. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+    // Key for localStorage - unique per user
+    const STORAGE_KEY = 'assistant_courses_' + <?php echo json_encode($userId); ?>;
+    
+    // Initialize selected courses from localStorage
+    let selectedCourses = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
+
+    // Function to update checkboxes based on selected courses
+    function updateCheckboxes() {
+        document.querySelectorAll('input[type=checkbox][name="selected_courses[]"]').forEach(cb => {
+            cb.checked = selectedCourses.has(cb.value);
+        });
+    }
+
+    // Function to save selected courses to localStorage
+    function saveSelectedCourses() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(selectedCourses)));
+        sessionStorage.setItem('temp_selected_courses', JSON.stringify(Array.from(selectedCourses)));
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize checkboxes
+        updateCheckboxes();
+        
+        // Handle checkbox changes
+        document.addEventListener('change', function(e) {
+            const checkbox = e.target;
+            if (checkbox.name === 'selected_courses[]') {
+                if (checkbox.checked) {
+                    selectedCourses.add(checkbox.value);
+                } else {
+                    selectedCourses.delete(checkbox.value);
+                }
+                saveSelectedCourses();
+            }
+        });
+        
+        // Handle year/semester navigation
+        document.querySelectorAll('.year-list a, .semester-list a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Save current selections before navigating
+                saveSelectedCourses();
+                window.location.href = this.href;
+            });
+        });
+        
+        // Handle form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Remove any existing hidden inputs to prevent duplicates
+            document.querySelectorAll('input[name="selected_courses[]"][type=hidden]').forEach(el => el.remove());
+            
+            // Convert Set to Array to remove duplicates, then add hidden inputs
+            const uniqueCourses = Array.from(selectedCourses);
+            console.log('Submitting courses:', uniqueCourses);
+            
+            // Add hidden inputs for all selected courses (without duplicates)
+            uniqueCourses.forEach(courseId => {
+                const hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = 'selected_courses[]';
+                hidden.value = courseId;
+                this.appendChild(hidden);
+            });
+            
+            // Submit the form
+            this.submit();
+        });
+    });
+    </script>
+</body>
+</html>

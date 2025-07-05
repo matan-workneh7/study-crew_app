@@ -1,0 +1,451 @@
+<?php
+// Include session.php first to handle session start
+require_once 'session.php';
+require_once 'config.php';
+
+// Debug: Check if database connection is working
+error_log('=== Checking Database Connection ===');
+require_once 'functions.php';
+
+global $conn;
+if (!isset($conn) || !$conn) {
+    error_log('Database connection failed!');
+    die('Database connection failed. Please try again later.');
+} else {
+    error_log('Database connection successful');
+    
+    // Check if assistants table exists and has required columns
+    $result = $conn->query("SHOW TABLES LIKE 'assistants'");
+    if ($result->num_rows == 0) {
+        error_log('Error: assistants table does not exist');
+    } else {
+        error_log('Assistants table exists');
+        
+        // Check table structure
+        $columns = $conn->query("SHOW COLUMNS FROM assistants");
+        $requiredColumns = ['id', 'user_id', 'telegram', 'phone', 'bio', 'availability'];
+        $existingColumns = [];
+        
+        while ($column = $columns->fetch_assoc()) {
+            $existingColumns[] = $column['Field'];
+        }
+        
+        $missingColumns = array_diff($requiredColumns, $existingColumns);
+        if (!empty($missingColumns)) {
+            error_log('Missing columns in assistants table: ' . implode(', ', $missingColumns));
+        } else {
+            error_log('All required columns exist in assistants table');
+        }
+    }
+}
+
+// Debug logging
+error_log('=== Assistant Profile Page Loaded ===');
+error_log('POST data: ' . print_r($_POST, true));
+error_log('SESSION data: ' . print_r($_SESSION, true));
+
+// Check if user is logged in, is an assistant, and has selected courses
+if (!isLoggedIn() || !isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'assist' || !isset($_SESSION['assistant_courses'])) {
+    header("Location: assistant-dashboard.php");
+    exit();
+}
+
+$userId = $_SESSION['user_id'];
+$userData = getUserData($userId);
+$error = '';
+$success = '';
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
+    $bio = trim($_POST['bio'] ?? '');
+    $availability = trim($_POST['availability'] ?? '');
+    $contactInfo = trim($_POST['contact_info'] ?? '');
+    
+    // Debug log form data
+    error_log('Form submitted with data:');
+    error_log('- Bio: ' . $bio);
+    error_log('- Availability: ' . $availability);
+    error_log('- Contact Info: ' . $contactInfo);
+    
+    // Get selected courses from both session and POST data
+    $selectedCourses = [];
+    
+    // First, check if we have courses in POST data (from hidden inputs)
+    if (!empty($_POST['selected_courses']) && is_array($_POST['selected_courses'])) {
+        $selectedCourses = array_filter(array_map('trim', $_POST['selected_courses']), function($courseId) {
+            return !empty($courseId);
+        });
+        error_log('Courses from POST: ' . print_r($selectedCourses, true));
+    } 
+    // Fall back to session if no courses in POST
+    elseif (!empty($_SESSION['assistant_courses'])) {
+        $selectedCourses = array_filter((array)$_SESSION['assistant_courses'], function($courseId) {
+            return !empty($courseId);
+        });
+        error_log('Courses from SESSION: ' . print_r($selectedCourses, true));
+    } else {
+        error_log('No courses found in POST or SESSION');
+    }
+    
+    // Debug log the courses being saved
+    error_log('Saving profile with courses: ' . print_r($selectedCourses, true));
+    error_log('POST data: ' . print_r($_POST, true));
+    error_log('Session data: ' . print_r($_SESSION, true));
+    
+    // Basic validation - using username as full_name
+    if (true) {
+        // Save profile to database
+        error_log('Calling saveAssistantProfile with params:');
+        error_log('- User ID: ' . $userId);
+        error_log('- Courses: ' . print_r($selectedCourses, true));
+        error_log('- Contact Info: ' . $contactInfo);
+        error_log('- Bio: ' . $bio);
+        error_log('- Availability: ' . $availability);
+        
+        // Validate required fields
+        if (empty($bio) || empty($availability) || empty($contactInfo)) {
+            $error = 'All fields are required.';
+            error_log('Validation failed: Required fields are empty');
+        } else {
+            // Save the profile
+            $result = saveAssistantProfile($userId, $selectedCourses, $contactInfo, $contactInfo, $bio, $availability);
+            
+            if ($result) {
+                error_log('Profile saved successfully');
+                
+                // Clear the courses from session after saving profile
+                if (isset($_SESSION['assistant_courses'])) {
+                    unset($_SESSION['assistant_courses']);
+                }
+                
+                // Set success message
+                $_SESSION['success'] = 'Profile saved successfully!';
+                
+                // Redirect to dashboard
+                header('Location: assistant-dashboard.php');
+                exit();
+            } else {
+                $error = 'Failed to save profile. Please try again.';
+                error_log('Failed to save profile.');
+                
+                // Log database error if available
+                global $conn;
+                if (isset($conn) && $conn->error) {
+                    error_log('Database error: ' . $conn->error);
+                }
+            }
+        }
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Profile - Study Crew</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assistant-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="logo">
+                <span class="book-icon">📚</span>STUDY CREW
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.php">Home</a></li>
+                    <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
+                    <li><a href="about.php">About</a></li>
+                    <li><a href="contact.php">Contact Us</a></li>
+                </ul>
+            </nav>
+            <div class="user-menu">
+                <span><?php echo htmlspecialchars($_SESSION['username']); ?></span>
+                <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <h1>Complete Your Assistant Profile</h1>
+                <p>Please fill in your details to complete your assistant profile</p>
+            </div>
+            
+            <?php if ($error): ?>
+                <div class="error-banner">
+                    <div class="container">
+                        <p><?php echo htmlspecialchars($error); ?></p>
+                    </div>
+                </div>
+            <?php endif; ?>
+            
+            <a href="assistant-dashboard.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+            
+            <form method="POST" action="" class="profile-form">
+                <div class="form-group">
+                    <label>Username</label>
+                    <div class="readonly-field">
+                        <?php echo htmlspecialchars($userData['username'] ?? $_SESSION['username']); ?>
+                    </div>
+                    <input type="hidden" name="full_name" value="<?php echo htmlspecialchars($userData['username'] ?? $_SESSION['username']); ?>">
+                </div>
+                
+                <div class="form-group">
+                    <label for="bio">Bio</label>
+                    <textarea id="bio" name="bio" rows="4" 
+                              placeholder="Tell students about yourself and your teaching experience"><?php echo htmlspecialchars($userData['bio'] ?? ''); ?></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="availability">Availability</label>
+                    <input type="text" id="availability" name="availability" 
+                           placeholder="e.g., Weekdays after 5 PM, Weekends"
+                           value="<?php echo htmlspecialchars($userData['availability'] ?? ''); ?>">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contact_info">Preferred Contact Information</label>
+                    <input type="text" id="contact_info" name="contact_info" 
+                           placeholder="Email or phone number"
+                           value="<?php echo htmlspecialchars($userData['contact_info'] ?? ''); ?>">
+                </div>
+                
+                <div class="selected-courses">
+                    <h3>Selected Courses</h3>
+                    <div class="course-chips" id="selected-courses-list">
+                        <?php 
+                        $courses = isset($_SESSION['assistant_courses']) ? getCoursesByIds($_SESSION['assistant_courses']) : [];
+                        foreach ($courses as $course): 
+                        ?>
+                            <span class="course-chip" data-course-id="<?php echo htmlspecialchars($course['id']); ?>">
+                                <?php echo htmlspecialchars($course['name']); ?>
+                            </span>
+                        <?php endforeach; ?>
+                    </div>
+                    <p class="hint">
+                        <a href="assistant-dashboard.php" class="btn btn-secondary">
+                            <i class="fas fa-edit"></i> Modify Course Selection
+                        </a>
+                    </p>
+                </div>
+                
+                <?php if (!empty($_SESSION['assistant_courses'])): ?>
+                    <?php foreach ($_SESSION['assistant_courses'] as $courseId): ?>
+                        <input type="hidden" name="selected_courses[]" value="<?php echo htmlspecialchars($courseId); ?>">
+                    <?php endforeach; ?>
+                <?php endif; ?>
+                
+                <script>
+                // Restore selected courses from sessionStorage when coming back from dashboard
+                document.addEventListener('DOMContentLoaded', function() {
+                    const tempCourses = sessionStorage.getItem('temp_selected_courses');
+                    if (tempCourses) {
+                        const courses = JSON.parse(tempCourses);
+                        const courseChips = document.getElementById('selected-courses-list');
+                        
+                        // Update the UI to show the modified courses
+                        if (courseChips && courses.length > 0) {
+                            // Clear existing chips
+                            courseChips.innerHTML = '';
+                            
+                            // Add new chips
+                            courses.forEach(courseId => {
+                                // In a real implementation, you would fetch course names from the server
+                                // For now, we'll just show the IDs
+                                const chip = document.createElement('span');
+                                chip.className = 'course-chip';
+                                chip.textContent = 'Course ' + courseId;
+                                courseChips.appendChild(chip);
+                                
+                                // Update hidden inputs
+                                const hiddenInput = document.createElement('input');
+                                hiddenInput.type = 'hidden';
+                                hiddenInput.name = 'selected_courses[]';
+                                hiddenInput.value = courseId;
+                                document.querySelector('form').appendChild(hiddenInput);
+                            });
+                            
+                            // Clear the temp storage
+                            sessionStorage.removeItem('temp_selected_courses');
+                        }
+                    }
+                });
+                </script>
+                
+                <div class="form-actions">
+                    <button type="submit" name="save_profile" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Profile
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: 2.5rem;
+        }
+        
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        .profile-header h1 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .profile-header p {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-group input[type="text"]:focus,
+        .form-group textarea:focus {
+            border-color: #4a6cf7;
+            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1);
+            outline: none;
+        }
+        
+        .selected-courses {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .selected-courses h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .course-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .course-chip {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            padding: 0.4rem 1rem;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+        
+        .hint {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin: 0.5rem 0 0 0;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 1rem;
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #4a6cf7;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #3a5ce4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 108, 247, 0.2);
+        }
+        
+        .btn-secondary {
+            background: #f1f3f5;
+            color: #495057;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            .profile-card {
+                padding: 1.5rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</body>
+</html>

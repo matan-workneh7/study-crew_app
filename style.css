@@ -719,7 +719,7 @@ footer p {
     gap: 1rem;
 }
 
-.course-item {
+.course-card {
     display: flex;
     align-items: center;
     background: white;
@@ -730,17 +730,23 @@ footer p {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
     border: 1px solid #f3f4f6;
+    margin-bottom: 1rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
-.course-item:hover {
+.course-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
     border-color: #667eea;
+    text-decoration: none;
 }
 
 .course-icon {
-    font-size: 1.8rem;
-    margin-right: 1rem;
+    font-size: 1.5rem;
+    margin-right: 1.25rem;
+    min-width: 60px;
     width: 60px;
     height: 60px;
     display: flex;
@@ -749,21 +755,32 @@ footer p {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 16px;
     color: white;
+    flex-shrink: 0;
 }
 
 .course-name {
     flex: 1;
     font-weight: 600;
     font-size: 1.1rem;
+    line-height: 1.4;
+}
+
+.course-code {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+    font-weight: 500;
 }
 
 .course-arrow {
     font-size: 1.5rem;
     color: #9ca3af;
     transition: all 0.3s ease;
+    margin-left: 1rem;
+    flex-shrink: 0;
 }
 
-.course-item:hover .course-arrow {
+.course-card:hover .course-arrow {
     color: #667eea;
     transform: translateX(4px);
 }

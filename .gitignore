@@ -1,6 +1,14 @@
 # Data files
 data/*.json
 
+# Log files
+/logs/*.log
+*.log
+
+# Backup files
+*.bak
+*~
+
 # Environment variables
 .env
 .env.local

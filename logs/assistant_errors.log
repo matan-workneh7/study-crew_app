@@ -1,0 +1,48 @@
+2025-07-03 10:27:56 - Error in saveAssistantProfile: Duplicate entry '9-SE101' for key 'user_id'
+User ID: 9
+Course ID: SE101
+SQL Error: 
+Backtrace: #0 /opt/lampp/htdocs/study-crew_app/functions.php(354): mysqli_stmt->execute()
+#1 /opt/lampp/htdocs/study-crew_app/assistant-dashboard.php(80): saveAssistantProfile(9, Array, '', '', '', '')
+#2 {main}
+
+2025-07-03 10:28:11 - Error in saveAssistantProfile: Duplicate entry '9-SE101' for key 'user_id'
+User ID: 9
+Course ID: SE101
+SQL Error: 
+Backtrace: #0 /opt/lampp/htdocs/study-crew_app/functions.php(354): mysqli_stmt->execute()
+#1 /opt/lampp/htdocs/study-crew_app/assistant-dashboard.php(80): saveAssistantProfile(9, Array, '', '', '', '')
+#2 {main}
+
+2025-07-03 10:28:14 - Error in saveAssistantProfile: Duplicate entry '9-SE101' for key 'user_id'
+User ID: 9
+Course ID: SE101
+SQL Error: 
+Backtrace: #0 /opt/lampp/htdocs/study-crew_app/functions.php(354): mysqli_stmt->execute()
+#1 /opt/lampp/htdocs/study-crew_app/assistant-dashboard.php(80): saveAssistantProfile(9, Array, '', '', '', '')
+#2 {main}
+
+2025-07-03 10:33:43 - Error in saveAssistantProfile: Unknown column 'year' in 'field list'
+User ID: 9
+Courses: SE101, SE102, SE105
+SQL Error: 
+Backtrace: #0 /opt/lampp/htdocs/study-crew_app/functions.php(354): mysqli->prepare('\n              ...')
+#1 /opt/lampp/htdocs/study-crew_app/assistant-dashboard.php(80): saveAssistantProfile(9, Array, '', '', '', '')
+#2 {main}
+
+2025-07-03 10:33:46 - Error in saveAssistantProfile: Unknown column 'year' in 'field list'
+User ID: 9
+Courses: SE101, SE103, SE104
+SQL Error: 
+Backtrace: #0 /opt/lampp/htdocs/study-crew_app/functions.php(354): mysqli->prepare('\n              ...')
+#1 /opt/lampp/htdocs/study-crew_app/assistant-dashboard.php(80): saveAssistantProfile(9, Array, '', '', '', '')
+#2 {main}
+
+2025-07-03 10:33:55 - Error in saveAssistantProfile: Unknown column 'year' in 'field list'
+User ID: 9
+Courses: SE101, SE102, SE103, SE104
+SQL Error: 
+Backtrace: #0 /opt/lampp/htdocs/study-crew_app/functions.php(354): mysqli->prepare('\n              ...')
+#1 /opt/lampp/htdocs/study-crew_app/assistant-dashboard.php(80): saveAssistantProfile(9, Array, '', '', '', '')
+#2 {main}
+
