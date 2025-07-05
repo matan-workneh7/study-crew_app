@@ -122,7 +122,20 @@ function getAssistantByUserId($userId) {
     $conn = getDbConnection();
     $stmt = $conn->prepare("SELECT * FROM assistants WHERE user_id = ?");
     $stmt->execute([$userId]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
+    $assistant = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if ($assistant) {
+        // Get the assistant's courses
+        $stmt = $conn->prepare("
+            SELECT course_id 
+            FROM assistant_courses 
+            WHERE assistant_id = ?
+        ");
+        $stmt->execute([$assistant['id']]);
+        $assistant['course_ids'] = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+    
+    return $assistant;
 }
 
 /**

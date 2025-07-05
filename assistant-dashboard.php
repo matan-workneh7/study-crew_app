@@ -62,22 +62,34 @@ $courses = array_filter($assistantCourses, function($course) use ($selectedYear,
     return $courseYearValue == $selectedYear && $course['semester'] == $selectedSemester;
 });
 
-// Get courses the user is already assisting
-$assistingCourses = getAssistantCourses($userId);
-$assistingCourseIds = array_column($assistingCourses, 'course_id');
+// Get assisting courses from session if available, otherwise from database
+if (isset($_SESSION['temporary_course_selections'])) {
+    $assistingCourseIds = $_SESSION['temporary_course_selections'];
+} else {
+    $assistingCourseIds = [];
+    $assistant = getAssistantByUserId($userId);
+    if ($assistant && !empty($assistant['course_ids'])) {
+        $assistingCourseIds = $assistant['course_ids'];
+    }
+    // Store in session for consistency
+    $_SESSION['temporary_course_selections'] = $assistingCourseIds;
+}
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $selectedCourses = $_POST['selected_courses'] ?? [];
     
-    // Save selected courses
-    if (saveAssistantProfile($userId, $selectedCourses, $userData['telegram'] ?? '', $userData['phone'] ?? '', $userData['bio'] ?? '', $userData['availability'] ?? '')) {
-        $_SESSION['success_message'] = 'Your course selections have been saved successfully!';
-        header('Location: ' . $_SERVER['PHP_SELF'] . '?year=' . $selectedYear . '&semester=' . $selectedSemester);
-        exit();
-    } else {
-        $_SESSION['error_message'] = 'Failed to save course selections. Please try again.';
-    }
+    // Filter out any empty values
+    $selectedCourses = array_filter($selectedCourses, function($id) {
+        return !empty($id);
+    });
+    
+    // Store in session
+    $_SESSION['temporary_course_selections'] = $selectedCourses;
+    
+    // Redirect to profile page
+    header('Location: assistant-profile.php');
+    exit();
 }
 ?>
 
@@ -106,6 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: all 0.2s ease;
             cursor: pointer;
             border: 1px solid #e5e7eb;
+            width: 100%;
         }
 
         .course-item:hover {
@@ -114,23 +127,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-color: #d1d5db;
         }
 
+        .course-item label {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .course-item input[type="checkbox"] {
+            margin-right: 15px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
         .course-icon {
             font-size: 1.5rem;
             margin-right: 15px;
             color: #4f46e5;
             width: 40px;
             text-align: center;
+            flex-shrink: 0;
         }
 
         .course-name {
             flex: 1;
             font-weight: 500;
             color: #111827;
+            margin: 0 15px 0 0;
         }
 
         .course-arrow {
             color: #9ca3af;
             transition: all 0.2s;
+            flex-shrink: 0;
+            margin-left: auto;
+            padding: 0 10px;
         }
 
         .course-item:hover .course-arrow {
@@ -261,32 +294,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <!-- Course List -->
-            <form method="POST" action="save-courses.php">
+<!-- Course List -->
+            <form method="POST" action="">
                 <div class="course-list">
                     <?php if (!empty($courses)): ?>
                         <?php foreach ($courses as $course): ?>
-                            <label class="course-item">
+                            <div class="course-item">
                                 <input type="checkbox" 
                                        name="selected_courses[]" 
-                                       value="<?php echo $course['id']; ?>" 
+                                       value="<?php echo htmlspecialchars($course['id']); ?>" 
+                                       id="course-<?php echo htmlspecialchars($course['id']); ?>"
                                        class="course-checkbox"
                                        <?php echo in_array($course['id'], $assistingCourseIds) ? 'checked' : ''; ?>>
-                                <div class="course-icon">
-                                    <?php echo getCourseIcon($course['category']); ?>
-                                </div>
-                                <div class="course-name">
-                                    <?php echo htmlspecialchars($course['name']); ?>
-                                </div>
-                                <div class="course-arrow">
-                                    &rsquo;
-                                </div>
-                            </label>
+                                <label for="course-<?php echo htmlspecialchars($course['id']); ?>">
+                                    <div class="course-icon">
+                                        <?php echo getCourseIcon($course['category']); ?>
+                                    </div>
+                                    <div class="course-name">
+                                        <?php echo htmlspecialchars($course['name']); ?>
+                                    </div>
+                                </label>
+                            </div>
                         <?php endforeach; ?>
                         
                         <div class="form-actions">
-                            <button type="submit" class="save-btn">
-                                <i class="fas fa-save"></i> Save Selections
+                            <a href="assistant-profile.php" class="btn btn-secondary">
+                                <i class="fas fa-user-edit"></i> View/Edit Profile
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Course Selections
                             </button>
                         </div>
                     <?php else: ?>

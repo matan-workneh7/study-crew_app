@@ -373,24 +373,14 @@ function getCoursesForAssistant($userYearValue) {
 
 // Function to get courses the user is assisting
 function getAssistantCourses($userId) {
-    $conn = getDbConnection();
-    
-    // First check if user is an assistant
     $assistant = getAssistantByUserId($userId);
-    if (!$assistant) {
+    
+    if (!$assistant || empty($assistant['course_ids'])) {
         return [];
     }
     
-    // Get courses for this assistant
-    $stmt = $conn->prepare("
-        SELECT c.* FROM courses c
-        JOIN assistant_courses ac ON c.id = ac.course_id
-        WHERE ac.assistant_id = ?
-        ORDER BY c.name
-    ");
-    $stmt->execute([$assistant['id']]);
-    
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Get full course details for each course ID
+    return getCoursesByIds($assistant['course_ids']);
 }
 
 // Function to save assistant profile with multiple courses
@@ -780,8 +770,13 @@ function getCoursesByIds($courseIds) {
         return [];
     }
     
-    // Ensure all IDs are integers to prevent SQL injection
-    $courseIds = array_map('intval', $courseIds);
+    // Ensure we have an array of non-empty values
+    $courseIds = array_filter((array)$courseIds, 'strlen');
+    if (empty($courseIds)) {
+        return [];
+    }
+    
+    // Create placeholders for the IN clause
     $placeholders = rtrim(str_repeat('?,', count($courseIds)), ',');
     
     $conn = getDbConnection();
@@ -789,11 +784,34 @@ function getCoursesByIds($courseIds) {
         SELECT * FROM courses 
         WHERE id IN ($placeholders)
         ORDER BY name
-    
     ");
     
-    $stmt->execute($courseIds);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Execute with the original values (PDO will handle parameter binding safely)
+    $stmt->execute(array_values($courseIds));
+    $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Add categories to the courses using the same logic as getCoursesForAssistant
+    foreach ($courses as &$course) {
+        $courseCode = strtoupper($course['code'] ?? '');
+        if (strpos($courseCode, 'CS') === 0 || stripos($course['name'] ?? '', 'computer') !== false) {
+            $course['category'] = 'computer';
+        } elseif (strpos($courseCode, 'MATH') === 0 || stripos($course['name'] ?? '', 'math') !== false) {
+            $course['category'] = 'math';
+        } elseif (strpos($courseCode, 'ENG') === 0 || stripos($course['name'] ?? '', 'english') !== false) {
+            $course['category'] = 'language';
+        } elseif (strpos($courseCode, 'PHYS') === 0) {
+            $course['category'] = 'physics';
+        } elseif (strpos($courseCode, 'CHEM') === 0) {
+            $course['category'] = 'chemistry';
+        } elseif (strpos($courseCode, 'BIO') === 0) {
+            $course['category'] = 'biology';
+        } else {
+            $course['category'] = 'default';
+        }
+    }
+    unset($course);
+    
+    return $courses;
 }
 
 // Initialize with sample data if database is empty
