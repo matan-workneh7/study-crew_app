@@ -5,11 +5,14 @@ ini_set('display_errors', 1);
 
 // Function to log debug information
 function log_debug($message, $data = null) {
-    $log = "[DEBUG] [" . date('Y-m-d H:i:s') . "] " . $message;
+    $log = "[DEBUG] [" . date('Y-m-d H:i:s') . "] " . $message . "\n";
     if ($data !== null) {
-        $log .= "\n" . print_r($data, true);
+        $log .= print_r($data, true) . "\n";
     }
+    // Log to PHP error log
     error_log($log);
+    // Also try to write to a debug file in /tmp
+    @file_put_contents('/tmp/study_crew_debug.log', $log, FILE_APPEND);
 }
 
 // Start session if not already started
@@ -42,15 +45,30 @@ try {
     $email = trim($_POST['email'] ?? '');
     $subject = trim($_POST['subject'] ?? 'New Message from Study Crew');
     $message = trim($_POST['message'] ?? '');
-    $courseId = trim($_POST['course_id'] ?? '');
-    $courseName = trim($_POST['course_name'] ?? '');
+    
+    // Handle multiple course selections
+    $courses = [];
+    if (!empty($_POST['courses']) && is_array($_POST['courses'])) {
+        foreach ($_POST['courses'] as $courseId => $courseData) {
+            $courses[] = [
+                'id' => $courseId,
+                'code' => $courseData['code'] ?? '',
+                'name' => $courseData['name'] ?? ''
+            ];
+        }
+    }
+    
+    // For backward compatibility with single course selection
+    $courseId = $_POST['course_id'] ?? ($courses[0]['id'] ?? '');
+    $courseName = $courses[0]['name'] ?? '';
 
     // Validate required fields
     $required = [
         'tutor_id' => $tutorId,
         'name' => $name,
         'email' => $email,
-        'message' => $message
+        'message' => $message,
+        'at_least_one_course' => !empty($courses) ? 1 : 0
     ];
     
     $missing = [];
@@ -61,7 +79,12 @@ try {
     }
     
     if (!empty($missing)) {
-        throw new Exception('Please fill in all required fields: ' . implode(', ', $missing));
+        // Replace the at_least_one_course key with a user-friendly message
+        $missingFields = array_map(function($field) {
+            return $field === 'at_least_one_course' ? 'at least one course' : $field;
+        }, $missing);
+        
+        throw new Exception('Please fill in all required fields: ' . implode(', ', $missingFields));
     }
     
     // Validate email format
@@ -114,8 +137,41 @@ try {
             }
         }
         
-        // 4. Insert the message
-        $stmt = $conn->prepare("
+        // 4. Prepare course data for storage
+        $courseIds = [];
+        $courseNames = [];
+        $courseCodes = [];
+        
+        // If no courses are selected, use the single course_id for backward compatibility
+        if (empty($courses) && !empty($courseId)) {
+            $courses[] = [
+                'id' => $courseId,
+                'name' => $courseName,
+                'code' => ''
+            ];
+        }
+        
+        // Prepare course data arrays
+        foreach ($courses as $course) {
+            if (!empty($course['id'])) {
+                $courseIds[] = $course['id'];
+                $courseNames[] = $course['name'] ?? '';
+                if (!empty($course['code'])) {
+                    $courseCodes[] = $course['code'];
+                }
+            }
+        }
+        
+        // If there are multiple courses, include them in the subject
+        $emailSubject = $subject;
+        if (count($courseCodes) > 1) {
+            $emailSubject = '[' . implode(', ', $courseCodes) . '] ' . $subject;
+        } elseif (count($courseCodes) === 1) {
+            $emailSubject = '[' . $courseCodes[0] . '] ' . $subject;
+        }
+        
+        // Insert a single message with all courses
+        $insertStmt = $conn->prepare("
             INSERT INTO messages (
                 sender_id, sender_name, sender_email,
                 tutor_id, tutor_email,
@@ -129,43 +185,180 @@ try {
             )
         ");
         
-        $stmt->execute([
+        $insertStmt->execute([
             ':sender_id' => $senderId,
             ':sender_name' => $name,
             ':sender_email' => $email,
             ':tutor_id' => $tutorId,
             ':tutor_email' => $tutor['email'],
-            ':subject' => $subject,
+            ':subject' => $emailSubject,
             ':message' => $message,
-            ':course_id' => $courseId ?: null,
-            ':course_name' => $courseName ?: null
+            ':course_id' => !empty($courseIds) ? json_encode($courseIds) : null,
+            ':course_name' => !empty($courseNames) ? json_encode($courseNames) : null
         ]);
         
         $messageId = $conn->lastInsertId();
         
-        // 5. Prepare and send email
-        $emailSubject = "New Message: " . htmlspecialchars($subject, ENT_QUOTES, 'UTF-8');
-        $emailBody = "You have received a new message from:\n";
-        $emailBody .= "Name: " . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . "\n";
-        $emailBody .= "Email: " . htmlspecialchars($email, ENT_QUOTES, 'UTF-8') . "\n";
-        
-        if ($courseName) {
-            $emailBody .= "\nCourse: " . htmlspecialchars($courseName, ENT_QUOTES, 'UTF-8') . "\n";
+        // 5. Create connection record
+        try {
+            // Log all available data
+            $debugInfo = [
+                'senderId' => $senderId,
+                'tutorId' => $tutorId,
+                'courseId' => $courseId,
+                'hasSession' => isset($_SESSION['user_id']) ? 'yes' : 'no',
+                'sessionUserId' => $_SESSION['user_id'] ?? 'not set',
+                'messageLength' => strlen($message),
+                'isConnected' => $conn ? 'yes' : 'no',
+                'dbName' => $conn ? $conn->query('SELECT DATABASE()')->fetchColumn() : 'no connection'
+            ];
+            
+            log_debug("=== ATTEMPTING TO CREATE CONNECTION ===", $debugInfo);
+            
+            // Log current database tables
+            if ($conn) {
+                $tables = $conn->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
+                log_debug("Available tables in database:", $tables);
+                
+                // Log connections table structure
+                try {
+                    $columns = $conn->query("DESCRIBE connections")->fetchAll(PDO::FETCH_ASSOC);
+                    log_debug("Connections table structure:", $columns);
+                } catch (Exception $e) {
+                    log_debug("Failed to get connections table structure: " . $e->getMessage());
+                }
+            }
+
+            // Ensure we have required values
+            if (empty($senderId)) {
+                throw new Exception('Sender ID is required but not provided');
+            }
+
+            // Get the assistant ID for this tutor (user_id)
+            $checkStmt = $conn->prepare("SELECT id FROM assistants WHERE user_id = ?");
+            $checkStmt->execute([$tutorId]);
+            $assistant = $checkStmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$assistant) {
+                log_debug("No assistant found for user ID $tutorId");
+                // Don't throw an error, just log and skip connection creation
+                return;
+            }
+            
+            $assistantId = $assistant['id'];
+
+            // Prepare course IDs array for JSON storage
+            $courseIds = [];
+            foreach ($courses as $course) {
+                if (!empty($course['id'])) {
+                    $courseIds[] = $course['id'];
+                }
+            }
+            
+            // If no valid course IDs, use empty array
+            $coursesJson = !empty($courseIds) ? json_encode($courseIds) : '[]';
+            
+            // Check if connection already exists
+            $checkConnStmt = $conn->prepare("SELECT id, course_id FROM connections WHERE user_id = ? AND assistant_id = ?");
+            $checkConnStmt->execute([$senderId, $assistantId]);
+            $existingConn = $checkConnStmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($existingConn) {
+                // Update existing connection with merged course IDs
+                $existingCourseIds = [];
+                if (!empty($existingConn['course_id']) && $existingConn['course_id'] !== '[]') {
+                    $existingCourseIds = json_decode($existingConn['course_id'], true) ?: [];
+                }
+                
+                // Merge existing and new course IDs, remove duplicates
+                $allCourseIds = array_unique(array_merge($existingCourseIds, $courseIds));
+                $mergedCoursesJson = json_encode(array_values($allCourseIds));
+                
+                // Update the connection with merged courses
+                $updateStmt = $conn->prepare("UPDATE connections SET course_id = ?, updated_at = NOW() WHERE id = ?");
+                $result = $updateStmt->execute([$mergedCoursesJson, $existingConn['id']]);
+                
+                if ($result) {
+                    log_debug("Successfully updated connection with ID: " . $existingConn['id']);
+                } else {
+                    $errorInfo = $updateStmt->errorInfo();
+                    throw new Exception("Failed to update connection: " . ($errorInfo[2] ?? 'Unknown error'));
+                }
+            } else {
+                // Create new connection with all course IDs
+                $sql = "INSERT INTO connections (
+                            user_id, 
+                            assistant_id, 
+                            course_id, 
+                            problem_description, 
+                            status,
+                            created_at,
+                            updated_at
+                        ) VALUES (
+                            :user_id,
+                            :assistant_id,
+                            :course_id,
+                            :problem_description,
+                            'pending',
+                            NOW(),
+                            NOW()
+                        )";
+                
+                log_debug("Executing SQL: " . $sql);
+                
+                $stmt = $conn->prepare($sql);
+                $result = $stmt->execute([
+                    ':user_id' => $senderId,
+                    ':assistant_id' => $assistantId,
+                    ':course_id' => $coursesJson,
+                    ':problem_description' => substr($message, 0, 500) // Limit length to prevent issues
+                ]);
+                
+                if ($result) {
+                    log_debug("Successfully created connection with ID: " . $conn->lastInsertId());
+                } else {
+                    $errorInfo = $stmt->errorInfo();
+                    throw new Exception("Failed to create connection: " . ($errorInfo[2] ?? 'Unknown error'));
+                }
+            }
+            
+        } catch (Exception $e) {
+            log_debug("CRITICAL ERROR in connection creation: " . $e->getMessage());
+            log_debug("Full error info: " . print_r($e, true));
+            // Don't rethrow to prevent breaking the message sending
         }
         
-        $emailBody .= "\nMessage:\n" . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . "\n\n";
+        // 6. Prepare email content
+        $emailBody = "You have received a new message from $name ($email)\n\n";
+        
+        // Add course information
+        if (!empty($courses)) {
+            $emailBody .= "Courses (" . count($courses) . "):\n";
+            foreach ($courses as $course) {
+                $courseLine = "- ";
+                if (!empty($course['code'])) {
+                    $courseLine .= "[{$course['code']}] ";
+                }
+                if (!empty($course['name'])) {
+                    $courseLine .= $course['name'];
+                }
+                $emailBody .= $courseLine . "\n";
+            }
+            $emailBody .= "\n";
+        }
+        
+        $emailBody .= "Message:\n$message\n\n";
         $emailBody .= "---\n";
         $emailBody .= "This message was sent through the Study Crew platform.\n";
+        $emailBody .= "Please do not reply directly to this email.";
         
-        // Set a default 'from' email if none is provided
-        $fromEmail = !empty($email) ? $email : 'noreply@studycrew.com';
-        
+        // Email headers
         $headers = [
-            'From: ' . $fromEmail,
-            'Reply-To: ' . $fromEmail,
+            'From: Study Crew <noreply@studycrew.com>',
+            'Reply-To: ' . $email,
             'X-Mailer: PHP/' . phpversion(),
             'MIME-Version: 1.0',
-            'Content-Type: text/plain; charset=UTF-8'
+            'Content-Type: text/plain; charset=utf-8'
         ];
         
         // Log email details before sending

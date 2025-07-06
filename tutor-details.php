@@ -171,6 +171,36 @@ if (!$assistant || !$user) {
                         const defaultCourseId = urlParams.get('course_id');
                         const courseCards = Array.from(document.querySelectorAll('.selectable-course'));
                         let selectedCourses = [];
+                        const selectedCoursesDisplay = document.getElementById('selected-courses-display');
+                        const subjectInput = document.getElementById('subject');
+                        
+                        // Function to update the selected courses display
+                        function updateSelectedCoursesDisplay() {
+                            if (selectedCourses.length === 0) {
+                                selectedCoursesDisplay.innerHTML = '<p style="margin: 0; color: #6c757d;">No courses selected</p>';
+                                return;
+                            }
+                            
+                            const coursesList = selectedCourses.map(courseId => {
+                                const card = document.querySelector(`.selectable-course[data-id="${courseId}"]`);
+                                if (card) {
+                                    return card.dataset.code;
+                                }
+                                return '';
+                            }).filter(Boolean);
+                            
+                            selectedCoursesDisplay.innerHTML = `
+                                <p style="margin: 0 0 10px 0; font-weight: 500;">Selected Courses (${coursesList.length}):</p>
+                                <ul style="margin: 0; padding-left: 20px;">
+                                    ${coursesList.map(course => `<li>${course}</li>`).join('')}
+                                </ul>
+                            `;
+                            
+                            // Update subject field if empty or contains default text
+                            if (!subjectInput.value || subjectInput.value === 'Question about ' + (defaultCourseId || '')) {
+                                subjectInput.value = `Question about ${coursesList.length} course${coursesList.length > 1 ? 's' : ''}`;
+                            }
+                        }
                         // Select default course from URL or first course
                         let defaultSelected = false;
                         courseCards.forEach(function(card, idx) {
@@ -199,6 +229,7 @@ if (!$assistant || !$user) {
                         function updateHiddenCourseFields() {
                             // Remove any previous hidden course fields
                             contactForm.querySelectorAll('.selected-course-field').forEach(el => el.remove());
+                            
                             // Add hidden fields for each selected course
                             selectedCourses.forEach(function(courseId) {
                                 const card = courseCards.find(c => c.dataset.id === courseId);
@@ -208,8 +239,19 @@ if (!$assistant || !$user) {
                                     addHiddenField(contactForm, `courses[${courseId}][id]`, courseId);
                                     addHiddenField(contactForm, `courses[${courseId}][code]`, code);
                                     addHiddenField(contactForm, `courses[${courseId}][name]`, name);
+                                    
+                                    // Add a hidden field for the first course ID for backward compatibility
+                                    if (selectedCourses[0] === courseId) {
+                                        addHiddenField(contactForm, 'course_id', courseId);
+                                    }
                                 }
                             });
+                            
+                            // If no courses selected, ensure we have at least one course_id for backward compatibility
+                            if (selectedCourses.length === 0 && courseCards.length > 0) {
+                                const firstCourseId = courseCards[0].dataset.id;
+                                addHiddenField(contactForm, 'course_id', firstCourseId);
+                            }
                         }
 
                         // Update hidden fields whenever selection changes
@@ -291,7 +333,7 @@ if (!$assistant || !$user) {
                 <form id="contactForm" class="contact-form" method="POST" action="/study-crew_app/api/send-message.php">
                     <input type="hidden" name="contact_submit" value="1">
                     <input type="hidden" name="tutor_id" value="<?php echo htmlspecialchars($user['id']); ?>">
-                    <input type="hidden" name="course_id" value="<?php echo htmlspecialchars($selectedCourseId); ?>">
+                    <!-- Course fields will be added dynamically by JavaScript -->
                     
                     <?php if (empty($_SESSION['user_id'])): ?>
                     <div class="form-group">
@@ -309,6 +351,13 @@ if (!$assistant || !$user) {
                     <input type="hidden" name="name" value="<?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?>">
                     <input type="hidden" name="email" value="<?php echo htmlspecialchars($_SESSION['email'] ?? ''); ?>">
                     <?php endif; ?>
+                    
+                    <div class="form-group">
+                        <label>Selected Courses</label>
+                        <div id="selected-courses-display" style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+                            <p style="margin: 0; color: #6c757d;">No courses selected</p>
+                        </div>
+                    </div>
                     
                     <div class="form-group">
                         <label for="subject">Subject</label>

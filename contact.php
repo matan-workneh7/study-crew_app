@@ -6,7 +6,11 @@ ini_set('display_errors', 1);
 // Include necessary files
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/session.php';
-require_once __DIR__ . '/functions.php'; // Include functions if needed
+require_once __DIR__ . '/functions.php';
+
+// Initialize variables
+$error = '';
+$success = '';
 
 // Get tutor ID from URL if available
 $tutorId = isset($_GET['tutor_id']) ? (int)$_GET['tutor_id'] : null;
@@ -635,7 +639,7 @@ $defaultSubject = $tutor ? "Question about tutoring" : "Contact Form Submission"
                     </div>
                     <div class="info-content">
                         <h3>Phone Number</h3>
-                        <p>+251 507-XXX-XXXX</p>
+                        <p>+251 911-435-465</p>
                     </div>
                 </div>
                 
@@ -668,7 +672,7 @@ $defaultSubject = $tutor ? "Question about tutoring" : "Contact Form Submission"
             </div>
             
             <div class="contact-container">
-                <form id="contactForm" class="contact-form" action="/study-crew_app/api/send-message.php" method="POST">
+                <form id="contactForm" class="contact-form" action="" method="POST">
                     <h2>Send us a message</h2>
                     <?php if ($tutor): ?>
                         <div class="form-info">
@@ -736,7 +740,7 @@ $defaultSubject = $tutor ? "Question about tutoring" : "Contact Form Submission"
                 const formData = new FormData(contactForm);
                 
                 // Send AJAX request
-                fetch('/study-crew_app/api/send-message.php', {
+                fetch('/study-crew_app/api/contact-submit.php', {
                     method: 'POST',
                     body: formData,
                     headers: {
