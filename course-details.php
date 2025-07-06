@@ -4,7 +4,7 @@ include 'functions.php';
 
 // Prefill user data for modal
 $userData = [];
-if (isLoggedIn()) {
+if (isset($_SESSION['user_id'])) {
     $userData = getUserData($_SESSION['user_id']);
 }
 
@@ -79,7 +79,7 @@ if (defined('DEBUG_MODE') && DEBUG_MODE === true) {
 }
 
 // Redirect to login if not logged in
-if (!isLoggedIn()) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: index.php?action=login&intent=get");
     exit();
 }
@@ -106,10 +106,15 @@ $selectedSemester = isset($_GET['semester']) ? (int)$_GET['semester'] : 1;
 // Debug: Log the course ID and its type
 error_log('Course ID: ' . $courseId . ', Type: ' . gettype($courseId));
 
-// Get course details
+// First try to get course by ID
 $course = getCourseById($courseId);
 
-// If course not found, show error and exit
+// If not found by ID, try to find by code
+if (!$course) {
+    $course = getCourseByCode($courseId);
+}
+
+// If course still not found, show error and exit
 if (!$course) {
     // Debug: Log available courses for troubleshooting
     $courses = readJsonFile(COURSES_FILE);
@@ -139,8 +144,8 @@ $sortOrder = isset($_GET['order']) ? $_GET['order'] : 'desc';
 if ($sortBy === 'name') {
     usort($tutors, function($a, $b) use ($sortOrder) {
         return $sortOrder === 'asc' ? 
-            strcmp($a['name'], $b['name']) : 
-            strcmp($b['name'], $a['name']);
+            strcmp($a['username'], $b['username']) : 
+            strcmp($b['username'], $a['username']);
     });
 } else {
     usort($tutors, function($a, $b) use ($sortOrder) {
@@ -245,7 +250,7 @@ if(isset($_GET['logout'])) {
                         <a href="tutor-details.php?id=<?php echo $tutor['user_id']; ?>&course_id=<?php echo urlencode($courseId); ?>" class="tutor-item">
                             <div class="tutor-name">
                                 <i class="fas fa-user-graduate" style="margin-right: 8px; color: #667eea;"></i>
-                                <?php echo htmlspecialchars($tutor['name']); ?>
+                                <?php echo htmlspecialchars($tutor['username']); ?>
                             </div>
                             <div class="tutor-year">
                                 <i class="fas fa-calendar" style="margin-right: 8px; color: #6c757d;"></i>
@@ -256,12 +261,6 @@ if(isset($_GET['logout'])) {
                                 <?php echo $tutor['visits']; ?> <?php echo $tutor['visits'] === 1 ? 'Visit' : 'Visits'; ?>
                             </div>
                         </a>
-                        <?php if (!empty($tutor['bio'])): ?>
-                            <div class="tutor-bio">
-                                <p><i class="fas fa-quote-left" style="color: #adb5bd; margin-right: 8px;"></i> 
-                                <?php echo nl2br(htmlspecialchars($tutor['bio'])); ?></p>
-                            </div>
-                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
@@ -279,7 +278,7 @@ $courseYear = $course['year'] ?? '';
 
 // Only show button if user is logged in, is not already an assistant, and their year is greater than the course year
 if (
-    isLoggedIn() &&
+    isset($_SESSION['user_id']) &&
     isset($studentYearOrder[$userAcademicYear], $studentYearOrder[$courseYear]) &&
     $studentYearOrder[$userAcademicYear] > $studentYearOrder[$courseYear]
 ) {

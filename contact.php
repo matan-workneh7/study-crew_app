@@ -1,31 +1,37 @@
 <?php
-require_once "session.php";
-require_once "functions.php";
-// Contact form handler
-$error = '';
-$success = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $message = trim($_POST['message'] ?? '');
-    if (!$name || !$email || !$message) {
-        $error = 'Please fill in all fields.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'Please enter a valid email address.';
-    } else {
-        $to = 'suranega43@gmail.com'; // Change this to your desired recipient
-        $subject = 'Study Crew Contact Form Submission';
-        $body = "Name: $name\nEmail: $email\nMessage:\n$message";
-        $headers = "From: $email\r\nReply-To: $email";
-        if (mail($to, $subject, $body, $headers)) {
-            $success = 'Thank you for contacting us! We will get back to you soon.';
-            // Clear form fields after success
-            $_POST = [];
-        } else {
-            $error = 'Sorry, there was a problem sending your message. Please try again later.';
-        }
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Include necessary files
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/session.php';
+require_once __DIR__ . '/functions.php'; // Include functions if needed
+
+// Get tutor ID from URL if available
+$tutorId = isset($_GET['tutor_id']) ? (int)$_GET['tutor_id'] : null;
+$courseId = isset($_GET['course_id']) ? $_GET['course_id'] : null;
+
+// If we have a tutor ID, get tutor details
+$tutor = null;
+if ($tutorId) {
+    try {
+        $conn = getDbConnection();
+        $stmt = $conn->prepare(
+            "SELECT a.id, u.username, u.email 
+            FROM assistants a 
+            JOIN users u ON a.user_id = u.id 
+            WHERE a.id = ?"
+        );
+        $stmt->execute([$tutorId]);
+        $tutor = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (Exception $e) {
+        error_log('Error getting tutor details: ' . $e->getMessage());
     }
 }
+
+// Set default subject if we have tutor info
+$defaultSubject = $tutor ? "Question about tutoring" : "Contact Form Submission";
 ?>
 
 <!DOCTYPE html>
@@ -389,6 +395,110 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
             gap: 15px;
             margin-top: 40px;
         }
+
+        /* Form Message Styles */
+        .form-message {
+            margin-top: 15px;
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            line-height: 1.5;
+            display: none;
+        }
+
+        .form-message.success {
+            display: block;
+            background-color: #e6f7e6;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+
+        .form-message.error {
+            display: block;
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
+
+        /* Form Group Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Form Info */
+        .form-info {
+            background-color: #f0f5ff;
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .form-info p {
+            margin: 0;
+            color: #2c5282;
+            font-size: 14px;
+        }
         
         .social-link {
             width: 45px;
@@ -467,16 +577,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
             <nav>
                 <ul>
                     <li><a href="index.php">Home</a></li>
-                    <?php if(isLoggedIn() && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'assist'): ?>
-                        <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
-                    <?php elseif(isLoggedIn()): ?>
-                        <li><a href="courses.php">Courses</a></li>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'assist'): ?>
+                            <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
+                        <?php else: ?>
+                            <li><a href="courses.php">Courses</a></li>
+                        <?php endif; ?>
                     <?php endif; ?>
                     <li><a href="about.php">About</a></li>
                     <li><a href="contact.php" class="active">Contact Us</a></li>
                 </ul>
             </nav>
-           <?php if(isLoggedIn()): ?>
+           <?php if (isset($_SESSION['user_id'])): ?>
                 <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
             <?php else: ?>
                 <a href="?action=login" class="sign-in-btn">SIGN IN</a>
@@ -555,24 +667,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
                 </div>
             </div>
             
-            <div class="contact-form">
-                <h2>Send Us a Message</h2>
-                <form method="POST" action="contact.php">
+            <div class="contact-container">
+                <form id="contactForm" class="contact-form" action="/study-crew_app/api/send-message.php" method="POST">
+                    <h2>Send us a message</h2>
+                    <?php if ($tutor): ?>
+                        <div class="form-info">
+                            <p>You're sending a message to: <strong><?php echo htmlspecialchars($tutor['username']); ?></strong></p>
+                        </div>
+                    <?php endif; ?>
                     <div class="form-group">
-                        <label for="name">Full Name</label>
-                        <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($_POST['name'] ?? ''); ?>" required>
+                        <label for="name">Your Name *</label>
+                        <input type="text" id="name" name="name" required 
+                            value="<?php echo isset($_SESSION['user_id']) ? htmlspecialchars($_SESSION['username'] ?? '') : ''; ?>">
                     </div>
                     <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>" required>
+                        <label for="email">Your Email *</label>
+                        <input type="email" id="email" name="email" required
+                            value="<?php echo isset($_SESSION['user_id']) && isset($_SESSION['email']) ? htmlspecialchars($_SESSION['email']) : ''; ?>">
                     </div>
                     <div class="form-group">
-                        <label for="message">Your Message</label>
-                        <textarea id="message" name="message" required><?php echo htmlspecialchars($_POST['message'] ?? ''); ?></textarea>
+                        <label for="subject">Subject *</label>
+                        <input type="text" id="subject" name="subject" value="<?php echo htmlspecialchars($defaultSubject); ?>" required>
                     </div>
-                    <button type="submit" name="contact_submit" class="send-btn">
-                        <i class="fas fa-paper-plane"></i> Send Message
-                    </button>
+                    <div class="form-group">
+                        <label for="message">Your Message *</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+                    <?php if ($tutorId): ?>
+                        <input type="hidden" name="tutor_id" value="<?php echo $tutorId; ?>">
+                    <?php endif; ?>
+                    <?php if ($courseId): ?>
+                        <input type="hidden" name="course_id" value="<?php echo htmlspecialchars($courseId); ?>">
+                    <?php endif; ?>
+                    <input type="hidden" name="contact_submit" value="1">
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                    <div id="formMessage" class="form-message"></div>
                 </form>
             </div>
         </div>
@@ -584,5 +713,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_submit'])) {
             <p>&copy; 2025 Study Crew. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const contactForm = document.getElementById('contactForm');
+        const formMessage = document.getElementById('formMessage');
+
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Disable submit button
+                const submitBtn = contactForm.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = 'Sending...';
+                
+                // Clear previous messages
+                formMessage.textContent = '';
+                formMessage.className = 'form-message';
+                
+                // Get form data
+                const formData = new FormData(contactForm);
+                
+                // Send AJAX request
+                fetch('/study-crew_app/api/send-message.php', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        formMessage.textContent = data.message;
+                        formMessage.className = 'form-message success';
+                        contactForm.reset();
+                    } else {
+                        throw new Error(data.message || 'Failed to send message');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    formMessage.textContent = error.message || 'An error occurred. Please try again.';
+                    formMessage.className = 'form-message error';
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Send Message';
+                    
+                    // Scroll to message
+                    formMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                });
+            });
+        }
+    });
+    </script>
 </body>
 </html>

@@ -3,7 +3,7 @@ require_once 'session.php';
 require_once 'functions.php';
 
 // Check if user is logged in and is an assistant
-if (!isLoggedIn() || !isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'assist') {
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'assist') {
     header("Location: index.php");
     exit();
 }

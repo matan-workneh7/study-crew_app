@@ -63,9 +63,8 @@ function getDbConnection() {
     
     if ($conn === null) {
         try {
-            // For XAMPP, use the socket path
-            $socket = '/opt/lampp/var/mysql/mysql.sock';
-            $dsn = "mysql:host=".DB_HOST.";dbname=".DB_NAME.";unix_socket=$socket;charset=utf8mb4";
+            // For XAMPP, use the standard connection without socket
+            $dsn = "mysql:host=".DB_HOST.";dbname=".DB_NAME.";charset=utf8mb4";
             
             $options = [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,

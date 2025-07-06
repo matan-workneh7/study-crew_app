@@ -127,11 +127,6 @@ function processLogin($email, $password, $intent = '') {
     return true;
 }
 
-// Helper function to check if user is logged in
-function isLoggedIn() {
-    return isset($_SESSION['user_id']);
-}
-
 // Function to register new users (multi-role support)
 function registerUser($username, $email, $password, $year, $user_role = 'student') {
     // Check if user already exists
@@ -310,7 +305,12 @@ function getAllCourses() {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-// Import getCourseById from db_functions
+/**
+ * Get a course by its ID
+ * 
+ * @param string $courseId The course ID to look up
+ * @return array|null The course data or null if not found
+ */
 if (!function_exists('getCourseById')) {
     function getCourseById($courseId) {
         $conn = getDbConnection();
@@ -325,6 +325,26 @@ if (!function_exists('getCourseById')) {
         
         return $course;
     }
+}
+
+/**
+ * Get a course by its course code
+ * 
+ * @param string $code The course code to look up (e.g., 'MATH101')
+ * @return array|null The course data or null if not found
+ */
+function getCourseByCode($code) {
+    $conn = getDbConnection();
+    $stmt = $conn->prepare("SELECT * FROM courses WHERE code = ?");
+    $stmt->execute([$code]);
+    $course = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$course) {
+        error_log('Course not found - Code: ' . $code . ' (Type: ' . gettype($code) . ')' );
+        return null;
+    }
+    
+    return $course;
 }
 
 // Function to get courses for assistant based on their academic year
@@ -466,6 +486,7 @@ function getTutorsByCourse($courseId, $searchQuery = '') {
             a.user_id, 
             u.username, 
             u.email, 
+            u.academic_year as year,
             a.telegram, 
             a.phone, 
             a.bio, 

@@ -3,7 +3,7 @@ require_once 'session.php';
 include 'functions.php';
 
 // Redirect to login if not logged in
-if (!isLoggedIn()) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: index.php?action=login&intent=get");
     exit();
 }
@@ -14,15 +14,12 @@ $userId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 // Get user info
 $user = getUserData($userId);
 
-// Find assistant record for this user
-$assistants = readJsonFile(ASSISTANTS_FILE);
+// Get assistant record for this user
 $assistant = null;
-foreach ($assistants as $a) {
-    if ($a['user_id'] == $userId) {
-        $assistant = $a;
-        break;
-    }
-}
+$conn = getDbConnection();
+$stmt = $conn->prepare("SELECT * FROM assistants WHERE user_id = ?");
+$stmt->execute([$userId]);
+$assistant = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
     echo '<h2>User not found.</h2>';
@@ -122,18 +119,15 @@ if (!$assistant || !$user) {
                 <?php 
                 // Get courses this assistant is teaching
                 $assistantCourses = [];
-                $allAssistants = readJsonFile(ASSISTANTS_FILE);
-                $allCourses = readJsonFile(COURSES_FILE);
-                
-                foreach ($allAssistants as $a) {
-                    if ($a['user_id'] == $userId) {
-                        foreach ($allCourses as $course) {
-                            if ($course['id'] == $a['course_id']) {
-                                $assistantCourses[] = $course;
-                                break;
-                            }
-                        }
-                    }
+                if ($assistant) {
+                    $stmt = $conn->prepare(
+                        "SELECT c.* 
+                        FROM courses c
+                        JOIN assistant_courses ac ON c.id = ac.course_id
+                        WHERE ac.assistant_id = ?"
+                    );
+                    $stmt->execute([$assistant['id']]);
+                    $assistantCourses = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 }
                 
                 if (!empty($assistantCourses)): 
@@ -265,33 +259,25 @@ if (!$assistant || !$user) {
                 $selectedCourseName = '';
                 $selectedCourseCode = '';
                 
-                // Get all courses this tutor teaches
+                // Get all courses this tutor teaches from the database
                 $tutorCourses = [];
-                $allAssistants = readJsonFile(ASSISTANTS_FILE);
-                $allCourses = readJsonFile(COURSES_FILE);
+                $stmt = $conn->prepare(
+                    "SELECT c.id, c.code, c.name 
+                    FROM courses c
+                    JOIN assistant_courses ac ON c.id = ac.course_id
+                    WHERE ac.assistant_id = ?"
+                );
+                $stmt->execute([$assistant['id']]);
+                $tutorCourses = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 
-                // Find all courses for this assistant
-                foreach ($allAssistants as $asst) {
-                    if ($asst['user_id'] == $assistant['user_id']) {
-                        $courseId = $asst['course_id'];
-                        
-                        // Find course details
-                        foreach ($allCourses as $course) {
-                            if (isset($course['id']) && $course['id'] == $courseId) {
-                                $tutorCourses[] = [
-                                    'id' => $course['id'],
-                                    'code' => $course['code'] ?? 'N/A',
-                                    'name' => $course['name'] ?? 'Unnamed Course'
-                                ];
-                                
-                                // If this is the selected course from URL
-                                if ($course['id'] == $selectedCourseId) {
-                                    $selectedCourseName = $course['name'] ?? '';
-                                    $selectedCourseCode = $course['code'] ?? '';
-                                }
-                                break;
-                            }
-                        }
+                // If a specific course is selected from URL, get its details
+                if (!empty($selectedCourseId)) {
+                    $stmt = $conn->prepare("SELECT id, code, name FROM courses WHERE id = ?");
+                    $stmt->execute([$selectedCourseId]);
+                    $selectedCourse = $stmt->fetch(PDO::FETCH_ASSOC);
+                    if ($selectedCourse) {
+                        $selectedCourseName = $selectedCourse['name'];
+                        $selectedCourseCode = $selectedCourse['code'];
                     }
                 }
                 
@@ -302,22 +288,43 @@ if (!$assistant || !$user) {
                     $selectedCourseCode = $tutorCourses[0]['code'];
                 }
                 ?>
-                <form id="contactForm" class="contact-form">
-                    <input type="hidden" name="tutor_email" value="<?php echo htmlspecialchars($user['email']); ?>">
-                    <input type="hidden" name="sender_email" value="<?php echo htmlspecialchars($_SESSION['email'] ?? ''); ?>">
-                    <input type="hidden" name="sender_name" value="<?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?>">
-                    <input type="hidden" name="tutor_id" value="<?php echo htmlspecialchars($assistant['id']); ?>">
+                <form id="contactForm" class="contact-form" method="POST" action="/study-crew_app/api/send-message.php">
+                    <input type="hidden" name="contact_submit" value="1">
+                    <input type="hidden" name="tutor_id" value="<?php echo htmlspecialchars($user['id']); ?>">
+                    <input type="hidden" name="course_id" value="<?php echo htmlspecialchars($selectedCourseId); ?>">
                     
-
+                    <?php if (empty($_SESSION['user_id'])): ?>
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" name="name" class="form-control" required 
+                               value="<?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?>">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Your Email</label>
+                        <input type="email" id="email" name="email" class="form-control" required
+                               value="<?php echo htmlspecialchars($_SESSION['email'] ?? ''); ?>">
+                    </div>
+                    <?php else: ?>
+                    <input type="hidden" name="name" value="<?php echo htmlspecialchars($_SESSION['username'] ?? ''); ?>">
+                    <input type="hidden" name="email" value="<?php echo htmlspecialchars($_SESSION['email'] ?? ''); ?>">
+                    <?php endif; ?>
                     
                     <div class="form-group">
                         <label for="subject">Subject</label>
-                        <input type="text" id="subject" name="subject" class="form-control" required placeholder="What's this message about?">
+                        <input type="text" id="subject" name="subject" class="form-control" required 
+                               value="<?php echo !empty($selectedCourseCode) ? 'Question about ' . htmlspecialchars($selectedCourseCode) : ''; ?>"
+                               placeholder="What's this message about?">
                     </div>
+                    
                     <div class="form-group">
                         <label for="message">Your Message</label>
                         <textarea id="message" name="message" rows="5" required
-                                 placeholder="Type your message here..."></textarea>
+                                 placeholder="Type your message here..."><?php 
+                                 if (!empty($selectedCourseCode)) {
+                                     echo "Hello,\n\nI have a question about " . htmlspecialchars($selectedCourseCode) . ".\n\n";
+                                 }
+                                 ?></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-paper-plane"></i> Send Message
@@ -348,12 +355,23 @@ if (!$assistant || !$user) {
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
                 
-                // Send form data via AJAX
-                fetch('send-email.php', {
+                // Send form data via AJAX to the API endpoint
+                fetch('/study-crew_app/api/send-message.php', {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
                 })
-                .then(response => response.json())
+                .then(async response => {
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        return response.json();
+                    } else {
+                        const text = await response.text();
+                        throw new Error('Server returned non-JSON response');
+                    }
+                })
                 .then(data => {
                     if (data.success) {
                         // Reset form
@@ -374,15 +392,24 @@ if (!$assistant || !$user) {
                     }
                 })
                 .catch(error => {
+                    console.error('Error:', error);
                     // Show error message
                     const errorMsg = document.createElement('div');
                     errorMsg.className = 'error-message';
-                    errorMsg.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (error.message || 'Failed to send message. Please try again.');
-                    form.appendChild(errorMsg);
+                    errorMsg.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed to send message. Please try again or contact support if the problem persists.';
+                    
+                    // Insert error message at the top of the form
+                    const firstFormElement = form.firstElementChild;
+                    if (firstFormElement) {
+                        form.insertBefore(errorMsg, firstFormElement);
+                    } else {
+                        form.appendChild(errorMsg);
+                    }
                     
                     // Hide error message after 5 seconds
                     setTimeout(() => {
-                        errorMsg.remove();
+                        errorMsg.style.opacity = '0';
+                        setTimeout(() => errorMsg.remove(), 300);
                     }, 5000);
                 })
                 .finally(() => {

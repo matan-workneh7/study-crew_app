@@ -2,7 +2,7 @@
 include 'functions.php';
 
 // Redirect to login if not logged in
-if (!isLoggedIn()) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: index.php?action=login&intent=get");
     exit();
 }

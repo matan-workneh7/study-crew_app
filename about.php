@@ -340,16 +340,16 @@ require_once 'functions.php';
             <nav>
                 <ul>
                     <li><a href="index.php">Home</a></li>
-                    <?php if(isLoggedIn() && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'assist'): ?>
+                    <?php if(isset($_SESSION['user_id']) && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'assist'): ?>
                         <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
-                    <?php elseif(isLoggedIn()): ?>
+                    <?php elseif(isset($_SESSION['user_id'])): ?>
                         <li><a href="courses.php">Courses</a></li>
                     <?php endif; ?>
                     <li><a href="about.php" class="active">About</a></li>
                     <li><a href="contact.php">Contact Us</a></li>
                 </ul>
             </nav>
-            <?php if(isLoggedIn()): ?>
+            <?php if(isset($_SESSION['user_id'])): ?>
                 <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
             <?php else: ?>
                 <a href="?action=login" class="sign-in-btn">SIGN IN</a>

@@ -140,9 +140,9 @@ if(isset($_SESSION['success_message'])) {
             <nav>
                 <ul>
                     <li><a href="index.php" class="active">Home</a></li>
-                    <?php if(isLoggedIn() && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'assist'): ?>
+                    <?php if(isset($_SESSION['user_id']) && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'assist'): ?>
                         <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
-                    <?php elseif(isLoggedIn()): ?>
+                    <?php elseif(isset($_SESSION['user_id'])): ?>
                         <li><a href="courses.php">Courses</a></li>
                     <?php endif; ?>
                     <li><a href="about.php">About</a></li>
@@ -176,7 +176,7 @@ if(isset($_SESSION['success_message'])) {
             <div class="hero-content">
                 <h1>Welcome to <span class="highlight">Study Crew</span>!</h1>
                 <p>Your campus connection for academic support.</p>
-                <?php if(isLoggedIn()): ?>
+                <?php if(isset($_SESSION['user_id'])): ?>
                     <a href="courses.php" class="get-started-btn">Continue Learning <span class="arrow">→</span></a>
                 <?php else: ?>
                     <a href="?action=signup&intent=get" class="get-started-btn">Get Started <span class="arrow">→</span></a>
@@ -188,7 +188,7 @@ if(isset($_SESSION['success_message'])) {
     <!-- Main Content Section -->
     <section class="main-content">
         <div class="container">
-            <?php if(!isLoggedIn()): ?>
+            <?php if(!isset($_SESSION['user_id'])): ?>
                 <h2>Struggling with Coursework?</h2>
                 <h3>Connect with Peer Tutors or Become One</h3>
                 <p class="description">

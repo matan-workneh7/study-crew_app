@@ -1,0 +1,6 @@
+[06-Jul-2025 17:36:56 Asia/Jerusalem] Database connection failed: SQLSTATE[HY000] [2002] No such file or directory
+[06-Jul-2025 17:39:55 Asia/Jerusalem] Database connection failed: SQLSTATE[HY000] [2002] No such file or directory
+[06-Jul-2025 17:48:16 Asia/Jerusalem] Database connection failed: SQLSTATE[HY000] [2002] No such file or directory
+[06-Jul-2025 17:51:17 Asia/Jerusalem] PHP Notice:  session_start(): Ignoring session_start() because a session is already active (started from /opt/lampp/htdocs/study-crew_app/config.php on line 49) in /opt/lampp/htdocs/study-crew_app/session.php on line 2
+[06-Jul-2025 17:51:17 Asia/Jerusalem] PHP Warning:  Cannot modify header information - headers already sent by (output started at /opt/lampp/htdocs/study-crew_app/session.php:2) in /opt/lampp/htdocs/study-crew_app/test_contact.php on line 12
+[06-Jul-2025 17:51:17 Asia/Jerusalem] PHP Warning:  http_response_code(): Cannot set response code - headers already sent (output started at /opt/lampp/htdocs/study-crew_app/session.php:2) in /opt/lampp/htdocs/study-crew_app/test_contact.php on line 102
