@@ -1,5 +1,7 @@
 # Data files
-data/*.json
+/data/
+/archive/
+/logs/
 
 # Environment variables
 .env
@@ -11,6 +13,13 @@ data/*.json
 .vscode/
 *.swp
 *.swo
+*.bak
+*~
+
+# Log files
+*.log
+debug.log
+error.log
 
 # OS generated files
 .DS_Store
@@ -18,5 +27,18 @@ data/*.json
 ._*
 .Spotlight-V100
 .Trashes
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Test files
+/test_*
+/check_*
+
+# Temporary files
+/tmp/
+/temp/
 ehthumbs.db
 Thumbs.db 
