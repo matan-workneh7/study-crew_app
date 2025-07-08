@@ -24,7 +24,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
                 <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
             </div>
         <?php else: ?>
-            <a href="?action=login" class="sign-in-btn">SIGN IN</a>
+            <a href="index.php?action=login&intent=student" class="sign-in-btn">SIGN IN</a>
         <?php endif; ?>
     </div>
 </header>
