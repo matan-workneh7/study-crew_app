@@ -51,23 +51,18 @@ study-crew_app/
 ## Setup Instructions
 
 1. **Clone or Download the Repository**
+   - Clone the repo into this folder in your pc - C:\xampp\htdocs\
    ```
-   git clone git@github.com/matan-workneh7/study-crew_app.git
+   git clone git@github.com:matan-workneh7/study-crew_app.git
    ```
 
-2. **Database Setup**
+3. **Database Setup**
    - Create a MySQL database named `study_crew`.
    - Import the provided SQL schema (study-crew.sql).
    - Update `DB_HOST`, `DB_USER`, `DB_PASS`, `DB_NAME` in `config.php` as needed.
    - Default port is `3306` for XAMPP. Change to `3307` if using default MySQL.
 
-3. **Configure Email (Optional)**
-   - Set your SMTP credentials in `config.php` for email notifications.
-
-4. **Set Permissions**
-   - Ensure the `data/` directory is writable if using JSON storage.
-
-5. **Run Locally**
+4. **Run Locally**
    - Start Apache and MySQL via XAMPP.
    - Visit [http://localhost/study-crew_app](http://localhost/study-crew_app) in your browser.
 
