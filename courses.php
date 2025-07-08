@@ -97,25 +97,7 @@ if(isset($_SESSION['success_message'])) {
 </head>
 <body>
     <!-- Header Section -->
-    <header>
-        <div class="container">
-            <div class="logo">
-                <span class="book-icon">📚</span>STUDY CREW
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="index.php">Home</a></li>
-                    <li><a href="courses.php" class="active">Courses</a></li>
-                    <li><a href="about.php">About</a></li>
-                    <li><a href="contact.php">Contact Us</a></li>
-                </ul>
-            </nav>
-            <div class="user-menu">
-                <span><?php echo htmlspecialchars($_SESSION['username']); ?></span>
-                <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
-            </div>
-        </div>
-    </header>
+    <?php include __DIR__ . '/includes/header.php'; ?>
 
     <!-- Success Message -->
     <?php if(isset($success_message)): ?>

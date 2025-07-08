@@ -332,30 +332,7 @@ require_once 'functions.php';
 </head>
 <body>
     <!-- Header Section -->
-    <header>
-        <div class="container">
-            <div class="logo">
-                <span class="book-icon">📚</span>STUDY CREW
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="index.php">Home</a></li>
-                    <?php if(isset($_SESSION['user_id']) && isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'assist'): ?>
-                        <li><a href="assistant-dashboard.php">Assistant Dashboard</a></li>
-                    <?php elseif(isset($_SESSION['user_id'])): ?>
-                        <li><a href="courses.php">Courses</a></li>
-                    <?php endif; ?>
-                    <li><a href="about.php" class="active">About</a></li>
-                    <li><a href="contact.php">Contact Us</a></li>
-                </ul>
-            </nav>
-            <?php if(isset($_SESSION['user_id'])): ?>
-                <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
-            <?php else: ?>
-                <a href="?action=login" class="sign-in-btn">SIGN IN</a>
-            <?php endif; ?>
-        </div>
-    </header>
+    <?php include __DIR__ . '/includes/header.php'; ?>
 
     <main class="container">
         <a href="index.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Home</a>
