@@ -436,6 +436,20 @@ try {
     log_debug("Error: " . $e->getMessage());
     $response['message'] = 'Failed to send message: ' . $e->getMessage();
 }
+// After sending the message, increment assistant's visits
+if (isset($_POST['tutor_id'])) {
+    $tutorId = (int)$_POST['tutor_id'];
+    require_once __DIR__ . '/../includes/db_functions.php'; // or wherever getDbConnection() is defined
+    $conn = getDbConnection();
+    // Get assistant record by user_id
+    $stmt = $conn->prepare("SELECT id FROM assistants WHERE user_id = ?");
+    $stmt->execute([$tutorId]);
+    $assistant = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($assistant) {
+        $stmt = $conn->prepare("UPDATE assistants SET visits = visits + 1 WHERE id = ?");
+        $stmt->execute([$assistant['id']]);
+    }
+}
 
 // Return JSON response
 echo json_encode($response);

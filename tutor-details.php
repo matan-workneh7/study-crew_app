@@ -181,9 +181,12 @@ if (!$assistant || !$user) {
                             `;
                             
                             // Update subject field if empty or contains default text
-                            if (!subjectInput.value || subjectInput.value === 'Question about ' + (defaultCourseId || '')) {
-                                subjectInput.value = `Question about ${coursesList.length} course${coursesList.length > 1 ? 's' : ''}`;
+                            if (coursesList.length > 0) {
+                                subjectInput.value = `Question about ${coursesList.join(', ')}`;
+                            } else {
+                                subjectInput.value = '';
                             }
+
                         }
                         // Select default course from URL or first course
                         let defaultSelected = false;
@@ -202,8 +205,13 @@ if (!$assistant || !$user) {
                                     this.classList.add('selected');
                                     selectedCourses.push(courseId);
                                 }
+                                updateSelectedCoursesDisplay();
                             });
+                        
                         });
+                        
+                        updateSelectedCoursesDisplay();
+
                         // Contact button logic
                         const contactBtn = document.querySelector('.btn.btn-primary[href="#contact"]');
                         const contactFormDiv = document.getElementById('contact');
@@ -224,12 +232,13 @@ if (!$assistant || !$user) {
                                     addHiddenField(contactForm, `courses[${courseId}][code]`, code);
                                     addHiddenField(contactForm, `courses[${courseId}][name]`, name);
                                     
-                                    // Add a hidden field for the first course ID for backward compatibility
-                                    if (selectedCourses[0] === courseId) {
-                                        addHiddenField(contactForm, 'course_id', courseId);
-                                    }
                                 }
                             });
+
+                            // For backward compatibility, set course_id to the first selected course (if any)
+                            if (selectedCourses.length > 0) {
+                                addHiddenField(contactForm, 'course_id', selectedCourses[0]);
+                            }
                             
                             // If no courses selected, ensure we have at least one course_id for backward compatibility
                             if (selectedCourses.length === 0 && courseCards.length > 0) {
@@ -241,6 +250,7 @@ if (!$assistant || !$user) {
                         // Update hidden fields whenever selection changes
                         courseCards.forEach(function(card) {
                             card.addEventListener('click', function() {
+                                updateSelectedCoursesDisplay();
                                 updateHiddenCourseFields();
                             });
                         });
@@ -261,6 +271,9 @@ if (!$assistant || !$user) {
                             form.appendChild(input);
                         }
                     });
+
+                    updateSelectedCoursesDisplay();
+                    updateHiddenCourseFields();
                     </script>
                 <?php endif; ?>
                 
@@ -352,12 +365,7 @@ if (!$assistant || !$user) {
                     
                     <div class="form-group">
                         <label for="message">Your Message</label>
-                        <textarea id="message" name="message" rows="5" required
-                                 placeholder="Type your message here..."><?php 
-                                 if (!empty($selectedCourseCode)) {
-                                     echo "Hello,\n\nI have a question about " . htmlspecialchars($selectedCourseCode) . ".\n\n";
-                                 }
-                                 ?></textarea>
+                        <textarea id="message" name="message" rows="5" required placeholder="Please explain the chapters you want to study with your tutor..."></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-paper-plane"></i> Send Message
