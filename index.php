@@ -254,7 +254,7 @@ You're making great progress in your studies! There are <strong>5 new tutors ava
                 <?php endif; ?>
 
                 <?php if (isset($error) && $show_login_modal): ?>
-                    <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+                    <div class="alert alert-danger" style="<?php echo (!empty($error) && $show_login_modal) ? '' : 'display:none;'; ?>"><?php echo htmlspecialchars($error); ?></div>
                 <?php endif; ?>
                 
                 <form method="POST" action="">
@@ -312,7 +312,7 @@ You're making great progress in your studies! There are <strong>5 new tutors ava
                 <?php endif; ?>
 
                 <?php if (isset($error) && $show_login_modal): ?>
-                    <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+                    <div class="alert alert-danger" style="<?php echo (!empty($error) && $show_login_modal) ? '' : 'display:none;'; ?>"><?php echo htmlspecialchars($error); ?></div>
                 <?php endif; ?>
                 
                 <form method="POST" action="">
@@ -370,7 +370,7 @@ You're making great progress in your studies! There are <strong>5 new tutors ava
                 <?php endif; ?>
 
                 <?php if (isset($error) && $show_signup_modal): ?>
-                    <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
+                    <div class="alert alert-danger"  style="<?php echo (!empty($error) && $show_login_modal) ? '' : 'display:none;'; ?>"><?php echo htmlspecialchars($error); ?></div>
                 <?php endif; ?>
                 
                 <form method="POST" action="">
