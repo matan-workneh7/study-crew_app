@@ -43,25 +43,9 @@ if (!$assistant || !$user) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="logo">
-                <span class="book-icon">📚</span>STUDY CREW
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="index.php">Home</a></li>
-                    <li><a href="courses.php" class="<?php echo basename($_SERVER['PHP_SELF']) === 'courses.php' ? 'active' : ''; ?>">Courses</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
-            </nav>
-            <div class="user-menu">
-                <span><?php echo htmlspecialchars($_SESSION['username'] ?? 'User'); ?></span>
-                <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
-            </div>
-        </div>
-    </header>
+    <!-- Header section -->
+    <?php include __DIR__ . '/includes/header.php'; ?>
+    
     <div class="container tutor-details-container">
         <a href="<?php echo isset($_SERVER['HTTP_REFERER']) ? htmlspecialchars($_SERVER['HTTP_REFERER']) : 'courses.php'; ?>" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Back

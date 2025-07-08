@@ -64,25 +64,7 @@ if(isset($_GET['logout'])) {
 </head>
 <body>
     <!-- Header Section -->
-    <header>
-        <div class="container">
-            <div class="logo">
-                <span class="book-icon">📚</span>STUDY CREW
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="index.php">Home</a></li>
-                    <li><a href="courses.php" class="active">Courses</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact Us</a></li>
-                </ul>
-            </nav>
-            <div class="user-menu">
-                <span><?php echo htmlspecialchars($_SESSION['username']); ?></span>
-                <a href="?logout=1" class="sign-in-btn">LOGOUT</a>
-            </div>
-        </div>
-    </header>
+    <?php include __DIR__ . '/includes/header.php'; ?>
 
     <!-- Main Content -->
     <div class="container connect-container">
