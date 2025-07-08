@@ -233,11 +233,7 @@ You're making great progress in your studies! There are <strong>5 new tutors ava
     </section>
 
     <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 Study Crew. All rights reserved.</p>
-        </div>
-    </footer>
+    <?php include __DIR__ . '/includes/footer.php'; ?>
 
     <!-- Student Login Modal -->
     <?php if(isset($show_login_modal) && $show_login_modal && ($assist_intent === 'student' || $assist_intent === 'get')): ?>

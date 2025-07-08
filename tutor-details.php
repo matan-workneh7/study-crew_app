@@ -465,11 +465,8 @@ if (!$assistant || !$user) {
             </div>
         <?php endif; ?>
     </div>
-    <footer style="background: white; padding: 2rem 0; margin-top: 3rem; border-top: 1px solid #e9ecef;">
-        <div class="container" style="text-align: center; color: #6c757d; font-size: 0.9rem;">
-            <p>&copy; <?php echo date('Y'); ?> Study Crew. All rights reserved.</p>
-        </div>
-    </footer>
+        <!-- Footer Section -->
+    <?php include __DIR__ . '/includes/footer.php'; ?>
     
     <style>
     /* Back button styles */
