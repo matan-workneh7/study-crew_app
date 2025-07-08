@@ -687,11 +687,7 @@ $defaultSubject = $tutor ? "Question about tutoring" : "Contact Form Submission"
     </div>
     
     <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 Study Crew. All rights reserved.</p>
-        </div>
-    </footer>
+    <?php include __DIR__ . '/includes/footer.php'; ?>
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
