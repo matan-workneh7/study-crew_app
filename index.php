@@ -288,7 +288,6 @@ You're making great progress in your studies! There are <strong>5 new tutors ava
                     </p>
                 </form>
             </div>
-            <button type="button" onclick="window.location.href='index.php'" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Home</button>
         </div>
     </div>
     <?php endif; ?>
@@ -346,7 +345,6 @@ You're making great progress in your studies! There are <strong>5 new tutors ava
                     </p>
                 </form>
             </div>
-            <button type="button" onclick="window.location.href='index.php'" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Home</button>
         </div>
     </div>
     <?php endif; ?>
@@ -395,14 +393,17 @@ You're making great progress in your studies! There are <strong>5 new tutors ava
 
                     <div class="form-group">
                         <label>Academic Year</label>
-                        <select class="form-select" name="academic_year" required>
-                            <option value="">Select your academic year</option>
-                            <option value="Freshman">Freshman (1st Year)</option>
-                            <option value="Sophomore">Sophomore (2nd Year)</option>
-                            <option value="Junior">Junior (3rd Year)</option>
-                            <option value="Senior">Senior (4th Year)</option>
-                            <option value="Graduate">Graduate</option>
-                        </select>
+                        <div class="input-group">
+                            <span class="input-icon">🎓</span>
+                            <select name="academic_year" required>
+                                <option value="">Select your academic year</option>
+                                <option value="Freshman">Freshman (1st Year)</option>
+                                <option value="Sophomore">Sophomore (2nd Year)</option>
+                                <option value="Junior">Junior (3rd Year)</option>
+                                <option value="Senior">Senior (4th Year)</option>
+                                <option value="Graduate">Graduate</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -430,7 +431,6 @@ You're making great progress in your studies! There are <strong>5 new tutors ava
                     </p>
                 </form>
             </div>
-            <button type="button" onclick="window.location.href='index.php'" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Home</button>
         </div>
     </div>
     <?php endif; ?>
